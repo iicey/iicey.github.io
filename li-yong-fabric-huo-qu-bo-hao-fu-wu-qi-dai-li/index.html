@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>利用fabric获取拨号服务器代理 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="利用fabric获取拨号服务器代理 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+代理服务器上的web服务没搭建成功，只能采用这种方式了
+
+使用示例
+import re
+from fabric import Connection
+
+def main():
+    c = Connection(&quot;用户名@ip&..." />
+    <meta name="keywords" content="fabric" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              利用fabric获取拨号服务器代理
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-13
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/-sS2t_Ajct/" class="post-tag">
+                  # fabric
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>代理服务器上的web服务没搭建成功，只能采用这种方式了</p>
+</blockquote>
+<h3 id="使用示例">使用示例</h3>
+<pre><code class="language-python">import re
+from fabric import Connection
+
+def main():
+    c = Connection(&quot;用户名@ip&quot;, port=0, connect_kwargs={&quot;password&quot;: &quot;&quot;})
+    ip = re.findall(r'\d+\.\d+\.\d+\.\d+', str(c.run(&quot;ifconfig&quot;)))[5]
+    print(ip)
+    c.close()
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+<h3 id="输出内容">输出内容</h3>
+<p>eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500<br>
+inet 192.168.99.148  netmask 255.255.255.0  broadcast 192.168.99.255<br>
+inet6 fe80::215:5dff:fe0a:5c72  prefixlen 64  scopeid 0x20<link><br>
+ether 00:15:5d:0a:5c:72  txqueuelen 1000  (Ethernet)<br>
+RX packets 15537451  bytes 4663930804 (4.3 GiB)<br>
+RX errors 0  dropped 70833  overruns 0  frame 0<br>
+TX packets 7816569  bytes 3530126546 (3.2 GiB)<br>
+TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</p>
+<p>lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536<br>
+inet 127.0.0.1  netmask 255.0.0.0<br>
+inet6 ::1  prefixlen 128  scopeid 0x10<host><br>
+loop  txqueuelen 0  (Local Loopback)<br>
+RX packets 3710  bytes 368837 (360.1 KiB)<br>
+RX errors 0  dropped 0  overruns 0  frame 0<br>
+TX packets 3710  bytes 368837 (360.1 KiB)<br>
+TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</p>
+<p>ppp0: flags=4305&lt;UP,POINTOPOINT,RUNNING,NOARP,MULTICAST&gt;  mtu 1492<br>
+inet 121.239.127.24  netmask 255.255.255.255  destination 121.239.127.1<br>
+ppp  txqueuelen 3  (Point-to-Point Protocol)<br>
+RX packets 23405  bytes 10003878 (9.5 MiB)<br>
+RX errors 0  dropped 0  overruns 0  frame 0<br>
+TX packets 26396  bytes 10117083 (9.6 MiB)<br>
+TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</p>
+<p><strong><font color=#ff502c>121.239.127.24</font></strong></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B">使用示例</a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E5%86%85%E5%AE%B9">输出内容</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/tdd-lian-xi-1-zhi-shi-yong-property-gai-xie/">
+              <h3 class="post-title">
+                TDD练习1之使用property改写
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

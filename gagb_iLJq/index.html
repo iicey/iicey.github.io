@@ -1,0 +1,777 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>supervisord管理服务进程 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="supervisord管理服务进程 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="抄自
+Mac使用专题
+安装
+brew install supervisor
+brew install services
+
+启动
+brew services start supervisor
+
+关闭
+brew services stop su..." />
+    <meta name="keywords" content="supervisord" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              supervisord管理服务进程
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-09-22
+              </span>
+              <span>
+                14 min read
+              </span>
+              
+                <a href="https://iicey.github.io/FB_0_Yeu2/" class="post-tag">
+                  # supervisord
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="https://www.escapelife.site/posts/98a019e9.html">抄自</a></p>
+<h1 id="mac使用专题">Mac使用专题</h1>
+<h2 id="安装">安装</h2>
+<pre><code class="language-sh">brew install supervisor
+brew install services
+</code></pre>
+<h2 id="启动">启动</h2>
+<pre><code class="language-sh">brew services start supervisor
+</code></pre>
+<h2 id="关闭">关闭</h2>
+<pre><code class="language-sh">brew services stop supervisor
+</code></pre>
+<h2 id="重启">重启</h2>
+<pre><code class="language-sh">brew services reload supervisor
+</code></pre>
+<h2 id="supervisord-文件路径">supervisord 文件路径</h2>
+<pre><code>/usr/local/bin/supervisord
+/usr/local/opt/supervisor/bin/supervisord
+/usr/local/Cellar/supervisor/4.2.4/libexec/bin/supervisord
+</code></pre>
+<h2 id="supervisordconf-文件路径">supervisord.conf 文件路径</h2>
+<pre><code>/usr/local/etc/supervisord.conf
+</code></pre>
+<h2 id="supervisor-目录路径">supervisor 目录路径</h2>
+<pre><code>/usr/local/opt/supervisor
+</code></pre>
+<pre><code class="language-sh">$ cd /usr/local/opt/supervisor &amp;&amp; ls
+CHANGES.rst				bin
+COPYRIGHT.txt				homebrew.mxcl.supervisor.plist
+INSTALL_RECEIPT.json		homebrew.supervisor.service
+README.rst					libexec
+</code></pre>
+<h2 id="supervisordini-文件路径">supervisord.ini 文件路径</h2>
+<pre><code>/usr/local/etc/supervisor.d/*.ini
+</code></pre>
+<h2 id="访问http-管理界面http1270019001">访问HTTP 管理界面，<a href="http://127.0.0.1:9001">http://127.0.0.1:9001</a></h2>
+<pre><code class="language-sh">vim supervisord.conf
+</code></pre>
+<pre><code class="language-ini"># 在/etc/supervisord.conf中修改[inet_http_server]的参数
+[inet_http_server]    ; 侦听在TCP上的socket
+port=*:9001           ; 侦听的IP和端口
+username=root         ; 连接的时候认证的用户，非必须设置
+password=1234         ; 用户名对应的密码，可用明码和SHA加密，非必须设置
+</code></pre>
+<h2 id="进程启动和守护的能力验证http1270018080">进程启动和守护的能力验证，<a href="http://127.0.0.1:8080">http://127.0.0.1:8080</a></h2>
+<pre><code class="language-sh">mkdir ~/example &amp;&amp; mkdir -p ~/example/log &amp;&amp; cd ~/example
+
+echo 'pip install SimpleHTTPServer &amp;&amp; python -m SimpleHTTPServer 8080' &gt; test.sh
+
+chmod +x test.sh
+
+echo '
+[program:test]
+; 启动目录
+directory = ~/example/
+; 执行命令
+command = sh ~/example/test.sh
+; 随 supervisord 启动
+autostart = true
+; 程序启动 5s 内没有异常则认为是正常运行
+startsecs = 5
+; 程序异常退出后重新启动
+autorestart = true
+; 重试启动程序多少次
+startretries = 3
+; 默认使用当前用户执行应用
+user = soulteary
+; 需要手动创建目录
+stdout_logfile = ~/example/log/supervisor.log
+' &gt; /usr/local/etc/supervisor.d/test.ini
+
+brew services reload supervisor
+</code></pre>
+<h1 id="安装-2">安装</h1>
+<h2 id="安装supervisor工具">安装supervisor工具</h2>
+<pre><code class="language-shell">yum install -y python-setuptools
+easy_install supervisor
+</code></pre>
+<h2 id="ubuntu直接apt安装就可以了自动生成etcsupervisor目录和supervisordconf配置文件">Ubuntu直接apt安装就可以了,自动生成/etc/supervisor目录和supervisord.conf配置文件</h2>
+<pre><code class="language-shell">apt-get install supervisor
+</code></pre>
+<h1 id="快速配置">快速配置</h1>
+<h2 id="创建默认配置文件">创建默认配置文件</h2>
+<pre><code class="language-shell">echo_supervisord_conf &gt; /etc/supervisord.conf
+</code></pre>
+<h2 id="启动默认配置异常解决方案">启动默认配置，<a href="https://stackoverflow.com/questions/25121838/supervisor-on-debian-wheezy-another-program-is-already-listening-on-a-port-that">异常解决方案</a></h2>
+<pre><code class="language-shell">supervisord -c /etc/supervisord.conf  # Centos
+supervisord -c /etc/supervisor/supervisord.conf  # Ubuntu
+supervisord -c /usr/local/etc/supervisord.conf  # Mac
+</code></pre>
+<h2 id="检查进程">检查进程</h2>
+<pre><code class="language-shell">ps aux | grep supervisord
+</code></pre>
+<h2 id="创建配置文件目录和日志">创建配置文件目录和日志</h2>
+<pre><code class="language-shell">mkdir -pv /etc/supervisord.d/conf &amp;&amp; mkdir -pv /etc/supervisord.d/log
+</code></pre>
+<h2 id="centos系统的配置文件">CentOS系统的配置文件</h2>
+<pre><code class="language-shell">vim /etc/supervisord.conf
+</code></pre>
+<pre><code class="language-ini">[supervisord]
+logfile=/var/log/supervisor/supervisord.log
+logfile_maxbytes=50MB
+logfile_backups=10
+loglevel=info
+pidfile=/tmp/supervisord.pid
+nodaemon=false
+
+[include]
+files = supervisord.d/conf/*.conf
+</code></pre>
+<h2 id="ubuntu的配置文件">Ubuntu的配置文件</h2>
+<pre><code class="language-sh">vim /etc/supervisor/supervisord.conf
+</code></pre>
+<pre><code class="language-ini">[unix_http_server]
+file=/var/run/supervisor.sock
+chmod=0700
+
+[supervisord]
+logfile=/var/log/supervisor/supervisord.log
+pidfile=/var/run/supervisord.pid
+childlogdir=/var/log/supervisor
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///var/run/supervisor.sock
+
+[include]
+files = /etc/supervisor/conf.d/*.conf
+</code></pre>
+<h2 id="mac的配置文件">Mac的配置文件</h2>
+<pre><code class="language-sh">vim /usr/local/etc/supervisord.conf
+</code></pre>
+<h2 id="supervisordconf-文件内容说明">supervisord.conf 文件内容说明</h2>
+<pre><code class="language-ini"># unix_http_server
+;[unix_http_server]
+;file=/var/run/supervisor.sock  ; socket文件的路径，用XML_RPC和supervisord进行通信，非必须设置
+;chmod=0700                     ; 修改上面的那个socket文件的权限，非必须设置
+;chown=escape:docker            ; 修改上面的那个socket文件的属组，非必须设置
+;username=escape                ; 连接的时候认证的用户，非必须设置
+;password=123456                ; 用户名对应的密码，可用明码和SHA加密，非必须设置
+
+# inet_http_server
+;[inet_http_server]    ; 侦听在TCP上的socket
+;port=*:9001           ; 侦听的IP和端口
+;username=root         ; 连接的时候认证的用户，非必须设置
+;password=1234         ; 用户名对应的密码，可用明码和SHA加密，非必须设置
+
+# supervisord
+;[supervisord]                                ; 主要是定义supervisord服务端进程的一些参数
+;logfile=/var/log/supervisor/supervisord.log  ; supervisord主进程的日志路径，非必须设置
+;logfile_maxbytes=50MB                        ; 日志文件的最大的大小，超过则生成新的日志，非必须设置
+;logfile_backups=10                           ; 日志文件保持的数量，默认为10个，非必须设置
+;loglevel=info                                ; 日志级别，非必须设置
+;pidfile=/var/run/supervisord.pid             ; supervisord服务的pid文件路径，非必须设置
+;nodaemon=false                               ; 如果是true的话，supervisord进程将在前台运行，默认后台以守护进程运行
+;umask=022                                    ; 进程创建文件的掩码
+;user=escape                                  ; 以root启动之后，该用户可以对supervisord进行管理
+;identifier=supervisor                        ; 多个supervisor且想调用XML_RPC统一管理，就需要为每个设置不同的标识符
+;directory=/tmp                               ; 作为守护进程运行的时候会先切换到这个目录
+;childlogdir=/var/log/supervisor              ; 当子进程日志路径为AUTO的时候，子进程日志文件的存放路径
+;environment=KEY=&quot;value&quot;                      ; 设置环境变量，会被子进程继承
+
+# rpcinterface
+;[rpcinterface:supervisor]  ; 给XML_RPC用的
+;supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+# supervisorctl
+;[supervisorctl]                            ; 主要是针对supervisorctl的一些配置
+;serverurl=unix:///var/run/supervisor.sock  ; 注意这个是和前面的[unix_http_server]对应的
+;username=root                              ; 用户名
+;password=1234                              ; 密码
+;prompt=mysupervisor                        ; 输入用户名密码时候的提示符
+;history_file=~/.super_history              ; 参数和shell中的history类似
+
+# include
+;[include]
+;files = /etc/supervisor/conf.d/*.conf      ; 读取配置文件的路径，支持匹配扩展
+</code></pre>
+<h2 id="创建管理应用的配置">创建管理应用的配置</h2>
+<pre><code>cd /etc/supervisor.d
+cd /usr/local/etc/supervisor.d
+vim program.ini
+</code></pre>
+<h2 id="应用配置的ini文件说明">应用配置的ini文件说明</h2>
+<pre><code># program
+;[program:theprogramname]      ; 必填选项，其格式为[program:应用名称]
+;command=/bin/cat              ; 启动命令，可以使用参数，不能是守护进程
+;process_name=%(program_name)s ; 当numprocs为1时，process_name=%(program_name)s;
+                                 当numprocs&gt;=2时，%(program_name)s_%(process_num)02d
+;numprocs=1                    ; 启动的进程数量，默认为1个，类似进程池的概念
+;directory=/tmp                ; 程序的执行目录
+;umask=022                     ; 指定掩码，默认为None
+;priority=999                  ; 指定优先级，值越高、最后启动、最先被关闭，默认值999
+;autostart=true                ; 当supervisor启动时，程序将会自动启动
+;startsecs=1                   ; 启动1秒后没有异常退出就当作已经正常启动
+;startretries=3                ; 启动异常重试次数，超过这个次数就认为失败
+;autorestart=unexpected        ; 程序异常退出后不会自动重启，true表示自动重启
+;exitcodes=0,2                 ; 当退出码是0和2时，执行重启，默认值0和2
+;stopsignal=HUP                ; 进程停止信号，默认为TERM，TERM/HUP/INT/QUIT/KILL等
+;stopwaitsecs=10               ; 当向子进程发送stopsignal信号后，到系统返回信息给supervisord
+                                 服务所等待的最大时间。超过这个时间，supervisord会向该子进程发
+                                 送一个强制kill的信号
+;stopasgroup=false             ; 主要用于supervisord管理的子进程，这个子进程本身还有子进程。
+                                 那么我们如果仅仅干掉supervisord的子进程的话，子进程的子进程
+                                 有可能会变成孤儿进程。设置这个选项，把整个该子进程的整个进程组
+                                 都干掉。设置为true的话，一般killasgroup也会被设置为true的。
+                                 需要注意的是，该选项发送的是stop信号
+;killasgroup=false             ; 和上面的stopasgroup类似，不过发送的是kill信号
+;user=escape                   ; 用哪个用户启动
+;redirect_stderr=true          ; 如果为true，则stderr的日志会被写入stdout日志文件中，默认false
+;stdout_logfile=/a/path        ; stdout日志文件路径
+;stdout_logfile_maxbytes=1MB   ; stdout日志文件大小，默认50MB
+;stdout_logfile_backups=10     ; stdout日志文件备份数，默认10次
+;stdout_capture_maxbytes=1MB   ; 设定capture管道的大小，当值不为0时，子进程可以从stdout
+                                 发送信息，而supervisor可以根据信息，发送相应的event。
+                                 默认为0，为0的时候表达关闭管道。
+;stdout_events_enabled=false   ; 当设置为ture的时候，当子进程由stdout向文件描述符中写日志的时
+                                 候，将触发supervisord发送PROCESS_LOG_STDOUT类型的event，
+                                 默认为false。
+;stderr_logfile=/a/path        ; stderr日志文件路径
+;stderr_logfile_maxbytes=1MB   ; stderr日志文件大小，默认50MB
+;stderr_logfile_backups=10     ; stderr日志文件备份数，默认10次
+;stderr_capture_maxbytes=1MB   ; number of bytes in 'capturemode' (default 0)
+;stderr_events_enabled=false   ; emit events on stderr writes (default false)
+;environment=A=&quot;1&quot;,B=&quot;2&quot;       ; 添加需要的环境变量
+;serverurl=AUTO                ; override serverurl computation (childutils) |
+</code></pre>
+<h2 id="信号">信号</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">编号</th>
+<th style="text-align:left">信号名称</th>
+<th style="text-align:left">数字表示</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><code>SIGTERM</code></td>
+<td style="text-align:left">supervisord 及其所有子进程都将关闭</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><code>SIGINT</code></td>
+<td style="text-align:left">supervisord 及其所有子进程都将关闭</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left"><code>SIGQUIT</code></td>
+<td style="text-align:left">supervisord 及其所有子进程都将关闭</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>SIGHUP</code></td>
+<td style="text-align:left">supervisord 将关闭所有进程，重新载入配置文件并启动所有进程</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>SIGUSR2</code></td>
+<td style="text-align:left">supervisord 将关闭并重新打开主要活动日志和所有子日志文件</td>
+</tr>
+</tbody>
+</table>
+<pre><code># 指定停止信号，默认为TERM
+; [中断]: INT(类似于Ctrl+C)(kill -INT pid)，退出后会将其写文件或日志(推荐)
+; [终止]: TERM(类似于kill -TERM pid)
+; [挂起]: HUP(类似于kill -HUP pid)，注意与Ctrl+Z/kill -stop pid不同
+; [从容停止]: QUIT(类似于kill -QUIT pid)
+stopsignal=TERM
+
+# 日常使用方式
+[root@localhost ~] $ sudo supervisorctl signal hup app-test:*
+</code></pre>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">信号名称</th>
+<th style="text-align:left">数字</th>
+<th style="text-align:left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>SIGHUP</code></td>
+<td style="text-align:left">1</td>
+<td style="text-align:left">终端挂起或控制进程终止。当用户退出 Shell 时，由该进程启动的所有进程都会收到这个信号，默认动作为终止进程。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGINT</code></td>
+<td style="text-align:left">2</td>
+<td style="text-align:left">键盘中断。当用户按下组合键时，用户终端向正在运行中的由该终端启动的程序发出此信号。默认动作为终止进程。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGQUIT</code></td>
+<td style="text-align:left">3</td>
+<td style="text-align:left">键盘退出键被按下。当用户按下或组合键时，用户终端向正在运行中的由该终端启动的程序发出此信号。默认动作为退出程序。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGFPE</code></td>
+<td style="text-align:left">8</td>
+<td style="text-align:left">发生致命的运算错误时发出。不仅包括浮点运算错误，还包括溢出及除数为 0 等所有的算法错误。默认动作为终止进程并产生 core 文件。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGKILL</code></td>
+<td style="text-align:left">9</td>
+<td style="text-align:left">无条件终止进程。进程接收到该信号会立即终止，不进行清理和暂存工作。该信号不能被忽略、处理和阻塞，它向系统管理员提供了可以杀死任何进程的方法。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGALRM</code></td>
+<td style="text-align:left">14</td>
+<td style="text-align:left">定时器超时，默认动作为终止进程。</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>SIGTERM</code></td>
+<td style="text-align:left">15</td>
+<td style="text-align:left">程序结束信号，可以由 kill 命令产生。与 SIGKILL 不同的是，SIGTERM 信号可以被阻塞和终止，以便程序在退出前可以保存工作或清理临时文件等。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="supervisord分组">supervisord分组</h2>
+<p><a href="https://blog.csdn.net/qq_42517220/article/details/108624561">https://blog.csdn.net/qq_42517220/article/details/108624561</a></p>
+<pre><code># 组配置模板
+[group:lnmp]
+programs=nginx-web,db-mysql,python-backend,confd  ; 指定组内成员
+priority=999                                      ; 指定优先级，默认为999
+</code></pre>
+<h2 id="服务配置模板ini文件">服务配置模板，ini文件</h2>
+<pre><code class="language-ini">[program:confd]
+directory = /usr/local/bin
+command = /usr/local/bin/confd -config-file /etc/confd/confd.toml
+process_name=%(program_name)s
+user = root
+stopasgroup=true
+killasgroup=true
+autostart = true
+startsecs = 5
+autorestart = true
+startretries = 3
+stdout_logfile=/a/path
+stdout_logfile_maxbytes = 20MB
+stdout_logfile_backups = 20
+stderr_logfile=/b/path
+stderr_logfile_maxbytes=20MB
+stderr_logfile_backups=20
+environment=PYTHONPATH=&quot;$PYTHONPATH:/path/to/somewhere&quot;
+</code></pre>
+<pre><code># 环境变量需要通过%()s的方式使用
+[program:example]
+command=/usr/bin/example --loglevel=%(ENV_LOGLEVEL)s
+</code></pre>
+<h1 id="服务启动">服务启动</h1>
+<h2 id="二进制启动">二进制启动</h2>
+<pre><code># 二进制启动
+supervisord -c /etc/supervisord.conf
+
+# 检查进程
+ps aux | grep supervisord
+</code></pre>
+<h2 id="设置开机启动及systemd方式启动">设置开机启动及systemd方式启动</h2>
+<pre><code class="language-sh">$ vim /etc/rc.d/init.d/supervisord
+#!/bin/sh
+#
+# /etc/rc.d/init.d/supervisord
+#
+# Supervisor is a client/server system that
+# allows its users to monitor and control a
+# number of processes on UNIX-like operating
+# systems.
+#
+# chkconfig: - 64 36
+# description: Supervisor Server
+# processname: supervisord
+
+# Source init functions
+. /etc/rc.d/init.d/functions
+
+prog=&quot;supervisord&quot;
+
+prefix=&quot;/usr&quot;
+exec_prefix=&quot;${prefix}&quot;
+prog_bin=&quot;${exec_prefix}/bin/supervisord&quot;
+PIDFILE=&quot;/var/run/$prog.pid&quot;
+
+start() {
+    echo -n $&quot;Starting $prog: &quot;
+    daemon $prog_bin --pidfile $PIDFILE -c /etc/supervisord.conf
+    [ -f $PIDFILE ] &amp;&amp; success $&quot;$prog startup&quot; || failure $&quot;$prog startup&quot;
+    echo
+}
+
+stop() {
+    echo -n $&quot;Shutting down $prog: &quot;
+    [ -f $PIDFILE ] &amp;&amp; killproc $prog || success $&quot;$prog shutdown&quot;
+    echo
+}
+
+case &quot;$1&quot; in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    status)
+        status $prog
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo &quot;Usage: $0 {start|stop|restart|status}&quot;
+        ;;
+esac
+</code></pre>
+<pre><code class="language-sh"># 设置开机启动及systemd方式启动
+sudo chmod +x /etc/rc.d/init.d/supervisord
+sudo chkconfig --add supervisord
+sudo chkconfig supervisord on
+sudo service supervisord start
+</code></pre>
+<h1 id="命令使用">命令使用</h1>
+<h2 id="supervisorctl-命令">supervisorctl 命令</h2>
+<h2 id="查看进程状态">查看进程状态</h2>
+<pre><code># beepkg为配置文件[program:beepkg]里配置的值
+supervisorctl status
+</code></pre>
+<h2 id="启动某个进程">启动某个进程</h2>
+<pre><code>supervisorctl start beepkg
+</code></pre>
+<h2 id="停止某一个进程">停止某一个进程</h2>
+<pre><code>supervisorctl stop beepkg
+</code></pre>
+<h2 id="重启某个进程">重启某个进程</h2>
+<pre><code>supervisorctl restart beepkg
+</code></pre>
+<h2 id="启动所有属于名为groupworker这个分组的进程">启动所有属于名为groupworker这个分组的进程</h2>
+<pre><code class="language-bash">supervisorctl start groupworker
+</code></pre>
+<h2 id="停止所有属于名为groupworker这个分组的进程">停止所有属于名为groupworker这个分组的进程</h2>
+<pre><code>supervisorctl stop groupworker
+</code></pre>
+<h2 id="重动所有属于名为groupworker这个分组的进程">重动所有属于名为groupworker这个分组的进程</h2>
+<pre><code>supervisorctl restart groupworker
+</code></pre>
+<h2 id="停止全部进程">停止全部进程</h2>
+<pre><code>supervisorctl stop all
+</code></pre>
+<h2 id="载入最新的配置文件">载入最新的配置文件</h2>
+<pre><code># 载入最新的配置文件
+# 停止原有进程并按新的配置启动、管理所有进程
+# 注意start、restart、stop都不会载入最新的配置文件
+supervisorctl reload
+</code></pre>
+<h2 id="根据最新的配置文件启动新配置或有改动的进程">根据最新的配置文件启动新配置或有改动的进程</h2>
+<pre><code># 根据最新的配置文件启动新配置或有改动的进程
+# 注意，如果配置没有改动的进程不会受影响而重启
+supervisorctl update
+</code></pre>
+<h2 id="help">help</h2>
+<pre><code>supervisorctl --help
+</code></pre>
+<h2 id="supervisord-命令">supervisord 命令</h2>
+<h2 id="help-2">help</h2>
+<pre><code>supervisord --help
+</code></pre>
+<h1 id="运行安全">运行安全</h1>
+<p>开发人员尽力确保以 <code>root</code> 身份运行的 <code>supervisord</code> 进程不会导致意外的权限升级。但 <code>supervisord</code> 允许在其配置文件中的任意路径规范写入数据，允许任意路径选择可能会造成符号链接工具的漏洞。确保 <code>supervisord</code> 配置文件的权限安全，除此之外，确保 <code>Python PATH</code> 和标准库都有足够的文件权限保护。</p>
+<h1 id="服务状态">服务状态</h1>
+<p>我们启动 <code>supervisord</code> 之后，可以查看进程的运行状态，所以必须事先知道 <code>supervisord</code> 到底有几种状态，对应状态代表着什么意思，之前的状态转移过程。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">编号</th>
+<th style="text-align:left">进程状态</th>
+<th style="text-align:left">退出码</th>
+<th style="text-align:left">状态说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left"><code>STOPPED</code></td>
+<td style="text-align:left"><code>0</code></td>
+<td style="text-align:left">该过程已经停止</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left"><code>STARTING</code></td>
+<td style="text-align:left"><code>10</code></td>
+<td style="text-align:left">该过程正在启动</td>
+</tr>
+<tr>
+<td style="text-align:left">3</td>
+<td style="text-align:left"><code>RUNNING</code></td>
+<td style="text-align:left"><code>20</code></td>
+<td style="text-align:left">该过程正在运行</td>
+</tr>
+<tr>
+<td style="text-align:left">4</td>
+<td style="text-align:left"><code>BACKOFF</code></td>
+<td style="text-align:left"><code>30</code></td>
+<td style="text-align:left">该过程进入 STARTING 状态但退出太快导致无法进入 RUNNING 状态</td>
+</tr>
+<tr>
+<td style="text-align:left">5</td>
+<td style="text-align:left"><code>STOPPING</code></td>
+<td style="text-align:left"><code>40</code></td>
+<td style="text-align:left">该过程正在停止</td>
+</tr>
+<tr>
+<td style="text-align:left">6</td>
+<td style="text-align:left"><code>EXITED</code></td>
+<td style="text-align:left"><code>100</code></td>
+<td style="text-align:left">该过程退出 RUNNING 状态</td>
+</tr>
+<tr>
+<td style="text-align:left">7</td>
+<td style="text-align:left"><code>FATAL</code></td>
+<td style="text-align:left"><code>200</code></td>
+<td style="text-align:left">该过程无法成功启动</td>
+</tr>
+<tr>
+<td style="text-align:left">8</td>
+<td style="text-align:left"><code>UNKNOWN</code></td>
+<td style="text-align:left"><code>1000</code></td>
+<td style="text-align:left">该过程处于未知状态，通常为 supervisord 程序错误</td>
+</tr>
+</tbody>
+</table>
+<figure data-type="image" tabindex="1"><img src="https://iicey.github.io//post-images/1663851723213.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#mac%E4%BD%BF%E7%94%A8%E4%B8%93%E9%A2%98">Mac使用专题</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8">启动</a></li>
+<li><a href="#%E5%85%B3%E9%97%AD">关闭</a></li>
+<li><a href="#%E9%87%8D%E5%90%AF">重启</a></li>
+<li><a href="#supervisord-%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84">supervisord 文件路径</a></li>
+<li><a href="#supervisordconf-%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84">supervisord.conf 文件路径</a></li>
+<li><a href="#supervisor-%E7%9B%AE%E5%BD%95%E8%B7%AF%E5%BE%84">supervisor 目录路径</a></li>
+<li><a href="#supervisordini-%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84">supervisord.ini 文件路径</a></li>
+<li><a href="#%E8%AE%BF%E9%97%AEhttp-%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2http1270019001">访问HTTP 管理界面，http://127.0.0.1:9001</a></li>
+<li><a href="#%E8%BF%9B%E7%A8%8B%E5%90%AF%E5%8A%A8%E5%92%8C%E5%AE%88%E6%8A%A4%E7%9A%84%E8%83%BD%E5%8A%9B%E9%AA%8C%E8%AF%81http1270018080">进程启动和守护的能力验证，http://127.0.0.1:8080</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85-2">安装</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85supervisor%E5%B7%A5%E5%85%B7">安装supervisor工具</a></li>
+<li><a href="#ubuntu%E7%9B%B4%E6%8E%A5apt%E5%AE%89%E8%A3%85%E5%B0%B1%E5%8F%AF%E4%BB%A5%E4%BA%86%E8%87%AA%E5%8A%A8%E7%94%9F%E6%88%90etcsupervisor%E7%9B%AE%E5%BD%95%E5%92%8Csupervisordconf%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">Ubuntu直接apt安装就可以了,自动生成/etc/supervisor目录和supervisord.conf配置文件</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BF%AB%E9%80%9F%E9%85%8D%E7%BD%AE">快速配置</a>
+<ul>
+<li><a href="#%E5%88%9B%E5%BB%BA%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">创建默认配置文件</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E5%BC%82%E5%B8%B8%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">启动默认配置，异常解决方案</a></li>
+<li><a href="#%E6%A3%80%E6%9F%A5%E8%BF%9B%E7%A8%8B">检查进程</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E5%92%8C%E6%97%A5%E5%BF%97">创建配置文件目录和日志</a></li>
+<li><a href="#centos%E7%B3%BB%E7%BB%9F%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">CentOS系统的配置文件</a></li>
+<li><a href="#ubuntu%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">Ubuntu的配置文件</a></li>
+<li><a href="#mac%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">Mac的配置文件</a></li>
+<li><a href="#supervisordconf-%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E8%AF%B4%E6%98%8E">supervisord.conf 文件内容说明</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE">创建管理应用的配置</a></li>
+<li><a href="#%E5%BA%94%E7%94%A8%E9%85%8D%E7%BD%AE%E7%9A%84ini%E6%96%87%E4%BB%B6%E8%AF%B4%E6%98%8E">应用配置的ini文件说明</a></li>
+<li><a href="#%E4%BF%A1%E5%8F%B7">信号</a></li>
+<li><a href="#supervisord%E5%88%86%E7%BB%84">supervisord分组</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%A8%A1%E6%9D%BFini%E6%96%87%E4%BB%B6">服务配置模板，ini文件</a></li>
+</ul>
+</li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8">服务启动</a>
+<ul>
+<li><a href="#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%90%AF%E5%8A%A8">二进制启动</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E5%8F%8Asystemd%E6%96%B9%E5%BC%8F%E5%90%AF%E5%8A%A8">设置开机启动及systemd方式启动</a></li>
+</ul>
+</li>
+<li><a href="#%E5%91%BD%E4%BB%A4%E4%BD%BF%E7%94%A8">命令使用</a>
+<ul>
+<li><a href="#supervisorctl-%E5%91%BD%E4%BB%A4">supervisorctl 命令</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81">查看进程状态</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E6%9F%90%E4%B8%AA%E8%BF%9B%E7%A8%8B">启动某个进程</a></li>
+<li><a href="#%E5%81%9C%E6%AD%A2%E6%9F%90%E4%B8%80%E4%B8%AA%E8%BF%9B%E7%A8%8B">停止某一个进程</a></li>
+<li><a href="#%E9%87%8D%E5%90%AF%E6%9F%90%E4%B8%AA%E8%BF%9B%E7%A8%8B">重启某个进程</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E6%89%80%E6%9C%89%E5%B1%9E%E4%BA%8E%E5%90%8D%E4%B8%BAgroupworker%E8%BF%99%E4%B8%AA%E5%88%86%E7%BB%84%E7%9A%84%E8%BF%9B%E7%A8%8B">启动所有属于名为groupworker这个分组的进程</a></li>
+<li><a href="#%E5%81%9C%E6%AD%A2%E6%89%80%E6%9C%89%E5%B1%9E%E4%BA%8E%E5%90%8D%E4%B8%BAgroupworker%E8%BF%99%E4%B8%AA%E5%88%86%E7%BB%84%E7%9A%84%E8%BF%9B%E7%A8%8B">停止所有属于名为groupworker这个分组的进程</a></li>
+<li><a href="#%E9%87%8D%E5%8A%A8%E6%89%80%E6%9C%89%E5%B1%9E%E4%BA%8E%E5%90%8D%E4%B8%BAgroupworker%E8%BF%99%E4%B8%AA%E5%88%86%E7%BB%84%E7%9A%84%E8%BF%9B%E7%A8%8B">重动所有属于名为groupworker这个分组的进程</a></li>
+<li><a href="#%E5%81%9C%E6%AD%A2%E5%85%A8%E9%83%A8%E8%BF%9B%E7%A8%8B">停止全部进程</a></li>
+<li><a href="#%E8%BD%BD%E5%85%A5%E6%9C%80%E6%96%B0%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">载入最新的配置文件</a></li>
+<li><a href="#%E6%A0%B9%E6%8D%AE%E6%9C%80%E6%96%B0%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%90%AF%E5%8A%A8%E6%96%B0%E9%85%8D%E7%BD%AE%E6%88%96%E6%9C%89%E6%94%B9%E5%8A%A8%E7%9A%84%E8%BF%9B%E7%A8%8B">根据最新的配置文件启动新配置或有改动的进程</a></li>
+<li><a href="#help">help</a></li>
+<li><a href="#supervisord-%E5%91%BD%E4%BB%A4">supervisord 命令</a></li>
+<li><a href="#help-2">help</a></li>
+</ul>
+</li>
+<li><a href="#%E8%BF%90%E8%A1%8C%E5%AE%89%E5%85%A8">运行安全</a></li>
+<li><a href="#%E6%9C%8D%E5%8A%A1%E7%8A%B6%E6%80%81">服务状态</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/xg7BG_qOo/">
+              <h3 class="post-title">
+                Python3常用的标准库
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

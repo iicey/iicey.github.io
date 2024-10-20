@@ -1,0 +1,418 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>读《算法图解》收获 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="读《算法图解》收获 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="二分查找
+# -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/us..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              读《算法图解》收获
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-09-09
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://iicey.github.io/NiqLQG1iy6/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="二分查找">二分查找</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def er_fen(arr, num):
+    arr.sort()
+    start, end = 0, len(arr)
+    while (end - start) &gt;= 0:
+        san = (end + start) // 2
+        if arr[san] == num:
+            return san
+        if arr[san] &gt; num:
+            end = san - 1
+        else:
+            start = end + 1
+    return -1
+
+if __name__ == '__main__':
+    print(er_fen([234, 421, 6534, 8765, 154, 1, 64231, 654, 1654], 654))
+</code></pre>
+<h4 id="小结">小结</h4>
+<ul>
+<li>二分查找的速度比简单查找快得多。</li>
+<li>O(log n)比O(n)快。需要搜索的元素越多，前者比后者就快得越多。</li>
+<li>算法运行时间并不以秒为单位。</li>
+<li>算法运行时间是从其增速的角度度量的。</li>
+<li>算法运行时间用大O表示法表示。</li>
+</ul>
+<h3 id="选择排序">选择排序</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def my_xz(arr):
+    length = len(arr)
+    for i in range(length):
+        for j in range(i + 1, length):
+            if arr[i] &gt; arr[j]:
+                arr[i], arr[j] = arr[j], arr[i]
+    return arr
+
+if __name__ == '__main__':
+    print(my_xz([234, 421, 6534, 8765, 154, 1, 64231, 654, 1654]))
+</code></pre>
+<h4 id="小结-2">小结</h4>
+<ul>
+<li>计算机内存犹如一大堆抽屉。</li>
+<li>需要存储多个元素时，可使用数组或链表。</li>
+<li>数组的元素都在一起。</li>
+<li>链表的元素是分开的，其中每个元素都存储了下一个元素的地址。</li>
+<li>数组的读取速度很快。</li>
+<li>链表的插入和删除速度很快。</li>
+<li>在同一个数组中，所有元素的类型都必须相同（都为int、double等）。</li>
+</ul>
+<h3 id="递归">递归</h3>
+<h4 id="小结-3">小结</h4>
+<ul>
+<li>递归指的是调用自己的函数。</li>
+<li>每个递归函数都有两个条件：基线条件和递归条件。</li>
+<li>栈有两种操作：压入和弹出。</li>
+<li>所有函数调用都进入调用栈。</li>
+<li>调用栈可能很长，这将占用大量的内存。</li>
+</ul>
+<h3 id="快速排序">快速排序</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+import sys
+
+def my_kp(arr):
+    if len(arr) &lt; 2:
+        return arr
+    else:
+        _ = arr[0]
+        __ = [i for i in arr[1:] if i &gt;= _]
+        ___ = [i for i in arr[1:] if i &lt; _]
+        return my_kp(__) + [_] + my_kp(___)
+
+if __name__ == '__main__':
+    print(my_kp([234, 421, 6534, 8765, 154, 1, 64231, 654, 1654]))
+</code></pre>
+<h4 id="小结-4">小结</h4>
+<ul>
+<li>D&amp;C将问题逐步分解。使用D&amp;C处理列表时，基线条件很可能是空数组或只包含一个元<br>
+素的数组。</li>
+<li>实现快速排序时，请随机地选择用作基准值的元素。快速排序的平均运行时间为O(n log n)。</li>
+<li>大O表示法中的常量有时候事关重大，这就是快速排序比合并排序快的原因所在。</li>
+<li>比较简单查找和二分查找时，常量几乎无关紧要，因为列表很长时，O(log n)的速度比O(n)<br>
+快得多。</li>
+</ul>
+<h3 id="散列表">散列表</h3>
+<h4 id="小结-5">小结</h4>
+<p><strong>散列表适合用于</strong>：</p>
+<ul>
+<li>模拟映射关系；</li>
+<li>防止重复；</li>
+<li>缓存/记住数据，以免服务器再通过处理来生成它们。</li>
+</ul>
+<p><strong>你几乎根本不用自己去实现散列表，因为你使用的编程语言提供了散列表实现。你可使用</strong><br>
+<strong>Python提供的散列表，并假定能够获得平均情况下的性能：常量时间。</strong></p>
+<p><strong>散列表是一种功能强大的数据结构，其操作速度快，还能让你以不同的方式建立数据模型。</strong><br>
+<strong>你可能很快会发现自己经常在使用它。</strong></p>
+<ul>
+<li>你可以结合散列函数和数组来创建散列表。</li>
+<li>冲突很糟糕，你应使用可以最大限度减少冲突的散列函数。</li>
+<li>散列表的查找、插入和删除速度都非常快。</li>
+<li>散列表适合用于模拟映射关系。</li>
+<li>一旦填装因子超过0.7，就该调整散列表的长度。</li>
+<li>散列表可用于缓存数据（例如，在Web服务器上）。</li>
+<li>散列表非常适合用于防止重复。</li>
+</ul>
+<h3 id="广度优先搜索">广度优先搜索</h3>
+<h4 id="小结-6">小结</h4>
+<ul>
+<li>广度优先搜索指出是否有从A到B的路径。</li>
+<li>如果有，广度优先搜索将找出最短路径。</li>
+<li>面临类似于寻找最短路径的问题时，可尝试使用图来建立模型，再使用广度优先搜索来解决问题。</li>
+<li>有向图中的边为箭头，箭头的方向指定了关系的方向，例如，rama→adit表示rama欠adit钱。无向图中的不带箭头，其中的关系是双向的，例如，ross - rachel表示“ross与rachel约会，而rachel也与ross约会”。</li>
+<li>队列是先进先出（FIFO）的。</li>
+<li>栈是后进先出（LIFO）的。</li>
+<li>你需要按加入顺序检查搜索列表中的人，否则找到的就不是最短路径，因此搜索列表必须是队列。</li>
+<li>对于检查过的人，务必不要再去检查，否则可能导致无限循环。</li>
+</ul>
+<h3 id="狄克斯特拉算法">狄克斯特拉算法</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+graph = dict()  # 整个图的散列表
+graph[&quot;start&quot;] = dict()
+graph[&quot;start&quot;][&quot;A&quot;] = 6
+graph[&quot;start&quot;][&quot;B&quot;] = 2
+graph[&quot;A&quot;] = dict()
+graph[&quot;A&quot;][&quot;fin&quot;] = 1
+graph[&quot;B&quot;] = dict()
+graph[&quot;B&quot;][&quot;A&quot;] = 3
+graph[&quot;B&quot;][&quot;fin&quot;] = 5
+graph[&quot;fin&quot;] = dict()
+
+infinity = float(&quot;inf&quot;)  # 散列表是开销
+costs = dict()
+costs[&quot;A&quot;] = 6
+costs[&quot;B&quot;] = 2
+costs[&quot;fin&quot;] = infinity
+
+parents = dict()  # 散列表是父子节点
+parents[&quot;A&quot;] = &quot;start&quot;
+parents[&quot;B&quot;] = &quot;start&quot;
+parents[&quot;fin&quot;] = None
+
+processed = []
+
+
+def find_lowest_cost_node(costs):
+    lowest_cost = float(&quot;inf&quot;)
+    lowest_cost_node = None
+    for node in costs:
+        cost = costs[node]
+        if cost &lt; lowest_cost and node not in processed:
+            lowest_cost = cost
+            lowest_cost_node = node
+    return lowest_cost_node
+
+
+node = find_lowest_cost_node(costs)  # 在未处理的节点中找出开销最小的节点
+while node is not None:  # 在所有节点都被处理后结束
+    cost = costs[node]
+    neighbors = graph[node]
+    for n in neighbors.keys():  # 遍历当前节点的所有邻居
+        new_cost = cost + neighbors[n]
+        if costs[n] &gt; new_cost:  # 如果经当前节点前往该邻居更近
+            costs[n] = new_cost  # 更新该邻居的开销
+            parents[n] = node  # 同时将该邻居的父节点设置为当前节点
+    processed.append(node)  # 将当前节点标记为处理过
+    node = find_lowest_cost_node(costs)  # 找出接下来要处理的节点，并循环
+print(processed)
+print(costs)
+print(parents)
+# start -&gt; B -&gt; A -&gt; end
+</code></pre>
+<h4 id="小结-7">小结</h4>
+<ul>
+<li>广度优先搜索用于在非加权图中查找最短路径。</li>
+<li>狄克斯特拉算法用于在加权图中查找最短路径。</li>
+<li>仅当权重为正时狄克斯特拉算法才管用。</li>
+<li>如果图中包含负权边，请使用贝尔曼福德算法。</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE">二分查找</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F">选择排序</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-2">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E9%80%92%E5%BD%92">递归</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-3">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F">快速排序</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-4">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%A3%E5%88%97%E8%A1%A8">散列表</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-5">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">广度优先搜索</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-6">小结</a></li>
+</ul>
+</li>
+<li><a href="#%E7%8B%84%E5%85%8B%E6%96%AF%E7%89%B9%E6%8B%89%E7%AE%97%E6%B3%95">狄克斯特拉算法</a>
+<ul>
+<li><a href="#%E5%B0%8F%E7%BB%93-7">小结</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/er-fen-cha-zhao/">
+              <h3 class="post-title">
+                二分查找
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

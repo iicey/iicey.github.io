@@ -1,0 +1,267 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>油猴JS Hook | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="油猴JS Hook | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Hook全局变量window中的key
+// ==UserScript==
+// @name         Hook全局变量中的key
+// @namespace    http://tampermonkey.net/
+// @versi..." />
+    <meta name="keywords" content="hook" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              油猴JS Hook
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/6TMbAERr1/" class="post-tag">
+                  # hook
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="hook全局变量window中的key">Hook全局变量window中的key</h3>
+<pre><code class="language-javascript">// ==UserScript==
+// @name         Hook全局变量中的key
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       各位老板
+// @include      *
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    //监控window(全局变量)中的 _t
+    var t = window._t;
+    var window_key = '_t';
+    var window_value = window[window_key];
+    Object.defineProperty(window, window_key, {
+        get: function() {
+            console.log('Getting window._t',window_value);
+            return t;
+        },
+        set: function(val) {
+            console.log('Setting window._t', val);
+            debugger;
+            t = val;
+            return t;
+        }
+    });
+})();
+</code></pre>
+<h3 id="hook加密函数打印加密结果加密函数内部调用的函数名">HOOK加密函数，打印加密结果，加密函数内部调用的函数名</h3>
+<pre><code class="language-javascript">// ==UserScript==
+// @name         Hook
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  HOOK加密函数，打印加密结果，加密函数内部调用的函数名
+// @author       FY
+// @include      *
+// @grant        none
+// @run-at       document-end
+// ==/UserScript==
+
+(function() {
+    'use strict';
+    var source = ['decodeData','base64decode','md5','decode','btoa','MD5','RSA','AES','CryptoJS','encrypt','strdecode',&quot;encode&quot;,'decodeURIComponent','_t','JSON.stringify','String.fromCharCode','fromCharCode'];
+    console.log(&quot;开始测试是否有解密函数&quot;);
+    let realCtx, realName;
+    function getRealCtx(ctx, funcName) {
+        let parts = funcName.split(&quot;.&quot;);
+        let realCtx = ctx;
+        for(let i = 0; i &lt; parts.length - 1; i++) {
+            realCtx = realCtx[parts[i]];
+        }
+        return realCtx;
+    }
+    function getRealName(funcName) {
+        let parts = funcName.split(&quot;.&quot;);
+        return parts[parts.length - 1];
+    }
+    function hook(ctx, funcName, level, originFunc) {
+        ctx[funcName] = function(a){
+            console.log(&quot;level:&quot; + level + &quot; function:&quot; + funcName,a);
+            let regexp = / [\S]*\(.*\)\;/g;
+            let match = originFunc.toString().match(regexp)
+            console.log(match);
+            debugger;
+            return originFunc(a);
+        };
+    }
+    function test(ctx, level) {
+        for(let i = 0; i &lt; source.length; i++) {
+            let f = source[i];
+            let realCtx = getRealCtx(ctx, f);
+            let realName = getRealName(f);
+            let chars = realCtx[realName];
+            hook(realCtx, realName, level, chars);
+        }
+    }
+    test(window, 1);
+})();
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#hook%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8Fwindow%E4%B8%AD%E7%9A%84key">Hook全局变量window中的key</a></li>
+<li><a href="#hook%E5%8A%A0%E5%AF%86%E5%87%BD%E6%95%B0%E6%89%93%E5%8D%B0%E5%8A%A0%E5%AF%86%E7%BB%93%E6%9E%9C%E5%8A%A0%E5%AF%86%E5%87%BD%E6%95%B0%E5%86%85%E9%83%A8%E8%B0%83%E7%94%A8%E7%9A%84%E5%87%BD%E6%95%B0%E5%90%8D">HOOK加密函数，打印加密结果，加密函数内部调用的函数名</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/javascript-de-async-yu-await-ying-yong/">
+              <h3 class="post-title">
+                JavaScript的async与await应用
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

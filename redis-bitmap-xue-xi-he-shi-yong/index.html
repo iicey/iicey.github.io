@@ -1,0 +1,227 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Redis Bitmap 学习和使用 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Redis Bitmap 学习和使用 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Redis Bitmap 学习和使用
+Redis Bitmap介绍及应用
+业务场景中如何巧妙的应用bitmap和zset
+Set Bit
+r = redis.Redis()
+r.setbit(&quot;users-subscribed&q..." />
+    <meta name="keywords" content="Redis" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Redis Bitmap 学习和使用
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-03-21
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/DPiDQdpx3B/" class="post-tag">
+                  # Redis
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="https://python.iitter.com/other/12856.html">Redis Bitmap 学习和使用</a><br>
+<a href="https://juejin.cn/post/6844904114753634311">Redis Bitmap介绍及应用</a><br>
+<a href="https://juejin.cn/post/6844904020587315207">业务场景中如何巧妙的应用bitmap和zset</a></p>
+<h3 id="set-bit">Set Bit</h3>
+<pre><code class="language-python">r = redis.Redis()
+r.setbit(&quot;users-subscribed&quot;, 7, 0)
+</code></pre>
+<h3 id="get-bit">Get Bit</h3>
+<pre><code class="language-python">result = r.getbit(&quot;users-subscribed&quot;, 7)
+print(result) # 0
+
+result2 = r.get(&quot;users-subscribed&quot;)
+print(result2) # 0
+</code></pre>
+<h3 id="bit-position">Bit Position</h3>
+<pre><code class="language-python">result = r.bitpos(&quot;users-subscribed&quot;, 1)
+print(result) # 7
+</code></pre>
+<h3 id="bit-operation">Bit Operation</h3>
+<pre><code class="language-python">r.setbit(&quot;users-subscribed-2&quot;, 6, 1)
+
+result = r.bitop(&quot;AND&quot;, &quot;newkey&quot;, &quot;users-subscribed&quot;, &quot;users-subscribed-2&quot;)
+print(result) # 7
+
+result2 = r.get(&quot;newkey&quot;)
+print(result2) # 7
+</code></pre>
+<h3 id="bit-field">Bit Field</h3>
+<pre><code class="language-python">result = r.bitfield(&quot;bit-map&quot;, &quot;incrby&quot;, &quot;i5&quot;, 100, 4, &quot;get&quot;, u4, 2)
+print(result) # 7
+</code></pre>
+<h3 id="bit-count">Bit Count</h3>
+<pre><code class="language-python">result = r.bitcount(&quot;users-subscribed&quot;)
+print(result) # 7
+
+result2 = r.bitcount(&quot;users-subscribed&quot;, 0, 4)
+print(result2) # 7
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#set-bit">Set Bit</a></li>
+<li><a href="#get-bit">Get Bit</a></li>
+<li><a href="#bit-position">Bit Position</a></li>
+<li><a href="#bit-operation">Bit Operation</a></li>
+<li><a href="#bit-field">Bit Field</a></li>
+<li><a href="#bit-count">Bit Count</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/ji-yan-hua-kuai-gui-ji-ji-suan-dai-ma/">
+              <h3 class="post-title">
+                极验滑块轨迹计算代码
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

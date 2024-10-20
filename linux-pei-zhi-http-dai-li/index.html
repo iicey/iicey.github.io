@@ -1,0 +1,242 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux配置http代理 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux配置http代理 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="该篇是http的配置, 非https
+1 安装squid
+sudo apt-get update
+sudo apt-get install squid
+
+2 修改配置文件squid.conf
+sudo vim /etc/squid/squi..." />
+    <meta name="keywords" content="代理" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux配置http代理
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://iicey.github.io/161bBV4y59T/" class="post-tag">
+                  # 代理
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>该篇是http的配置, 非https</p>
+<p>1 安装squid</p>
+<pre><code>sudo apt-get update
+sudo apt-get install squid
+</code></pre>
+<p>2 修改配置文件squid.conf</p>
+<pre><code>sudo vim /etc/squid/squid.conf
+</code></pre>
+<pre><code>http_port 3128　　　　　　　　　　　　　　　　　　#端口
+cache_mem 64 MB
+maximum_object_size 4 MB
+cache_dir ufs /var/spool/squid 100 16 256
+access_log /var/log/squid/access.log
+acl lanhome src all　　　　　　    			#定义本地网段
+http_access allow lanhome
+http_access deny all
+visible_hostname myserver01.lo              #squid主机名，最好是IP
+cache_mgr test@qq.com                       #邮箱，可不填
+#以下是高匿的设置
+request_header_access Via deny all
+request_header_access X-Forwarded-For deny all
+</code></pre>
+<p>3 初始化</p>
+<pre><code>aici@weichaoyang:~$ sudo squid -z
+2019/01/15 11:00:55 kid1| Creating missing swap directories
+2019/01/15 11:00:55 kid1| /var/spool/squid exists
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/00
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/01
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/02
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/03
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/04
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/05
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/06
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/07
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/08
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/09
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0A
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0B
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0C
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0D
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0E
+2019/01/15 11:00:55 kid1| Making directories in /var/spool/squid/0F
+^C
+</code></pre>
+<p>4.启动Squid</p>
+<pre><code>aici@weichaoyang:~$ sudo /etc/init.d/squid start
+[ ok ] Starting squid (via systemctl): squid.service.
+</code></pre>
+<p>5.重启服务，可不执行</p>
+<pre><code>sudo service squid restart
+</code></pre>
+<p>6.验证请求信息</p>
+<pre><code>r = requests.get('http://httpbin.org/get')
+print(r. text) 
+{
+&quot;args&quot;: {},
+&quot;headers&quot;: {
+&quot;Accept&quot;: &quot;text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8&quot;,
+&quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+&quot;Accept-Language&quot;: &quot;zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7&quot;,
+&quot;Host&quot;: &quot;httpbin.org&quot;,
+&quot;Upgrade-Insecure-Requests&quot;: &quot;1&quot;,
+&quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36&quot;
+},
+&quot;origin&quot;: &quot;180.172.125.179, 180.172.125.179&quot;,
+&quot;url&quot;: &quot;https://httpbin.org/get&quot;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-yu-simhash-shi-xian-wen-ben-qu-chong/">
+              <h3 class="post-title">
+                Python3与simhash实现文本去重
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

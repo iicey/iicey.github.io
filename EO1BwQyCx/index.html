@@ -1,0 +1,255 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>邮箱发送 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="邮箱发送 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="QQ邮箱
+发送文本
+import os.path
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart imp..." />
+    <meta name="keywords" content="邮箱,email" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              邮箱发送
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-10-12
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/J9VLZotgo/" class="post-tag">
+                  # 邮箱
+                </a>
+              
+                <a href="https://iicey.github.io/l_RmZjpNJH/" class="post-tag">
+                  # email
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="qq邮箱">QQ邮箱</h1>
+<h2 id="发送文本">发送文本</h2>
+<pre><code class="language-python">import os.path
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def send_text(subject, body, from_addr, to_addr):
+    msg = MIMEMultipart()
+    msg['From'] = from_addr
+    msg['To'] = ';'.join(to_addr)
+    msg['Subject'] = subject
+    att = MIMEText(body, 'plain', 'utf-8')
+    msg.attach(att)
+    smtp = smtplib.SMTP_SSL(&quot;smtp.qq.com&quot;, 465)
+    # 登录邮箱
+    smtp.login(from_addr, password)
+    # 开始发送
+    smtp.sendmail(from_addr, to_addr, msg.as_string())
+    smtp.quit()
+</code></pre>
+<h2 id="发送html">发送html</h2>
+<pre><code class="language-python">import os.path
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def send_html(subject, body, from_addr, to_addr):
+    msg = MIMEMultipart()
+    msg['From'] = from_addr
+    msg['To'] = ';'.join(to_addr)
+    msg['Subject'] = subject
+    att = MIMEText(body, 'html', 'utf-8')
+    msg.attach(att)
+    smtp = smtplib.SMTP_SSL(&quot;smtp.qq.com&quot;, 465)
+    # 登录邮箱
+    smtp.login(from_addr, password)
+    # 开始发送
+    smtp.sendmail(from_addr, to_addr, msg.as_string())
+    smtp.quit()
+</code></pre>
+<h2 id="发送文件">发送文件</h2>
+<pre><code class="language-python">import os.path
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+def send_file(subject, body, from_addr, to_addr, file_path):
+    msg = MIMEMultipart()
+    msg['From'] = from_addr
+    msg['To'] = ';'.join(to_addr)
+    msg['Subject'] = subject
+
+    text_apart = MIMEText(body, 'plain', 'utf-8')
+    excel_apart = MIMEApplication(open(file_path, 'rb').read())
+    excel_apart.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file_path))
+    msg.attach(text_apart)
+    msg.attach(excel_apart)
+
+    smtp = smtplib.SMTP_SSL(&quot;smtp.qq.com&quot;, 465)
+    # 登录邮箱
+    smtp.login(from_addr, password)
+    # 开始发送
+    smtp.sendmail(from_addr, to_addr, msg.as_string())
+    smtp.quit()
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#qq%E9%82%AE%E7%AE%B1">QQ邮箱</a>
+<ul>
+<li><a href="#%E5%8F%91%E9%80%81%E6%96%87%E6%9C%AC">发送文本</a></li>
+<li><a href="#%E5%8F%91%E9%80%81html">发送html</a></li>
+<li><a href="#%E5%8F%91%E9%80%81%E6%96%87%E4%BB%B6">发送文件</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/WnIZqa8M9/">
+              <h3 class="post-title">
+                Celery的使用
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

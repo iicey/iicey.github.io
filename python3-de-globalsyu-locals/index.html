@@ -1,0 +1,208 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3的globals()与locals() | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3的globals()与locals() | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接
+在Python中，有两个内建函数，你可能用不到，但是需要掌握它们。
+globals() ：以dict的方式存储所有全局变量
+def foo():
+    print(&quot;I am a func&quot;)
+
+def ba..." />
+    <meta name="keywords" content="globals,locals" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3的globals()与locals()
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-01
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/EZ2jbUhAYQ4/" class="post-tag">
+                  # globals
+                </a>
+              
+                <a href="https://iicey.github.io/ZC4zhhxL4io/" class="post-tag">
+                  # locals
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="http://python-online.cn/zh_CN/latest/c01/c01_05.html">原文链接</a></p>
+<p>在Python中，有两个内建函数，你可能用不到，但是需要掌握它们。</p>
+<p>globals() ：以dict的方式存储所有全局变量</p>
+<pre><code>def foo():
+    print(&quot;I am a func&quot;)
+
+def bar():
+    foo=&quot;I am a string&quot;
+    foo_dup = globals().get(&quot;foo&quot;)
+    foo_dup()
+
+bar()
+# 输出
+# I am a func
+</code></pre>
+<p>locals()：以dict的方式存储所有局部变量</p>
+<pre><code>other = &quot;test&quot;
+
+def foobar():
+    name = &quot;MING&quot;
+    gender = &quot;male&quot;
+    for key,value in locals().items():
+        print(key, &quot;=&quot;, value)
+
+foobar()
+# 输出
+# name = MING
+# gender = male
+</code></pre>
+<p>关于locals()的应用：在scrapy中对item添加键值对是个不错的选择。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-yong-zlib-dui-wang-ye-wen-ben-jin-xing-ya-suo-jie-ya/">
+              <h3 class="post-title">
+                Python3使用zlib对网页文本进行压缩解压
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

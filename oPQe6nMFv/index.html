@@ -1,0 +1,328 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>IP代理服务器搭建(含拨号) | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="IP代理服务器搭建(含拨号) | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Squid Install
+Centos
+#!/bin/bash
+yum install openssl -y
+yum install squid -y
+systemctl stop firewalld.service #停止firewal..." />
+    <meta name="keywords" content="Squid,拨号,TinyProxy,代理" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              IP代理服务器搭建(含拨号)
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-09-15
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/bpYneD_mB/" class="post-tag">
+                  # Squid
+                </a>
+              
+                <a href="https://iicey.github.io/A3z7DCY2-u/" class="post-tag">
+                  # 拨号
+                </a>
+              
+                <a href="https://iicey.github.io/uyLKKl7CVI/" class="post-tag">
+                  # TinyProxy
+                </a>
+              
+                <a href="https://iicey.github.io/161bBV4y59T/" class="post-tag">
+                  # 代理
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="squid-install">Squid Install</h1>
+<h2 id="centos">Centos</h2>
+<pre><code class="language-shell">#!/bin/bash
+yum install openssl -y
+yum install squid -y
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+yum install httpd-tools -y
+htpasswd  -cb /etc/squid/passwd  username password #用户名和密码
+echo '
+via off 
+forwarded_for transparent
+access_log /var/log/squid/access.log
+cache_mem 64 MB
+auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/passwd
+acl auth_user proxy_auth REQUIRED
+http_access allow auth_user
+maximum_object_size 4 MB
+cache_dir ufs /var/spool/squid 100 16 256
+http_port 3389
+http_access allow all
+coredump_dir /var/spool/squid
+refresh_pattern ^ftp: 1440 20% 10080
+refresh_pattern ^gopher: 1440 0% 1440
+refresh_pattern -i (/cgi-bin/|\?) 0 0%  0
+refresh_pattern . 0 20% 4320
+httpd_suppress_version_string on
+via off
+forwarded_for delete
+'&gt; /etc/squid/squid.conf
+systemctl stop   squid
+squid -z 
+sleep 5
+systemctl start   squid
+systemctl enable squid.service
+</code></pre>
+<h2 id="ubuntu">Ubuntu</h2>
+<pre><code class="language-shell">#!/bin/bash
+apt-get install openssl -y
+apt-get install squid -y
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+apt-get install apache2 -y
+htpasswd  -cb /etc/squid/passwd  username password #用户名和密码
+echo '
+via off 
+forwarded_for transparent
+access_log /var/log/squid/access.log
+cache_mem 64 MB
+auth_param basic program /usr/lib/squid/basic_ncsa_auth /etc/squid/passwd
+acl auth_user proxy_auth REQUIRED
+http_access allow auth_user
+maximum_object_size 4 MB
+cache_dir ufs /var/spool/squid 100 16 256
+http_port 3389
+http_access allow all
+coredump_dir /var/spool/squid
+refresh_pattern ^ftp: 1440 20% 10080
+refresh_pattern ^gopher: 1440 0% 1440
+refresh_pattern -i (/cgi-bin/|\?) 0 0%  0
+refresh_pattern . 0 20% 4320
+httpd_suppress_version_string on
+via off
+forwarded_for delete
+'&gt; /etc/squid/squid.conf
+systemctl stop   squid
+squid -z 
+sleep 5
+systemctl start   squid
+systemctl enable squid.service
+</code></pre>
+<h1 id="安装拨号服务">安装拨号服务</h1>
+<pre><code>mkdir /opt/linux_ic
+mkdir /media2
+chmod +x /etc/rc.local
+vi /etc/rc.local
+yum -y install cpan
+ln -s /usr/lib/libperl.so.5.10.1 /usr/lib/libperl.so
+yum install kernel-devel xinetd gcc gcc-c perl-devel perl-ExtUtils-Embed
+cpan PAR::Packer
+pp
+perl -v
+cpan pp
+perl -MCPAN -e shell
+cpan pp
+reboot
+ifconfig
+ipconfig
+yum search ifconfig
+ipconfig
+yum install net-tools.x86_64
+ifconfig
+nmcli con
+cpan pp
+pp
+init 0
+ifconfig
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+cd /opt/
+ll
+vi /etc/ppp/chap-secrets
+passwd
+init 0
+init 0
+ifconfig
+cat /etc/ppp/chap-secrets
+cd /opt/
+ll
+vi /etc/rc.local
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+passwd
+init 0
+ping baidu.com
+ifconfig
+pppoe-setup
+pppoe-start
+ping baidu.com
+</code></pre>
+<h1 id="查看拨号账号密码">查看拨号账号&amp;密码</h1>
+<pre><code>cat /etc/ppp/chap-secrets
+# Secrets for authentication using CHAP
+# client        server  secret                  IP addresses
+&quot;pld19447385@163&quot;       *       &quot;19447385&quot;
+&quot;057627764253&quot;  *       &quot;587976&quot;
+&quot;056491398317&quot;  *       &quot;666888&quot;
+</code></pre>
+<h1 id="自动拨号">自动拨号</h1>
+<pre><code class="language-shell">#!/bin/bash
+pppoe-stop
+sleep 5
+pppoe-start
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#squid-install">Squid Install</a>
+<ul>
+<li><a href="#centos">Centos</a></li>
+<li><a href="#ubuntu">Ubuntu</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AE%89%E8%A3%85%E6%8B%A8%E5%8F%B7%E6%9C%8D%E5%8A%A1">安装拨号服务</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E6%8B%A8%E5%8F%B7%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81">查看拨号账号&amp;密码</a></li>
+<li><a href="#%E8%87%AA%E5%8A%A8%E6%8B%A8%E5%8F%B7">自动拨号</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/U9FcvUka3/">
+              <h3 class="post-title">
+                frp内网穿透(http服务转发)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

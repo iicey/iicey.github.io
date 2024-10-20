@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pyppeteer使用细节 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="pyppeteer使用细节 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接
+windows下使用puppeteer
+1，安装puppeteer的python库pyppeteer
+pip install pyppeteer
+2，安装chromium
+第一次运行pyppeteer就会自动安装chromium。..." />
+    <meta name="keywords" content="pyppeteer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              pyppeteer使用细节
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-24
+              </span>
+              <span>
+                5 min read
+              </span>
+              
+                <a href="https://iicey.github.io/jXGNdNLu24K/" class="post-tag">
+                  # pyppeteer
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="https://segmentfault.com/a/1190000018873537">原文链接</a></p>
+<h3 id="windows下使用puppeteer">windows下使用puppeteer</h3>
+<p>1，安装puppeteer的python库pyppeteer</p>
+<p>pip install pyppeteer</p>
+<p>2，安装chromium<br>
+第一次运行pyppeteer就会自动安装chromium。</p>
+<h3 id="centos-安装-puppeteer">centos 安装 puppeteer</h3>
+<p>windows 上安装 puppeteer 非常的简单，只要安装了chrome浏览器，直接就可以运行，但在 CentOS 上却没那么简单了，需要处理一大堆的依赖程序，所以把这个过程记录下来，方便以后查阅。注意：Chrome已不再支持 CentOS 6 ，所以要么升级到CentOS 7或改用FireFox（据说也不再支持CentOS6了，而且也不兼容Puppeteer）。</p>
+<p>安装puppeteer npm包<br>
+由于防火墙的原因，我们不能直接访问google，在安装puppeteer npm包时，下载 chromium 的时候就会报错。</p>
+<p>ERROR: Failed to download Chromium r543305! Set &quot;PUPPETEER_SKIP_CHROMIUM_DOWNLOAD&quot; env variable to skip download.</p>
+<pre><code>{ Error: connect ETIMEDOUT 172.217.160.112:443
+    at TCPConnectWrap.afterConnect [as oncomplete] (net.js:1173:14)
+  errno: 'ETIMEDOUT',
+  code: 'ETIMEDOUT',
+  syscall: 'connect',
+  address: '172.217.160.112',
+  port: 443 
+}
+</code></pre>
+<p>所以要使用镜像安装，输入以下命令即可切换到镜像下载：</p>
+<p>npm config set puppeteer_download_host=<a href="https://storage.googleapis.com.cnpmjs.org/">https://storage.googleapis.co...</a><br>
+如果上面镜像坏了，报404，可以试一下下面这个：</p>
+<p>npm config set puppeteer_download_host=https://npm.taobao.org/mirror<br>
+然后像往常一样安装就可以了。</p>
+<p>npm i puppeteer --save<br>
+安装依赖包<br>
+如果直接运行，就会产生下面错误：</p>
+<p>/some/path/root/node_modules/puppeteer/.local-chromium/linux-543305/chrome-linux/chrome: error while loading shared libraries: libXss.so.1: cannot open shared object file: No such file or directory</p>
+<p>所以我们需要安装依赖包，幸运的是yum里已经有相应的包，所以命令很简单：</p>
+<p>sudo yum install google-chrome-stable<br>
+如果提示没有这个包，那就需要添加google的源来下载，如果没法访问google，那就需要找个镜像了，把下面的url替换成镜像的即可，添加文件/etc/yum.repo.d/google-chrome.repo：</p>
+<p>[google-chrome]<br>
+name=google-chrome<br>
+baseurl=<a href="http://dl.google.com/linux/chrome/rpm/stable/">http://dl.google.com/linux/ch...</a>$basearch<br>
+enabled=1<br>
+gpgcheck=1<br>
+gpgkey=<a href="https://dl-ssl.google.com/linux/linux_signing_key.pub">https://dl-ssl.google.com/lin...</a><br>
+如果无法下载gpgkey，可以把gpgcheck的值改为0（如果你不介意安全问题），再运行一次yum的安装命令即可。</p>
+<p>关闭沙盒模式<br>
+你以为这样就可以了？哈哈，图样图深破，你尝试运行还会有一个sandbox的错误，如果你的环境是暴露的，建议按官方教程加上沙盒运行，否则像我这样直接关闭就行，只要在js代码中加上一个no-sandbox的参数即可。</p>
+<p>const browser = await puppeteer.launch({args: ['--no-sandbox']});<br>
+字体缺失<br>
+某些服务器默认字体是不全的，需要手动安装，如果出现类似以下错误就需要装字体：</p>
+<p>[0427/123834.275317:FATAL:platform_font_linux.cc(83)] Check failed: InitDefaultFont(). Could not find the default font<br>
+安装方法很简单，就用yum就可以：</p>
+<p>yum install ipa-gothic-fonts xorg-x11-fonts-100dpi xorg-x11-fonts-75dpi xorg-x11-utils xorg-x11-fonts-cyrillic xorg-x11-fonts-Type1 xorg-x11-fonts-misc -y<br>
+到这里，你的puppeteer应该就可以了~</p>
+<h3 id="oserror-unable-to-remove-temporary-user-data">OSError: Unable to remove Temporary User Data</h3>
+<pre><code>Error in atexit._run_exitfuncs:
+Traceback (most recent call last):
+  File &quot;C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\pyppeteer\launcher.py&quot;, line 201, in killChrome
+    self._cleanup_tmp_user_data_dir()
+  File &quot;C:\Users\Administrator\AppData\Local\Programs\Python\Python36\lib\site-packages\pyppeteer\launcher.py&quot;, line 130, in _cleanup_tmp_user_data_dir
+    raise IOError('Unable to remove Temporary User Data')
+OSError: Unable to remove Temporary User Data
+</code></pre>
+<p>忘记关闭页面导致的错误，</p>
+<pre><code>await page.waitFor(3000)
+await page.close()
+</code></pre>
+<h3 id="pyppeteererrorsbrowsererror-failed-to-connect-to-browser">pyppeteer.errors.BrowserError: Failed to connect to browser</h3>
+<p>pyppeteer.errors.BrowserError: Failed to connect to browser port:<a href="http://127.0.0.1/">http://127.0.0.1</a>:59000/json/version</p>
+<p>启动时添加--disable-setuid-sandbox选项</p>
+<pre><code>const browser = await puppeteer.launch({
+    headless: true,
+   executablePath:'~/puppeteer/.local-chromium/linux-599821/chrome-linux/chrome',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  });
+</code></pre>
+<h3 id="pyppeteer-浏览器类和websocketsprotlcol类输出巨量日志解决办法">pyppeteer 浏览器类和websockets.protlcol类输出巨量日志解决办法</h3>
+<p>将pyppeteer类和websockets.protlcol类的log设置为WARNING级别,可以避免WARINIG级别下的log输出。此法，可以节省程序打印无用日志的时间和日志占用的巨大空间。</p>
+<pre><code>pyppeteer_level = logging.WARNING
+logging.getLogger('pyppeteer').setLevel(pyppeteer_level)
+logging.getLogger('websockets.protocol').setLevel(pyppeteer_level)
+
+pyppeteer_logger = logging.getLogger('pyppeteer')
+pyppeteer_logger.setLevel(logging.WARNING)
+</code></pre>
+<p>在github上崔大佬开了issue，讨论避免pyppeteer类和websockets.protlcol类打印大量日志的问题。<a href="https://github.com/miyakogi/pyppeteer/issues/103">github上issue地址</a></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#windows%E4%B8%8B%E4%BD%BF%E7%94%A8puppeteer">windows下使用puppeteer</a></li>
+<li><a href="#centos-%E5%AE%89%E8%A3%85-puppeteer">centos 安装 puppeteer</a></li>
+<li><a href="#oserror-unable-to-remove-temporary-user-data">OSError: Unable to remove Temporary User Data</a></li>
+<li><a href="#pyppeteererrorsbrowsererror-failed-to-connect-to-browser">pyppeteer.errors.BrowserError: Failed to connect to browser</a></li>
+<li><a href="#pyppeteer-%E6%B5%8F%E8%A7%88%E5%99%A8%E7%B1%BB%E5%92%8Cwebsocketsprotlcol%E7%B1%BB%E8%BE%93%E5%87%BA%E5%B7%A8%E9%87%8F%E6%97%A5%E5%BF%97%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95">pyppeteer 浏览器类和websockets.protlcol类输出巨量日志解决办法</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/windows-shang-jin-xing-pypputeer-de-chromium-an-zhuang/">
+              <h3 class="post-title">
+                Windows上进行pypputeer的Chromium安装
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

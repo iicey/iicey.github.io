@@ -1,0 +1,291 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3使用pymysql实现增删改查 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3使用pymysql实现增删改查 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="推荐阅读: 带你学习PyMySQL
+, Mysql 与 Pymysql
+原文链接
+原生语句操作
+所谓的原生语句就是mysql自带的增删改查的语句,即insert,delete,update,select。下面我们用python3为例。
+在p..." />
+    <meta name="keywords" content="pymysql" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3使用pymysql实现增删改查
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-20
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://iicey.github.io/cbWP_wXCMix/" class="post-tag">
+                  # pymysql
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>推荐阅读: <a href="https://mp.weixin.qq.com/s?__biz=MzIzMTcwNzQ4MQ==&amp;mid=2247483828&amp;idx=1&amp;sn=533bc0fa4b894770d7a9bf99e04a66d2&amp;chksm=e8a14782dfd6ce94866a73450689ce7d9c1c501f9fe1fd42c640c7ede00052fa77d39cacf41d#rd">带你学习PyMySQL</a><br>
+, <a href="https://juejin.im/post/58cd10e944d9040068386a4e">Mysql 与 Pymysql</a></p>
+<p><a href="https://www.cnblogs.com/c-x-a/p/9293398.html">原文链接</a></p>
+<h3 id="原生语句操作">原生语句操作</h3>
+<p>所谓的原生语句就是mysql自带的增删改查的语句,即insert,delete,update,select。下面我们用python3为例。<br>
+在python3中数据库的链接一般用pymsql模块。</p>
+<h5 id="第三方库的安装">第三方库的安装</h5>
+<pre><code>pip install pymysql
+</code></pre>
+<h5 id="创建数据库的链接">创建数据库的链接</h5>
+<p>前提我们 配置好了mysql数据库，并且安装上了pymysql模块。<br>
+然后我们需要导入pymsql，看下面示例代码:</p>
+<pre><code>conn = pymysql.connect(host='localhost', 
+port=3306, user='root', 
+passwd='1234', db='user', charset='utf8mb4')#声明mysql连接对象
+cursor=conn.cursor(cursor=pymysql.cursors.DictCursor)#查询结果以字典的形式
+cursor.execute(sql语句字符串)#执行sql语句
+conn.close()#关闭链接
+</code></pre>
+<h5 id="事务处理">事务处理</h5>
+<p>事务机制可以确保数据的一致性，如果我们有个逻辑是删除一条数据然后插入，如果我们在插入过程中失败了，那么之前删除的数据没有进行插入，就造成了数据的缺失，为了避免这种缺失情况的发生，我们使用使用来进行统一处理，如果以上操作都成功了才提交，否则回滚，就当什么也没发生一样。用代码就下面的写法</p>
+<pre><code>try:
+   cursor.execute(sql)
+   conn.commit()
+except:
+   conn.rollback()
+</code></pre>
+<h5 id="动态插入数据">动态插入数据</h5>
+<p>传入一个动态变化的字典即可。</p>
+<p>比如说一开始的时候我们有这样的一个表叫user，需要保存三个字段id,name,age然后我们可以构建下面的字典和表名</p>
+<p>d={'id':'1001','name':'zhangsan','age':'17'}</p>
+<pre><code>tables='user'
+
+d={'id':'1001','name':'zhangsan','age':'17'}　　
+ 
+tables='user'
+keys=','.join(d.key())
+values=','.join(['%s']*len(d))
+sql=f'INSERT INTO {table}({keys})VALUES({values})'
+try:
+   if cursor.execute(sql,tuple(d.values())):
+                  print('ok')
+                  conn.commit()
+except:
+     print('no')
+     conn.rollback()
+conn.close()
+</code></pre>
+<p>现在我们就完成了插入操作，但是有的时候我们需要 主键存在是更细，不存在时插入怎么办呢，首先我们看下面语句</p>
+<h5 id="动态更新插入数据">动态更新插入数据</h5>
+<pre><code>INSERT INTO user(id,name,age) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE id=%s,name=%s,age=%s
+ON DUPLICATE KEY UPDATE 
+</code></pre>
+<p>可以达到以下目的:</p>
+<p>向数据库中插入一条记录：</p>
+<p>若该数据的主键值/ UNIQUE KEY 已经在表中存在,则执行更新操作, 即UPDATE 后面的操作。</p>
+<p>否则插入一条新的记录。</p>
+<p>然后我们对上面整体做一个代码整理。如下</p>
+<pre><code>data_dic={'id':'1001','name':'zhangsan','age':'17'}　　
+ 
+tables = 'name'
+keys = ','.join(data_dic.keys())
+values = ','.join(['%s'] * len(data_dic))
+sql =f'INSERT INTO {tables}({keys})VALUES({values}) ON DUPLICATE KEY UPDATE '
+update = ','.join([f&quot;{k}={v}&quot; for k,v in data_dic.items()])
+sql += update
+try:
+   if cursor.execute(sql,tuple(d.values())):
+                  print('ok')
+                  conn.commit()
+except:
+     print('no')
+     conn.rollback()
+conn.close()
+</code></pre>
+<h5 id="查询语句">查询语句</h5>
+<p>查询语句就比较简单了用select。下面直接看代码</p>
+<pre><code>sql='select * from user limit 1,10'
+cursor.excute(sql)
+one=cursor.fetchone()
+while one:
+   one=cursor.fetchone()  
+#推荐使用while循环配合fetchone读取所有数据，随用随取，效率高。
+</code></pre>
+<h5 id="删除语句">删除语句</h5>
+<p>删除语句用delete语句，但是只要commit里之后才能生效。</p>
+<pre><code>tale='user'
+id='id=123'#可以直接把条件作为字符串传过来。
+sql=f'delete from {table} where {id}'
+try:
+    cursor.execute(sql)
+    conn.commit()
+except:
+    conn.rollback()
+conn.close()
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%8E%9F%E7%94%9F%E8%AF%AD%E5%8F%A5%E6%93%8D%E4%BD%9C">原生语句操作</a><br>
+*
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93%E7%9A%84%E5%AE%89%E8%A3%85">第三方库的安装</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E9%93%BE%E6%8E%A5">创建数据库的链接</a></li>
+<li><a href="#%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86">事务处理</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE">动态插入数据</a></li>
+<li><a href="#%E5%8A%A8%E6%80%81%E6%9B%B4%E6%96%B0%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE">动态更新插入数据</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5">查询语句</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E8%AF%AD%E5%8F%A5">删除语句</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-yong-md5/">
+              <h3 class="post-title">
+                Python3使用md5
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

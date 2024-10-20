@@ -1,0 +1,381 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>API文档书写demo | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="API文档书写demo | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="简易的demo，仅供参考
+推荐阅读：RESETful API 设计规范，前后端分离实践有感
+GET查询
+method: GET
+api: /v1/xxx/
+params:
+
+
+
+参数名称
+类型
+必填
+说明
+content-type
+
+
+
+
+..." />
+    <meta name="keywords" content="API" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              API文档书写demo
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-21
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/xSECmy9D5Nn/" class="post-tag">
+                  # API
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>简易的demo，仅供参考</p>
+<p>推荐阅读：<a href="https://juejin.im/post/5b30ef0ee51d4558dd699414">RESETful API 设计规范</a>，<a href="https://juejin.im/post/5a5380a6518825733365e62a">前后端分离实践有感</a></p>
+<h3 id="get查询">GET查询</h3>
+<p>method: GET</p>
+<p>api: <code>/v1/xxx/</code></p>
+<p>params:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数名称</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">必填</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">id</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">multiple/form-data</td>
+</tr>
+</tbody>
+</table>
+<p>response:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">code</th>
+<th style="text-align:center">msg</th>
+<th style="text-align:center">data</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">error</td>
+<td style="text-align:center">传参有误！</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">json</td>
+</tr>
+<tr>
+<td style="text-align:center">success</td>
+<td style="text-align:center">获取成功！</td>
+<td style="text-align:center">获取到的数据(见示例)</td>
+<td style="text-align:center">json</td>
+</tr>
+</tbody>
+</table>
+<p>示例:</p>
+<pre><code class="language-json">{
+    &quot;code&quot;: &quot;success&quot;,
+    &quot;msg&quot;: &quot;获取成功！&quot;,
+    &quot;data&quot;: [
+      {
+          &quot;id&quot;: 1,
+          &quot;data&quot;: &quot;&quot;,
+      },
+      ...
+    ]
+}
+</code></pre>
+<h3 id="post新增">POST新增</h3>
+<p>method: POST</p>
+<p>api: <code>/v1/xxx/</code></p>
+<p>body:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数名称</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">必填</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">id</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">multiple/form-data</td>
+</tr>
+<tr>
+<td style="text-align:center">info</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">multiple/form-data</td>
+</tr>
+</tbody>
+</table>
+<p>response:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">code</th>
+<th style="text-align:center">msg</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">error</td>
+<td style="text-align:center">传参有误！</td>
+<td style="text-align:center">json</td>
+</tr>
+<tr>
+<td style="text-align:center">success</td>
+<td style="text-align:center">添加成功！</td>
+<td style="text-align:center">json</td>
+</tr>
+</tbody>
+</table>
+<p>示例:</p>
+<pre><code class="language-json">{
+    &quot;code&quot;: &quot;success&quot;,
+    &quot;msg&quot;: &quot;添加成功！&quot;
+}
+</code></pre>
+<h3 id="delete删除">Delete删除</h3>
+<p>method: delete</p>
+<p>api: <code>/v1/xxx/</code></p>
+<p>body:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">参数名称</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">必填</th>
+<th style="text-align:center">说明</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">id</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">multiple/form-data</td>
+</tr>
+<tr>
+<td style="text-align:center">info</td>
+<td style="text-align:center">string</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">multiple/form-data</td>
+</tr>
+</tbody>
+</table>
+<p>response:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">code</th>
+<th style="text-align:center">msg</th>
+<th style="text-align:center">content-type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">error</td>
+<td style="text-align:center">传参有误！</td>
+<td style="text-align:center">json</td>
+</tr>
+<tr>
+<td style="text-align:center">success</td>
+<td style="text-align:center">删除成功！</td>
+<td style="text-align:center">json</td>
+</tr>
+</tbody>
+</table>
+<p>示例:</p>
+<pre><code class="language-json">{
+    &quot;code&quot;: &quot;success&quot;,
+    &quot;msg&quot;: &quot;删除成功！&quot;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#get%E6%9F%A5%E8%AF%A2">GET查询</a></li>
+<li><a href="#post%E6%96%B0%E5%A2%9E">POST新增</a></li>
+<li><a href="#delete%E5%88%A0%E9%99%A4">Delete删除</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-yong-pytesseract-jin-xing-shu-zi-tu-xiang-shi-bie/">
+              <h3 class="post-title">
+                Python3使用pytesseract进行数字图像识别
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

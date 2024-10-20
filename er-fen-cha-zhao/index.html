@@ -1,0 +1,270 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>二分查找 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="二分查找 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="算法思想
+二分法查找适用于数据量较大时，但是数据需要先排好顺序。主要思想是: (设查找的数组区间为array[low, high])
+
+确定该区间的中间位置K。
+将查找的值T与array[k]比较。若相等，查找成功返回此位置；否则确定新的查..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              二分查找
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-09-05
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://iicey.github.io/NiqLQG1iy6/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="算法思想">算法思想</h3>
+<p>二分法查找适用于数据量较大时，但是数据需要先排好顺序。主要思想是: (设查找的数组区间为array[low, high])</p>
+<ol>
+<li>确定该区间的中间位置K。</li>
+<li>将查找的值T与array[k]比较。若相等，查找成功返回此位置；否则确定新的查找区域，继续二分查找。<br>
+区域确定如下：a.array[k]&gt;T 由数组的有序性可知array[k,k+1,……,high]&gt;T;故新的区间为array[low,……，K-1]b.array[k]&lt;T 类似上面查找区间为array[k+1,……，high]。<br>
+每一次查找与中间值比较，可以确定是否查找成功，不成功当前查找区间将缩小一半，递归查找即可。<br>
+时间复杂度为:log2n，（是以2为底，n的对数）。</li>
+</ol>
+<h3 id="复杂度分析">复杂度分析</h3>
+<h5 id="时间复杂度">时间复杂度</h5>
+<ol>
+<li>最坏情况查找最后一个元素（或者第一个元素）Master定理T(n)=T(n/2)+O(1)所以T(n)=O(log2n)</li>
+<li>最好情况查找中间元素O(1)查找的元素即为中间元素（奇数长度数列的正中间，偶数长度数列的中间靠左的元素）</li>
+</ol>
+<h3 id="分析">分析</h3>
+<pre><code>因为二分查找每次排除掉一半的不适合值，所以对于n个元素的情况：
+
+一次二分剩下：n/2
+两次二分剩下：n/2/2 = n/4
+…
+m次二分剩下：n/(2^m)
+
+在最坏情况下是在排除到只剩下最后一个值之后得到结果，即
+
+n/(2^m)=1
+
+所以由上式可得 ： 2^m=n
+
+进而可求出时间复杂度为： log2(n)
+</code></pre>
+<h3 id="正确示例">正确示例</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+def binarySearch(alist, item):
+    first = 0
+    last = len(alist) - 1
+
+    while first &lt;= last:
+        mid = (first + last) // 2
+        print(f&quot;while - first:{first} last:{last} mid:{mid} alist[mid]:{alist[mid]} item:{item}&quot;)
+        
+        if alist[mid] == item:
+            return mid
+        
+        if alist[mid] &gt; item:
+            last = mid - 1
+            print(f&quot;&gt; - first:{first} last:{last} mid:{mid} alist[mid]:{alist[mid]} item:{item}&quot;)
+        else:
+            first = mid + 1
+            print(f&quot;&lt; - first:{first} last:{last} mid:{mid} alist[mid]:{alist[mid]} item:{item}&quot;)
+
+    return -1
+
+test = [0, 1, 2, 8, 13, 17, 19, 32, 42]
+print(binarySearch(test, 8))
+</code></pre>
+<h3 id="书中示例错误">书中示例(错误)</h3>
+<pre><code class="language-python">numbers = [1, 3, 5, 6, 7, 8, 13, 14, 15, 17, 18, 24, 30, 43, 56]
+head, tail = 0, len(numbers)  # 数组长度刚好是最大下标值+1
+search = int(input(&quot;Enter a number to search:&quot;))
+
+while end - start &gt; 1:  # 当尾指针tail减头指针head等于1时，查找范围内只head有指向的数
+    mid = (head + tail) // 2  # mid存储中间数的下标，//2代表对/2的结果舍去分数部分取整
+    if search &lt; numbers[mid]:  # search是我们要搜索的元素，如果它小于mid指向的元素
+        tail = mid
+    if search &gt; numbers[mid]:  # 如果search小于mid指向的元素
+        start = mid + 1  # mid指向的元素小于search，所以不用把它保留在范围内
+    if search == numbers[mid]:
+        ans = mid
+        break  # 找到元素的话就直接结束
+else:
+    if search == numbers[head]:
+        ans = head
+    else:
+        ans = -1  # 如果数组中没有这个元素，那么输出-1
+print(ans)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%AE%97%E6%B3%95%E6%80%9D%E6%83%B3">算法思想</a></li>
+<li><a href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90">复杂度分析</a><br>
+*
+<ul>
+<li><a href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6">时间复杂度</a></li>
+</ul>
+</li>
+<li><a href="#%E5%88%86%E6%9E%90">分析</a></li>
+<li><a href="#%E6%AD%A3%E7%A1%AE%E7%A4%BA%E4%BE%8B">正确示例</a></li>
+<li><a href="#%E4%B9%A6%E4%B8%AD%E7%A4%BA%E4%BE%8B%E9%94%99%E8%AF%AF">书中示例(错误)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/2-1-shu-zu-he-bing/">
+              <h3 class="post-title">
+                2-1数组合并
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

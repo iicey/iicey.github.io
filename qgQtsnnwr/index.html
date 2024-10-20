@@ -1,0 +1,224 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>企业级数据库设计十个原则 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="企业级数据库设计十个原则 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="3个基础原则，4个扩展性原则，3 个完备性原则
+3个基础原则
+
+
+结构清晰：表名、字段命名没有歧义，能一眼看懂
+
+
+唯一职责：一表一用，领域定义清晰，不存储无关信息，相关数据在一张表中
+
+
+主键原则：设计不带物理意义的主键；有唯一约束，确保..." />
+    <meta name="keywords" content="数据库" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              企业级数据库设计十个原则
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-09-16
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/gonOYr_fr/" class="post-tag">
+                  # 数据库
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="3个基础原则4个扩展性原则3-个完备性原则">3个基础原则，4个扩展性原则，3 个完备性原则</h1>
+<h1 id="3个基础原则">3个基础原则</h1>
+<ul>
+<li>
+<p>结构清晰：表名、字段命名没有歧义，能一眼看懂</p>
+</li>
+<li>
+<p>唯一职责：一表一用，领域定义清晰，不存储无关信息，相关数据在一张表中</p>
+</li>
+<li>
+<p>主键原则：设计不带物理意义的主键；有唯一约束，确保幂等</p>
+</li>
+</ul>
+<h1 id="4-个扩展性原则影响系统的性能和容量">4 个扩展性原则（影响系统的性能和容量）</h1>
+<ul>
+<li>
+<p>长短分离：可以扩展，长文本独立存储；有合适的容量设计</p>
+</li>
+<li>
+<p>冷热分离：当前数据与历史数据分离</p>
+</li>
+<li>
+<p>索引完备：有合适索引方便查询</p>
+</li>
+<li>
+<p>不使用关联查询：不使用一切的 SQL Join 操作，不做2 个表或者更多表的关联查询</p>
+</li>
+</ul>
+<h1 id="3-个完备性原则">3 个完备性原则</h1>
+<ul>
+<li>
+<p>完整性：保证数据的准确性和完整性，重要的内容都有记录</p>
+</li>
+<li>
+<p>可追溯：可追溯创建时间，修改时间，可以逻辑删除</p>
+</li>
+<li>
+<p>一致性原则：数据之间保持一致，尽可能避免同样的数据存储在不同表中</p>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#3%E4%B8%AA%E5%9F%BA%E7%A1%80%E5%8E%9F%E5%88%994%E4%B8%AA%E6%89%A9%E5%B1%95%E6%80%A7%E5%8E%9F%E5%88%993-%E4%B8%AA%E5%AE%8C%E5%A4%87%E6%80%A7%E5%8E%9F%E5%88%99">3个基础原则，4个扩展性原则，3 个完备性原则</a></li>
+<li><a href="#3%E4%B8%AA%E5%9F%BA%E7%A1%80%E5%8E%9F%E5%88%99">3个基础原则</a></li>
+<li><a href="#4-%E4%B8%AA%E6%89%A9%E5%B1%95%E6%80%A7%E5%8E%9F%E5%88%99%E5%BD%B1%E5%93%8D%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%A7%E8%83%BD%E5%92%8C%E5%AE%B9%E9%87%8F">4 个扩展性原则（影响系统的性能和容量）</a></li>
+<li><a href="#3-%E4%B8%AA%E5%AE%8C%E5%A4%87%E6%80%A7%E5%8E%9F%E5%88%99">3 个完备性原则</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/fj-ICXXe1/">
+              <h3 class="post-title">
+                关于我
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

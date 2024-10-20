@@ -1,0 +1,242 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>爬虫: 滑块验证码破解 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="爬虫: 滑块验证码破解 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="以下代码应用于头条号登录获取cookie，99%通过率。希望头条号能够提供授权发表文章的API。
+测试地址
+借鉴的原文链接1，借鉴的原文链接2
+服务器使用cv2报错的看这里
+第一步，计算缺口距离
+先对背景图与缺口图发请求，保存为本地文件，然..." />
+    <meta name="keywords" content="缺口滑块破解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              爬虫: 滑块验证码破解
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-03
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/ZmUaE55nwD/" class="post-tag">
+                  # 缺口滑块破解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>以下代码应用于头条号登录获取cookie，99%通过率。希望头条号能够提供授权发表文章的API。</p>
+<p><a href="https://sso.toutiao.com/login/?service=https://mp.toutiao.com/sso_confirm/?redirect_url=JTJG">测试地址</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/57675338">借鉴的原文链接1</a>，<a href="https://zhuanlan.zhihu.com/p/57976223">借鉴的原文链接2</a></p>
+<p><a href="https://iicey.github.io/post/fu-wu-qi-an-zhuang-opencv-pythonbing-jie-jue-cv2-yi-lai-huan-jing/">服务器使用cv2报错的看这里</a></p>
+<h3 id="第一步计算缺口距离">第一步，计算缺口距离</h3>
+<p>先对背景图与缺口图发请求，保存为本地文件，然后使用函数FindPic计算出缺口距离</p>
+<pre><code>def FindPic(target, template):
+    &quot;&quot;&quot;
+    找出图像中最佳匹配位置
+    :param target: 目标即背景图
+    :param template: 模板即需要找到的图
+    :return: 返回最佳匹配及其最差匹配和对应的坐标
+    &quot;&quot;&quot;
+    target_rgb = cv2.imread(target)
+    target_gray = cv2.cvtColor(target_rgb, cv2.COLOR_BGR2GRAY)
+    template_rgb = cv2.imread(template, 0)
+    res = cv2.matchTemplate(target_gray, template_rgb, cv2.TM_CCOEFF_NORMED)
+    value = cv2.minMaxLoc(res)
+    return value[2:][0][0], value[2:][1][0]  # 采用value[2:][1][0]
+</code></pre>
+<h3 id="第二步生成加减速为主的滑动轨迹">第二步，生成加减速为主的滑动轨迹</h3>
+<pre><code>def generate_tracks(distance):
+    distance += 20
+    v = 0
+    t = 0.2
+    forward_tracks = []
+    current = 0
+    mid = distance * 3 / 5  # 减速阀值
+    while current &lt; distance:
+        if current &lt; mid:
+            a = 2  # 加速度为+2
+        else:
+            a = -3  # 加速度-3
+        s = v * t + 0.5 * a * (t ** 2)
+        v = v + a * t
+        current += s
+        forward_tracks.append(round(s))
+    back_tracks = [-3, -3, -2, -2, -2, -2, -2, -1, -1, -1]
+    return forward_tracks, back_tracks
+</code></pre>
+<h3 id="第三步使用selenium实现滑动">第三步，使用selenium实现滑动</h3>
+<pre><code>value_1, value_2 = findpic(target_name, template_name)
+action = ActionChains(driver)  # 实例化一个action对象
+button = driver.find_element_by_xpath('//*[@id=&quot;validate-drag-wrapper&quot;]/div[2]/img')  # 找到滑块
+try:
+    action.click_and_hold(button).perform()  # perform()用来执行ActionChains中存储的行为
+except StaleElementReferenceException as e:
+    pass
+action.reset_actions()
+forward_tracks, back_tracks = generate_tracks(value_2)
+for x in forward_tracks:
+    action.move_by_offset(x, 0)  # 前进移动滑块
+for x in back_tracks:
+    action.move_by_offset(x, 0)  # 后退移动滑块
+action.release().perform()  # 松开鼠标
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E8%AE%A1%E7%AE%97%E7%BC%BA%E5%8F%A3%E8%B7%9D%E7%A6%BB">第一步，计算缺口距离</a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E7%94%9F%E6%88%90%E5%8A%A0%E5%87%8F%E9%80%9F%E4%B8%BA%E4%B8%BB%E7%9A%84%E6%BB%91%E5%8A%A8%E8%BD%A8%E8%BF%B9">第二步，生成加减速为主的滑动轨迹</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E4%BD%BF%E7%94%A8selenium%E5%AE%9E%E7%8E%B0%E6%BB%91%E5%8A%A8">第三步，使用selenium实现滑动</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/hello-gridea/">
+              <h3 class="post-title">
+                Hello Gridea
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

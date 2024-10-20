@@ -1,0 +1,239 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>对缺口滑块轨迹计算代码的封装 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="对缺口滑块轨迹计算代码的封装 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="建议先阅读：爬虫: 滑块验证码破解
+# -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin:..." />
+    <meta name="keywords" content="缺口滑块破解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              对缺口滑块轨迹计算代码的封装
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-09-10
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/ZmUaE55nwD/" class="post-tag">
+                  # 缺口滑块破解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>建议先阅读：<a href="https://juejin.im/post/5cf4cbd4f265da1b8e7089b4">爬虫: 滑块验证码破解</a></p>
+<pre><code># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+import os
+import sys
+
+import cv2
+import requests
+
+
+class CalcSlideDistance:
+
+    @staticmethod
+    def find_pic(target, template):
+        target_rgb = cv2.imread(target)
+        target_gray = cv2.cvtColor(target_rgb, cv2.COLOR_BGR2GRAY)
+        template_rgb = cv2.imread(template, 0)
+        res = cv2.matchTemplate(target_gray, template_rgb, cv2.TM_CCOEFF_NORMED)
+        value = cv2.minMaxLoc(res)
+        return value[2:][0][0], value[2:][1][0]
+
+    @staticmethod
+    def generate_tracks(distance):
+        distance += 20
+        v = 0
+        t = 0.2
+        forward_tracks = []
+        current = 0
+        mid = distance * 3 / 5  # 减速阀值
+        while current &lt; distance:
+            if current &lt; mid:
+                a = 2  # 加速度为+2
+            else:
+                a = -3  # 加速度-3
+            s = v * t + 0.5 * a * (t ** 2)
+            v = v + a * t
+            current += s
+            forward_tracks.append(round(s))
+        back_tracks = [-3, -3, -2, -2, -2, -2, -2, -1, -1, -1]
+        return forward_tracks, back_tracks
+
+    def calc_result(self, username, target_url, template_url):
+        template_path = os.path.join(os.getcwd(), 'img', f'slide_1_{username}.png')
+        target_path = os.path.join(os.getcwd(), 'img', f'slide_2_{username}.png')
+        # 对滑块图片发请求保持为背景图片
+        target = requests.get(url=target_url).content
+        with open(target_path, 'wb') as f_tar:
+            f_tar.write(target)
+        template = requests.get(url=template_url).content
+        with open(template_path, 'wb') as f_tem:
+            f_tem.write(template)
+
+        value_1, value_2 = self.find_pic(target_path, template_path)  # 计算缺口距离
+        forward_tracks, back_tracks = self.generate_tracks(value_2)  # 加速轨迹, 减速轨迹
+        os.remove(target_path), os.remove(template_path)  # 删除滑块图片
+        return forward_tracks, back_tracks
+
+if __name__ == '__main__':
+    calc_slide_distance = CalcSlideDistance()
+    calc_slide_distance.calc_result(&quot;定义滑块图片名&quot;, &quot;大图的url&quot;, &quot;小图的url&quot;)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/du-lesslesstu-jie-suan-fa-greatergreater-shou-huo/">
+              <h3 class="post-title">
+                读《算法图解》收获
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

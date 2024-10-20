@@ -1,0 +1,678 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3实现定时任务 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3实现定时任务 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="常用推荐
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+scheduler = BlockingScheduler()
+
+# 定义一个job类，完成想要做的事
+..." />
+    <meta name="keywords" content="apscheduler" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3实现定时任务
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-18
+              </span>
+              <span>
+                18 min read
+              </span>
+              
+                <a href="https://iicey.github.io/qlpeTQofi-C/" class="post-tag">
+                  # apscheduler
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="常用推荐">常用推荐</h3>
+<pre><code>from apscheduler.schedulers.blocking import BlockingScheduler
+
+scheduler = BlockingScheduler()
+
+# 定义一个job类，完成想要做的事
+def worker():
+    print(&quot;hello scheduler&quot;)
+
+# 定时每天 00:00:00秒执行任务
+scheduler.add_job(worker, 'cron', day_of_week='0-6', hour=00, minute=00, second=00)
+scheduler.start()  # 开始任务
+</code></pre>
+<pre><code>import time
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+def my_job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+scheduler = BlockingScheduler()
+
+# 表示每5秒执行该程序一次
+scheduler.add_job(my_job, 'cron', second='*/5')
+
+# 表示每5分钟执行该程序一次
+scheduler.add_job(my_job, 'cron', minute='*/5')
+
+# 表示每5小时执行该程序一次
+scheduler.add_job(my_job, 'cron', hour='*/5')
+
+# 表示2017年3月22日17时19分07秒执行该程序
+scheduler.add_job(my_job, 'cron', year=2017, month=3, day=22, hour=17, minute=19, second=7)
+
+# 表示任务在6,7,8,11,12月份的第三个星期五的00:00,01:00,02:00,03:00 执行该程序
+scheduler.add_job(my_job, 'cron', month='6-8,11-12', day='3rd fri', hour='0-3')
+
+# 表示从星期一到星期五5:30（AM）直到2014-05-30 00:00:00
+scheduler.add_job(my_job(), 'cron', day_of_week='mon-fri', hour=5, minute=30, end_date='2020-05-30')
+
+scheduler.start()
+</code></pre>
+<h3 id="1-while循环中使用sleep">1、while循环中使用sleep</h3>
+<p>缺点：不容易控制，而且是个阻塞函数</p>
+<pre><code>def timer(n):  
+    ''''' 
+    每n秒执行一次 
+    '''  
+    while True:    
+        print(time.strftime('%Y-%m-%d %X',time.localtime()))    
+        yourTask()  # 此处为要执行的任务    
+        time.sleep(n)
+</code></pre>
+<h3 id="2-schedule模块">2、schedule模块</h3>
+<p>优点：可以管理和调度多个任务,可以进行控制<br>
+缺点：阻塞式函数</p>
+<pre><code>import schedule
+import time
+import datetime
+
+def job1():
+    print('Job1:每隔10秒执行一次的任务，每次执行2秒')
+    print('Job1-startTime:%s' %(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    time.sleep(2)
+    print('Job1-endTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print('------------------------------------------------------------------------')
+
+def job2():
+    print('Job2:每隔30秒执行一次，每次执行5秒')
+    print('Job2-startTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    time.sleep(5)
+    print('Job2-endTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print('------------------------------------------------------------------------')
+
+
+def job3():
+    print('Job3:每隔1分钟执行一次，每次执行10秒')
+    print('Job3-startTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    time.sleep(10)
+    print('Job3-endTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print('------------------------------------------------------------------------')
+
+
+def job4():
+    print('Job4:每天下午17:49执行一次，每次执行20秒')
+    print('Job4-startTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    time.sleep(20)
+    print('Job4-endTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print('------------------------------------------------------------------------')
+
+
+def job5():
+    print('Job5:每隔5秒到10秒执行一次，每次执行3秒')
+    print('Job5-startTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    time.sleep(3)
+    print('Job5-endTime:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    print('------------------------------------------------------------------------')
+
+
+if __name__ == '__main__':
+    schedule.every(10).seconds.do(job1)
+    schedule.every(30).seconds.do(job2)
+    schedule.every(1).minutes.do(job3)
+    schedule.every().day.at('17:49').do(job4)
+    schedule.every(5).to(10).seconds.do(job5)
+    while True:
+        schedule.run_pending()
+</code></pre>
+<h3 id="3-threading模块中的timer">3、Threading模块中的Timer</h3>
+<p>优点：非阻塞<br>
+缺点：不易管理多个任务</p>
+<pre><code>from threading import Timer
+import datetime
+# 每隔两秒执行一次任务
+def printHello():
+    print('TimeNow:%s' % (datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+    t = Timer(2, printHello)
+    t.start()
+
+if __name__ == &quot;__main__&quot;:
+    printHello()
+</code></pre>
+<h3 id="4-sched模块">4、sched模块</h3>
+<p>sched模块实现了一个时间调度程序，该程序可以通过单线程执行来处理按照时间尺度进行调度的时间。<br>
+通过调用<code>scheduler.enter(delay,priority,func,args)</code>函数，可以将一个任务添加到任务队列里面，当指定的时间到了，就会执行任务(<strong>func函数</strong>)。</p>
+<ul>
+<li><em>delay</em>：任务的间隔时间。</li>
+<li><em>priority</em>：如果几个任务被调度到相同的时间执行，将按照priority的增序执行这几个任务。</li>
+<li><em>func</em>：要执行的任务函数</li>
+<li><em>args</em>：func的参数</li>
+</ul>
+<pre><code>import time, sched
+import datetime
+
+s = sched.scheduler(time.time, time.sleep)
+
+def print_time(a='default'):
+    print('Now Time:',datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),a)
+
+def print_some_times():
+    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    s.enter(10,1,print_time)
+    s.enter(5,2,print_time,argument=('positional',))
+    s.run()
+    print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+print_some_times()
+</code></pre>
+<p>执行结果为：</p>
+<pre><code>2018-09-20 16:25:03
+Now Time: 2018-09-20 16:25:08 positional
+Now Time: 2018-09-20 16:25:13 default
+2018-09-20 16:25:13
+
+Process finished with exit code 0
+</code></pre>
+<p>按顺序执行任务：</p>
+<pre><code>import time, sched
+import datetime
+
+s = sched.scheduler(time.time, time.sleep)
+
+
+def event_fun1():
+    print(&quot;func1 Time:&quot;, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+def perform1(inc):
+    s.enter(inc, 0, perform1, (inc,))
+    event_fun1()
+
+
+def event_fun2():
+    print(&quot;func2 Time:&quot;, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+
+
+def perform2(inc):
+    s.enter(inc, 0, perform2, (inc,))
+    event_fun2()
+
+
+def mymain(func, inc=2):
+    if func == &quot;1&quot;:
+        s.enter(0, 0, perform1, (10,))# 每隔10秒执行一次perform1
+    if func == &quot;2&quot;:
+        s.enter(0, 0, perform2, (20,))# 每隔20秒执行一次perform2
+if __name__ == '__main__':
+    mymain('1')
+    mymain('2')
+    s.run()
+</code></pre>
+<p>执行结果为：</p>
+<pre><code>E:\virtualenv\pachong\Scripts\python.exe F:/workspace/project_01/demo_09.py
+func1 Time: 2018-09-20 16:30:28
+func2 Time: 2018-09-20 16:30:28
+func1 Time: 2018-09-20 16:30:38
+func2 Time: 2018-09-20 16:30:48
+func1 Time: 2018-09-20 16:30:48
+func1 Time: 2018-09-20 16:30:58
+func2 Time: 2018-09-20 16:31:08
+func1 Time: 2018-09-20 16:31:08
+func1 Time: 2018-09-20 16:31:18
+func2 Time: 2018-09-20 16:31:28
+func1 Time: 2018-09-20 16:31:28
+func1 Time: 2018-09-20 16:31:38
+</code></pre>
+<p>s.run()会阻塞当前线程的执行<br>
+可以用</p>
+<pre><code>t=threading.Thread(target=s.run)
+t.start()
+</code></pre>
+<p>也可以用<code>s.cancal(action)</code>来取消sched中的某个action</p>
+<h3 id="5-定时框架apscheduler">5、定时框架APScheduler</h3>
+<blockquote>
+<p>APSScheduler是python的一个定时任务框架，它提供了基于日期date、固定时间间隔interval、以及linux上的crontab类型的定时任务。该矿机不仅可以添加、删除定时任务，还可以将任务存储到数据库中、实现任务的持久化。</p>
+</blockquote>
+<h4 id="apscheduler有四种组件">APScheduler有四种组件：</h4>
+<ul>
+<li>triggers（触发器）：触发器包含调度逻辑，每一个作业有它自己的触发器，用于决定接下来哪一个作业会运行，除了他们自己初始化配置外，触发器完全是无状态的。</li>
+<li><strong>job stores</strong>（作业存储）：用来存储被调度的作业，默认的作业存储器是简单地把作业任务保存在内存中，其它作业存储器可以将任务作业保存到各种数据库中，支持MongoDB、Redis、SQLAlchemy存储方式。当对作业任务进行持久化存储的时候，作业的数据将被序列化，重新读取作业时在反序列化。</li>
+<li><strong>executors</strong>（执行器）：执行器用来执行定时任务，只是将需要执行的任务放在新的线程或者线程池中运行。当作业任务完成时，执行器将会通知调度器。对于执行器，默认情况下选择ThreadPoolExecutor就可以了，但是如果涉及到一下特殊任务如比较消耗CPU的任务则可以选择ProcessPoolExecutor，当然根据根据实际需求可以同时使用两种执行器。</li>
+<li><strong>schedulers</strong>（调度器）：调度器是将其它部分联系在一起，一般在应用程序中只有一个调度器，应用开发者不会直接操作触发器、任务存储以及执行器，相反调度器提供了处理的接口。通过调度器完成任务的存储以及执行器的配置操作，如可以添加。修改、移除任务作业。</li>
+</ul>
+<h4 id="apscheduler提供了七种调度器">APScheduler提供了七种调度器：</h4>
+<ul>
+<li>BlockingScheduler：适合于只在进程中运行单个任务的情况，通常在调度器是你唯一要运行的东西时使用。</li>
+<li>BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用。</li>
+<li>AsyncIOScheduler：适合于使用asyncio异步框架的情况</li>
+<li>GeventScheduler: 适合于使用gevent框架的情况</li>
+<li>TornadoScheduler: 适合于使用Tornado框架的应用</li>
+<li>TwistedScheduler: 适合使用Twisted框架的应用</li>
+<li>QtScheduler: 适合使用QT的情况</li>
+</ul>
+<h4 id="apscheduler提供了四种存储方式">APScheduler提供了四种存储方式：</h4>
+<ul>
+<li>MemoryJobStore</li>
+<li>sqlalchemy</li>
+<li>mongodb</li>
+<li>redis</li>
+</ul>
+<h4 id="apscheduler提供了三种任务触发器">APScheduler提供了三种任务触发器：</h4>
+<ul>
+<li><strong>data</strong>：固定日期触发器：任务只运行一次，运行完毕自动清除；若错过指定运行时间，任务不会被创建</li>
+<li><strong>interval</strong>：时间间隔触发器</li>
+<li><strong>cron</strong>：cron风格的任务触发</li>
+</ul>
+<h4 id="示例1">示例1、</h4>
+<pre><code>import time
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+def job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+
+if __name__ == '__main__':
+    # 该示例代码生成了一个BlockingScheduler调度器，使用了默认的任务存储MemoryJobStore，以及默认的执行器ThreadPoolExecutor，并且最大线程数为10。
+    
+    # BlockingScheduler：在进程中运行单个任务，调度器是唯一运行的东西
+    scheduler = BlockingScheduler()
+    # 采用阻塞的方式
+
+    # 采用固定时间间隔（interval）的方式，每隔5秒钟执行一次
+    scheduler.add_job(job, 'interval', seconds=5)
+    
+    scheduler.start()
+</code></pre>
+<h4 id="示例2">示例2、</h4>
+<pre><code>import time
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+def job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+    
+if __name__ == '__main__':
+    # BlockingScheduler：在进程中运行单个任务，调度器是唯一运行的东西
+    scheduler = BlockingScheduler()
+    # 采用阻塞的方式
+    
+    # 采用date的方式，在特定时间只执行一次
+    scheduler.add_job(job, 'date', run_date='2018-09-21 15:30:00')
+
+    scheduler.start() 
+</code></pre>
+<h4 id="示例3">示例3、</h4>
+<pre><code>import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def job():
+    print('job:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+if __name__ == '__main__':
+    # BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用。
+    scheduler = BackgroundScheduler()
+    # 采用非阻塞的方式
+
+    # 采用固定时间间隔（interval）的方式，每隔3秒钟执行一次
+    scheduler.add_job(job, 'interval', seconds=3)
+    # 这是一个独立的线程
+    scheduler.start()
+    
+    # 其他任务是独立的线程
+    while True:
+        print('main-start:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+        time.sleep(2)
+        print('main-end:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+</code></pre>
+<p>运行结果为：</p>
+<pre><code>main-start: 2018-09-21 15:54:28
+main-end: 2018-09-21 15:54:30
+main-start: 2018-09-21 15:54:30
+job: 2018-09-21 15:54:31
+main-end: 2018-09-21 15:54:32
+main-start: 2018-09-21 15:54:32
+main-end: 2018-09-21 15:54:34
+main-start: 2018-09-21 15:54:34
+job: 2018-09-21 15:54:34
+main-end: 2018-09-21 15:54:36
+main-start: 2018-09-21 15:54:36
+</code></pre>
+<h4 id="示例4">示例4、</h4>
+<pre><code>import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
+def job():
+    print('job:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+if __name__ == '__main__':
+    # BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用。
+    scheduler = BackgroundScheduler()
+    # 采用非阻塞的方式
+
+    # 采用date的方式，在特定时间里执行一次
+    scheduler.add_job(job, 'date', run_date='2018-09-21 15:53:00')
+    # 这是一个独立的线程
+    scheduler.start()
+
+    # 其他任务是独立的线程
+    while True:
+        print('main-start:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+        time.sleep(2)
+        print('main-end:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+</code></pre>
+<p>运行结果为：</p>
+<pre><code>main-start: 2018-09-21 15:52:57
+main-end: 2018-09-21 15:52:59
+main-start: 2018-09-21 15:52:59
+job: 2018-09-21 15:53:00
+main-end: 2018-09-21 15:53:01
+</code></pre>
+<h4 id="示例5">示例5、</h4>
+<pre><code>import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+def job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+
+if __name__ == '__main__':
+    # BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用
+    scheduler = BackgroundScheduler()
+    # 采用非阻塞的方式
+
+    # 采用corn的方式
+    scheduler.add_job(job, 'cron', day_of_week='fri', second='*/5')
+    '''
+    year (int|str) – 4-digit year
+    month (int|str) – month (1-12)
+    day (int|str) – day of the (1-31)
+    week (int|str) – ISO week (1-53)
+    day_of_week (int|str) – number or name of weekday (0-6 or mon,tue,wed,thu,fri,sat,sun)
+    hour (int|str) – hour (0-23)
+    minute (int|str) – minute (0-59)
+    econd (int|str) – second (0-59)
+            
+    start_date (datetime|str) – earliest possible date/time to trigger on (inclusive)
+    end_date (datetime|str) – latest possible date/time to trigger on (inclusive)
+    timezone (datetime.tzinfo|str) – time zone to use for the date/time calculations (defaults to scheduler timezone)
+        
+    *    any    Fire on every value
+    */a    any    Fire every a values, starting from the minimum
+    a-b    any    Fire on any value within the a-b range (a must be smaller than b)
+    a-b/c    any    Fire every c values within the a-b range
+    xth y    day    Fire on the x -th occurrence of weekday y within the month
+    last x    day    Fire on the last occurrence of weekday x within the month
+    last    day    Fire on the last day within the month
+    x,y,z    any    Fire on any matching expression; can combine any number of any of the above expressions
+    '''
+    scheduler.start()
+    
+    # 其他任务是独立的线程
+    while True:
+        print('main-start:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+        time.sleep(2)
+        print('main-end:', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+</code></pre>
+<p>运行结果：</p>
+<pre><code>main-start: 2018-09-21 16:02:55
+main-end: 2018-09-21 16:02:57
+main-start: 2018-09-21 16:02:57
+main-end: 2018-09-21 16:02:59
+main-start: 2018-09-21 16:02:59
+2018-09-21 16:03:00
+main-end: 2018-09-21 16:03:01
+main-start: 2018-09-21 16:03:01
+main-end: 2018-09-21 16:03:03
+main-start: 2018-09-21 16:03:03
+2018-09-21 16:03:05
+main-end: 2018-09-21 16:03:05
+main-start: 2018-09-21 16:03:05
+main-end: 2018-09-21 16:03:07
+main-start: 2018-09-21 16:03:07
+main-end: 2018-09-21 16:03:09
+main-start: 2018-09-21 16:03:09
+2018-09-21 16:03:10
+</code></pre>
+<h4 id="示例6">示例6、</h4>
+<pre><code>import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
+
+def job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+
+
+if __name__ == '__main__':
+    # BackgroundScheduler: 适合于要求任何在程序后台运行的情况，当希望调度器在应用后台执行时使用
+    scheduler = BackgroundScheduler()
+    # 采用阻塞的方式
+
+    # 采用corn的方式
+    scheduler.add_job(job, 'cron', day_of_week='fri', second='*/5')
+    '''
+    year (int|str) – 4-digit year
+    month (int|str) – month (1-12)
+    day (int|str) – day of the (1-31)
+    week (int|str) – ISO week (1-53)
+    day_of_week (int|str) – number or name of weekday (0-6 or mon,tue,wed,thu,fri,sat,sun)
+    hour (int|str) – hour (0-23)
+    minute (int|str) – minute (0-59)
+    econd (int|str) – second (0-59)
+            
+    start_date (datetime|str) – earliest possible date/time to trigger on (inclusive)
+    end_date (datetime|str) – latest possible date/time to trigger on (inclusive)
+    timezone (datetime.tzinfo|str) – time zone to use for the date/time calculations (defaults to scheduler timezone)
+        
+    *    any    Fire on every value
+    */a    any    Fire every a values, starting from the minimum
+    a-b    any    Fire on any value within the a-b range (a must be smaller than b)
+    a-b/c    any    Fire every c values within the a-b range
+    xth y    day    Fire on the x -th occurrence of weekday y within the month
+    last x    day    Fire on the last occurrence of weekday x within the month
+    last    day    Fire on the last day within the month
+    x,y,z    any    Fire on any matching expression; can combine any number of any of the above expressions
+    '''
+
+    scheduler.start()
+</code></pre>
+<h4 id="示例7">示例7、</h4>
+<pre><code>import time
+from pymongo import MongoClient
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.jobstores.mongodb import MongoDBJobStore
+
+def job():
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())))
+if __name__ == '__main__':
+    # mongodb存储job
+    scheduler = BlockingScheduler()
+    client = MongoClient(host='127.0.0.1', port=27017)
+    store = MongoDBJobStore(collection='job', database='test', client=client)
+    scheduler.add_jobstore(store)
+    scheduler.add_job(job, 'interval', second=5)
+    scheduler.start()
+</code></pre>
+<p>原文链接https://www.jianshu.com/p/b77d934cc252</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%B8%B8%E7%94%A8%E6%8E%A8%E8%8D%90">常用推荐</a></li>
+<li><a href="#1-while%E5%BE%AA%E7%8E%AF%E4%B8%AD%E4%BD%BF%E7%94%A8sleep">1、while循环中使用sleep</a></li>
+<li><a href="#2-schedule%E6%A8%A1%E5%9D%97">2、schedule模块</a></li>
+<li><a href="#3-threading%E6%A8%A1%E5%9D%97%E4%B8%AD%E7%9A%84timer">3、Threading模块中的Timer</a></li>
+<li><a href="#4-sched%E6%A8%A1%E5%9D%97">4、sched模块</a></li>
+<li><a href="#5-%E5%AE%9A%E6%97%B6%E6%A1%86%E6%9E%B6apscheduler">5、定时框架APScheduler</a>
+<ul>
+<li><a href="#apscheduler%E6%9C%89%E5%9B%9B%E7%A7%8D%E7%BB%84%E4%BB%B6">APScheduler有四种组件：</a></li>
+<li><a href="#apscheduler%E6%8F%90%E4%BE%9B%E4%BA%86%E4%B8%83%E7%A7%8D%E8%B0%83%E5%BA%A6%E5%99%A8">APScheduler提供了七种调度器：</a></li>
+<li><a href="#apscheduler%E6%8F%90%E4%BE%9B%E4%BA%86%E5%9B%9B%E7%A7%8D%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F">APScheduler提供了四种存储方式：</a></li>
+<li><a href="#apscheduler%E6%8F%90%E4%BE%9B%E4%BA%86%E4%B8%89%E7%A7%8D%E4%BB%BB%E5%8A%A1%E8%A7%A6%E5%8F%91%E5%99%A8">APScheduler提供了三种任务触发器：</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B1">示例1、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B2">示例2、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B3">示例3、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B4">示例4、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B5">示例5、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B6">示例6、</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B7">示例7、</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/asyncioaiohttpaiofiles-shi-xian-yi-bu-xia-zai-mei-zi-tu-pian/">
+              <h3 class="post-title">
+                asyncio+aiohttp+aiofiles实现异步下载妹子图片
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1199 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Xposed用法示例 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Xposed用法示例 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="API
+选择需要Hook的APP包名及类名
+import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPack..." />
+    <meta name="keywords" content="hook,xposed" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Xposed用法示例
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                27 min read
+              </span>
+              
+                <a href="https://iicey.github.io/6TMbAERr1/" class="post-tag">
+                  # hook
+                </a>
+              
+                <a href="https://iicey.github.io/lQ3tnpCE7/" class="post-tag">
+                  # xposed
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="api">API</h3>
+<h4 id="选择需要hook的app包名及类名">选择需要Hook的APP包名及类名</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+        }
+    }
+}
+</code></pre>
+<h4 id="hook修改变量">Hook修改变量</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.setStaticIntField(clazz, &quot;字段名&quot;, 数字);
+            XposedHelpers.setStaticObjectField(clazz, &quot;字段名&quot;, &quot;字符串&quot;);
+        }
+    }
+}
+</code></pre>
+<h4 id="hook修改普通方法并获取参数与返回值">Hook修改普通方法并获取参数与返回值</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(clazz,
+                    &quot;publicFunc &lt;- 需要hook的函数名&quot;,
+                    String.class,
+                    new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;获取publicFunc函数参数&quot;, &quot;&quot; + param.args[0]);
+
+                            Log.d(&quot;publicFunc被hook前执行&quot;, &quot;publicFunc is hooked before&quot;);
+                        }
+
+                        /* access modifiers changed from: protected */
+                        public void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;获取publicFunc函数返回值&quot;, &quot;&quot; + param.getResult());
+                            Log.d(&quot;publicFunc被hook后执行&quot;, &quot;publicFunc is hooked after&quot;);
+                        }
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook无参构造函数">Hook无参构造函数</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookConstructor(clazz, new XC_MethodHook() {
+                /* access modifiers changed from: protected */
+                public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    Log.d(&quot;tag&quot;, &quot;这是无参构造函数前&quot;);
+                }
+
+                /* access modifiers changed from: protected */
+                public void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Log.d(&quot;tag&quot;, &quot;这是无参构造函数后&quot;);
+                }
+            });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook有参构造函数">Hook有参构造函数</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookConstructor(clazz, String.class, new XC_MethodHook() {
+                /* access modifiers changed from: protected */
+                public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    param.args[0] = &quot;第一个参数&quot;;
+                }
+
+                /* access modifiers changed from: protected */
+                public void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    Log.d(&quot;tag&quot;, &quot;这是有参构造函数后&quot;);
+                }
+            });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook复杂参数">Hook复杂参数</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            final Class clazz = XposedHelpers.findClass(&quot;类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(
+                    clazz,
+                    &quot;functionName&quot;, //函数名
+                    &quot;java.lang.String&quot;, //字符串
+                    &quot;[[Ljava.lang.String;&quot;, //二维字符串数组
+                    Map.class,
+                    Class.forName(&quot;java.util.ArrayList&quot;),
+                    new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;tag&quot;, &quot;functionName is hooked before&quot;);
+                        }
+
+                        /* access modifiers changed from: protected */
+                        public void afterHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;tag&quot;, &quot;functionName is hooked after&quot;);
+                        }
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook自定义类参数">Hook自定义类参数</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+            
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            Class cls = Class.forName(&quot;自定义类名路径&quot;, 
+                    true,
+                    loadPackageParam.classLoader);
+            
+            XposedHelpers.findAndHookMethod(
+                    
+                    clazz,
+                    &quot;functionName&quot;, //要hook的函数名
+                    &quot;类名路径&quot;, //自定义的类名 或者 cls
+                    String.class, //字符串参数
+                    
+                    new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;tag&quot;, &quot;这是自定义类参数的Hook Class.forName&quot;);
+                        }
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook替换函数与函数置空">Hook替换函数与函数置空</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(clazz, &quot;要替换的函数名&quot;,
+                    new XC_MethodReplacement() {
+                        /* access modifiers changed from: protected */
+                        public Object replaceHookedMethod(MethodHookParam methodHookParam) throws Throwable {
+                            Log.d(&quot;tag&quot;, &quot;这是替换之后的输出&quot;);
+                            return null;
+                        }
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook内部类">Hook内部类</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
+                    &quot;要hook函数的类名路径$内部类名&quot;,
+                    loadPackageParam.classLoader),
+                    &quot;内部类的函数名&quot;,
+                    String.class, new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) 
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="hook匿名类">Hook匿名类</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
+                    &quot;要hook函数的类名路径$1&quot;, //匿名类用数字(查阅smali)表示, 例: new Demo()无变量赋值操作
+                    loadPackageParam.classLoader),
+                    &quot;内部类的函数名&quot;,
+                    String.class, new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="xposed主动调用">Xposed主动调用</h4>
+<pre><code>import android.util.Log;
+
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
+                    &quot;要hook函数的类名路径$1&quot;, //匿名类用数字(查阅smali)表示, 例: new Demo()无变量赋值操作
+                    loadPackageParam.classLoader),
+                    &quot;内部类的函数名&quot;,
+                    String.class, new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Log.d(&quot;tag&quot;, &quot;主动调用前&quot;);
+                            XposedHelpers.callMethod(clazz.newInstance(), &quot;想要调用的方法名&quot;);
+                            Log.d(&quot;tag&quot;, &quot;主动调用后&quot;);
+                            int aa = XposedHelpers.getIntField(param.thisObject, &quot;内部类字段名&quot;);
+                            Log.d(&quot;tag&quot;, &quot;&quot; + aa);
+                        }
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="java反射">Java反射</h4>
+<pre><code>import android.util.Log;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            final Class clazz = XposedHelpers.findClass(&quot;要hook函数的类名路径&quot;, loadPackageParam.classLoader);
+            XposedHelpers.findAndHookMethod(XposedHelpers.findClass(
+                    &quot;要hook函数的类名路径&quot;,
+                    loadPackageParam.classLoader),
+                    &quot;要hook的函数名&quot;,
+                    String.class, new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void beforeHookedMethod(MethodHookParam param) throws Throwable {
+
+                        Field field = clazz.getDeclaredField(&quot;fieldName&quot;);
+                        Object obj = clazz.newInstance();
+                        field.setAccessible(true);
+                        String str = (String) field.get(obj);
+                        Log.d(&quot;这是反射前获取的字段&quot;, str);
+                        field.set(obj, &quot;newInfo&quot;);
+                        String str2 = (String) field.get(obj);
+                        Log.d(&quot;这是反射后设置的字段&quot;, str2);
+                        Method method = clazz.getDeclaredMethod(&quot;methodNmae&quot;);
+                        method.setAccessible(true);
+                        method.invoke(obj);
+                        }
+                    });
+
+            Log.d(&quot;tag&quot;, clazz.getName());
+            //获取所有的方法名
+            for (Method method : clazz.getDeclaredMethods()) {
+                Log.d(&quot;tag&quot;, method.toString());
+            }
+
+            //获取所有的字段名
+            Field[] fd = clazz.getDeclaredFields();
+            for (Field field : fd) {
+                Log.d(&quot;tag&quot;, field.toString());
+            }
+            Log.d(&quot;tag&quot;, &quot;====================================&quot;);
+
+            //获取所有内部类名再迭代获取类的方法名与字段名
+            Class[] cls = clazz.getDeclaredClasses();
+            for (int i = 0; i &lt; fd.length; i++) {
+                Log.d(&quot;tag&quot;, cls[i].getName());
+                for (Method method2 : cls[i].getDeclaredMethods()) {
+                    Log.d(&quot;tag&quot;, method2.toString());
+                }
+                for (Field field2 : cls[i].getDeclaredFields()) {
+                    Log.d(&quot;tag&quot;, field2.toString());
+                }
+            }
+        }
+    }
+}
+</code></pre>
+<h4 id="hook所有类的所有方法">Hook所有类的所有方法</h4>
+<pre><code>import android.util.Log;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam loadPackageParam) throws Throwable {
+
+        Log.d(&quot;tag&quot;, &quot;Hooking......&quot;);
+        if (loadPackageParam.packageName.equals(&quot;包名&quot;)) {
+
+            XposedHelpers.findAndHookMethod(ClassLoader.class,
+                    &quot;loadClass&quot;,
+                    String.class, new XC_MethodHook() {
+                        /* access modifiers changed from: protected */
+                        public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                            Class clazz = (Class) param.getResult();
+                            String clazzName = clazz.getName();
+                            Log.d(&quot;tag&quot;, &quot;LoadClass: &quot; + clazzName);
+                            if (clazzName.contains(&quot;com.xxx&quot;)) {
+                                Method[] mds = clazz.getDeclaredMethods();
+                                for (int i = 0; i &lt; mds.length; i++) {
+                                    final Method md = mds[i];
+                                    int mod = mds[i].getModifiers();
+                                    if (!Modifier.isAbstract(mod) &amp;&amp; !Modifier.isNative(mod) &amp;&amp; !Modifier.isInterface(mod)) {
+                                        XposedBridge.hookMethod(mds[i], new XC_MethodHook() {
+                                            public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                                                if (md.getName().contains(&quot;complexParameterFunc&quot;)) {
+                                                    for (Object obj : param.args) {
+                                                        Log.d(&quot;tag&quot;, obj.getClass().getName());
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                    });
+        }
+    }
+}
+</code></pre>
+<h4 id="multidex的hook方法">multiDex的Hook方法</h4>
+<pre><code>import android.app.Application;
+import android.content.Context;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.Map;
+
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+public class TestCode implements IXposedHookLoadPackage {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        Log.d(&quot;tag&quot;, &quot;hooking Start...&quot;);
+        if (lpparam.packageName.equals(&quot;包名&quot;)) {
+            XposedHelpers.findAndHookMethod(Application.class, &quot;attach&quot;, Context.class, new XC_MethodHook() {
+                /* access modifiers changed from: protected */
+                public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                    try {
+                        XposedHelpers.findAndHookMethod(((Context) param.args[0]).getClassLoader().loadClass(&quot;类名路径&quot;), &quot;方法名&quot;, String.class, String[][].class, Map.class, ArrayList.class, new XC_MethodHook() {
+                            /* access modifiers changed from: protected */
+                            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                                String arg0 = (String) param.args[0];
+                                String arg1 = (String) param.args[1];
+                                Log.d(&quot;tag&quot;, arg0);
+                                Log.d(&quot;tag&quot;, &quot;测试分dexHook&quot;);
+                            }
+                        });
+                    } catch (Exception e) {
+                        Log.e(&quot;tag&quot;, &quot;类没找到&quot;, e);
+                    }
+                }
+            });
+        }
+    }
+}
+</code></pre>
+<h3 id="java加密算法示例">Java加密算法示例</h3>
+<h4 id="单向散列函数消息摘要算法">单向散列函数(消息摘要算法)</h4>
+<h5 id="utils">Utils</h5>
+<pre><code>public class Utils {
+    public static String byteToHexString(byte[] by) {
+        StringBuffer SB = new StringBuffer();
+        for (byte k : by) {
+            int j = k;
+            if (k &lt; 0) {
+                j = k + 256;
+            }
+            if (j &lt; 16) {
+                SB.append(&quot;0&quot;);
+            }
+            SB.append(Integer.toHexString(j));
+        }
+        return SB.toString();
+    }
+
+    public static byte[] hexStringToByte(byte[] b) {
+        if (b.length % 2 != 0) {
+            throw new IllegalArgumentException(&quot;长度不是偶数&quot;);
+        }
+        byte[] b2 = new byte[(b.length / 2)];
+        for (int n = 0; n &lt; b.length; n += 2) {
+            b2[n / 2] = (byte) Integer.parseInt(new String(b, n, 2), 16);
+        }
+        return b2;
+    }
+}
+</code></pre>
+<h5 id="md5">MD5</h5>
+<pre><code>import java.security.MessageDigest;
+
+public class MD5 {
+    public static String md5_1(String args) throws Exception {
+        MessageDigest md = MessageDigest.getInstance(&quot;MD5&quot;, &quot;BC&quot;);
+        md.update(args.getBytes());
+        return Utils.byteToHexString(md.digest());
+    }
+
+    public static String md5_2(String args) throws Exception {
+        MessageDigest md = MessageDigest.getInstance(&quot;MD5&quot;, &quot;BC&quot;);
+        md.update(args.getBytes(), 2, 5);
+        return Utils.byteToHexString(md.digest(&quot;xiaojianbang&quot;.getBytes()));
+    }
+}
+</code></pre>
+<h5 id="sha">SHA</h5>
+<pre><code>import java.security.MessageDigest;
+
+public class SHA {
+    public static String sha_1(String args) throws Exception {
+        MessageDigest md = MessageDigest.getInstance(&quot;SHA-1&quot;, &quot;BC&quot;);
+        md.update(args.getBytes());
+        return Utils.byteToHexString(md.digest());
+    }
+
+    public static String sha_2(String args) throws Exception {
+        MessageDigest md = MessageDigest.getInstance(&quot;SHA-1&quot;, &quot;BC&quot;);
+        md.update(args.getBytes(), 2, 5);
+        return Utils.byteToHexString(md.digest(&quot;xiaojianbang&quot;.getBytes()));
+    }
+}
+</code></pre>
+<h5 id="mac">Mac</h5>
+<pre><code>import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+public class MAC {
+    public static String mac_1(String args) throws Exception {
+        SecretKey key = new SecretKeySpec(&quot;FridaHook&quot;.getBytes(), &quot;HmacSHA1&quot;);
+        Mac mac = Mac.getInstance(&quot;HmacSHA1&quot;);
+        mac.init(key);
+        mac.update(args.getBytes());
+        return Utils.byteToHexString(mac.doFinal());
+    }
+
+    public static String mac_2(String args) throws Exception {
+        SecretKey key = new SecretKeySpec(&quot;FridaHook&quot;.getBytes(), &quot;HmacSHA1&quot;);
+        Mac mac = Mac.getInstance(&quot;HmacSHA1&quot;);
+        mac.init(key);
+        mac.update(args.getBytes(), 2, 5);
+        return Utils.byteToHexString(mac.doFinal(&quot;xiaojianbang&quot;.getBytes()));
+    }
+}
+</code></pre>
+<h4 id="对称加密算法在java中的调用">对称加密算法在Java中的调用</h4>
+<h5 id="des">DES</h5>
+<pre><code>import android.util.Base64;
+import java.security.spec.AlgorithmParameterSpec;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+
+public class DES {
+    public static String des_1(String args) throws Exception {
+        SecretKey secretKey = SecretKeyFactory.getInstance(&quot;DES&quot;).generateSecret(new DESKeySpec(&quot;12345678&quot;.getBytes()));
+        AlgorithmParameterSpec iv = new IvParameterSpec(&quot;87654321&quot;.getBytes());
+        Cipher cipher = Cipher.getInstance(&quot;DES/CBC/PKCS5Padding&quot;);
+        cipher.init(1, secretKey, iv);
+        cipher.update(args.getBytes());
+        return Base64.encodeToString(cipher.doFinal(), 0);
+    }
+
+    public static String des_2(String args) throws Exception {
+        SecretKey secretKey = SecretKeyFactory.getInstance(&quot;DES&quot;).generateSecret(new DESKeySpec(&quot;12345678&quot;.getBytes()));
+        AlgorithmParameterSpec iv = new IvParameterSpec(&quot;87654321&quot;.getBytes());
+        Cipher cipher = Cipher.getInstance(&quot;DES/CBC/PKCS5Padding&quot;);
+        cipher.init(1, secretKey, iv);
+        return Base64.encodeToString(cipher.doFinal(args.getBytes()), 0);
+    }
+}
+</code></pre>
+<h5 id="desede">DESede</h5>
+<pre><code>import android.util.Base64;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+
+public class DESede {
+    public static String desede(String args) throws Exception {
+        SecretKey secretKey = SecretKeyFactory.getInstance(&quot;DESede&quot;).generateSecret(new DESedeKeySpec(&quot;123456781234567812345678&quot;.getBytes()));
+        Cipher cipher = Cipher.getInstance(&quot;DESede/ECB/PKCS5Padding&quot;);
+        cipher.init(1, secretKey);
+        cipher.update(args.getBytes());
+        return Base64.encodeToString(cipher.doFinal(&quot;xiaojianbang&quot;.getBytes()), 0);
+    }
+}
+</code></pre>
+<h5 id="aes">AES</h5>
+<pre><code>import android.util.Base64;
+import java.security.spec.AlgorithmParameterSpec;
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
+public class AES {
+    public static String aes(String args) throws Exception {
+        SecretKeySpec key = new SecretKeySpec(&quot;1234567890abcdef1234567890abcdef&quot;.getBytes(), &quot;AES&quot;);
+        AlgorithmParameterSpec iv = new IvParameterSpec(&quot;1234567890abcdef&quot;.getBytes());
+        Cipher aes = Cipher.getInstance(&quot;AES/CBC/PKCS5Padding&quot;);
+        aes.init(1, key, iv);
+        return Base64.encodeToString(aes.doFinal(args.getBytes(&quot;UTF-8&quot;)), 0);
+    }
+}
+</code></pre>
+<h4 id="数字签名算法在java中的调用">数字签名算法在Java中的调用</h4>
+<h5 id="rsa">RSA</h5>
+<pre><code>import android.util.Base64;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import javax.crypto.Cipher;
+
+public class RSA {
+    public static String priKey = &quot;MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAJWFpHc6vuy5SXAdSXYvLfq5WZuhnf4eGi+iAOMuBET0JtpSiRLZ6oZpUV9vEBTEVOE0O5er98EP5J1SCmmZxmsjDgcww/gC0TaoklAf8rE9aZtcfsu/70KKw209g6W9Yn8YdGp/3HdMEqON4nYKO5XGU8ENfrf4RyKXYlH2SVVrAgMBAAECgYAJ0TeGOI42nsfKm7GqF9juAGN4y3jDKZjQjdN/FxNir6Epboffe/1hC+My3+jvZCCqlLJg+AKRY4jAJ5XVbypO3tHRd9uLFgCjzREJ09J6SWyNj3KFKCkJ4vpaO0jbUAAtFGlLElc6ZtHNKabeJ0ECOgcIvVsfHpP47j1GTRU8oQJBAMXsksEmrIvCJ0l5mdDX73nRJzbxDK6m7jndE4fBe0h3Wl06iBCfuaS2x+PTjmiRWvfFu2B1/9E9Tt0jc4FQS3ECQQDBZUKZjnv6rKtwqBj1EqjIXVF2SAsttW/6vTpg6mhHYITlrqQqrt1NJ5+6PRVQr1FLDxPArNVSdoz6MFIIAiibAkA+3K+Tt0PQM78koAGRijPePea1lYPQqOY67JN6Z6JPVtEVkTSMCx78SK1eF+BAKAJ7dYrYzUGN5Gn65HqYFLeRAkBcBOFWjSxCjwwX03PkkBdNFtHe9NKU0iLQ7F6tpHsvkyZI3vrv8DoOLw9aHxxYQsLscuUUJWhvD0du97TgaJ6HAkEAoRXjsQO2UmgQcddE2e6Uxp5riOuWIEEzoW6YssCW9BznCnwXy/xamrTKhoW2cIHwn6cFx+MFmyaK5T0xAtF5pw==&quot;;
+    public static String pubKey = &quot;MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC9xhBZOWWF5Icw384mJksmaJ53RBLPUbEq5hXWW4Xgf82r6Zj24e3MWOnBTcblDodXYtSsaRJilosdTQVWGetJewebKmyqh1l1lUagS1/dbII9GsGat5zMboMHLWUO9NoBS9VDxqYL2VLppNEj/Xe39gBRHIiSnmtggiHuYsEv8wIDAQAB&quot;;
+
+    public static PublicKey getPublicKey(String key) throws Exception {
+        return KeyFactory.getInstance(&quot;RSA&quot;).generatePublic(new X509EncodedKeySpec(Base64.decode(key, 0)));
+    }
+
+    public static PrivateKey getPrivateKey(String key) throws Exception {
+        return KeyFactory.getInstance(&quot;RSA&quot;).generatePrivate(new PKCS8EncodedKeySpec(Base64.decode(key, 0)));
+    }
+
+    public static String sign(String data) throws Exception {
+        PrivateKey priK = getPrivateKey(priKey);
+        Signature sig = Signature.getInstance(&quot;SHA256withRSA&quot;);
+        sig.initSign(priK);
+        sig.update(data.getBytes());
+        return Base64.encodeToString(sig.sign(), 0);
+    }
+
+    public static boolean verify(byte[] data, byte[] sign) throws Exception {
+        PublicKey pubK = getPublicKey(pubKey);
+        Signature sig = Signature.getInstance(&quot;SHA256withRSA&quot;);
+        sig.initVerify(pubK);
+        sig.update(data);
+        return sig.verify(sign);
+    }
+
+    public static byte[] encrypt(byte[] plaintext) throws Exception {
+        PublicKey publicKey = getPublicKey(pubKey);
+        Cipher cipher = Cipher.getInstance(&quot;RSA/None/NoPadding&quot;, &quot;BC&quot;);
+        cipher.init(1, publicKey);
+        return cipher.doFinal(plaintext);
+    }
+
+    public static byte[] decrypt(byte[] encrypted) throws Exception {
+        PrivateKey privateKey = getPrivateKey(priKey);
+        Cipher cipher = Cipher.getInstance(&quot;RSA/None/PKCS1Padding&quot;, &quot;BC&quot;);
+        cipher.init(2, privateKey);
+        return cipher.doFinal(encrypted);
+    }
+
+    public static String rsa(String args) throws Exception {
+        return Base64.encodeToString(encrypt(&quot;xiaojianbang&quot;.getBytes()), 0);
+    }
+}
+</code></pre>
+<h3 id="快速定位关键代码">快速定位关键代码</h3>
+<pre><code>Log.e(&quot;tag&quot;, &quot;Stack:&quot;, new Throwable(&quot;stack dump&quot;));
+</code></pre>
+<h3 id="xposed过-h5-app-远程调试限制">Xposed过 H5 APP 远程调试限制</h3>
+<pre><code>package com.xiaojianbang.xposed;
+
+import android.util.Log;
+import android.webkit.WebView;
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+public class Hook implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws ClassNotFoundException {
+        Log.d(&quot;xiaojianbang&quot;, &quot;Hooking by xiaojianbang ......&quot;);
+        XposedBridge.hookAllConstructors(WebView.class, new XC_MethodHook() {
+            public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                XposedHelpers.callStaticMethod(WebView.class, &quot;setWebContentsDebuggingEnabled&quot;, new Object[]{true});
+                Log.d(&quot;xiaojianbang&quot;, &quot;Hooking WebView Constructor from: &quot; + loadPackageParam.packageName);
+            }
+        });
+        XposedBridge.hookAllMethods(WebView.class, &quot;setWebContentsDebuggingEnabled&quot;, new XC_MethodHook() {
+            public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                param.args[0] = true;
+                Log.d(&quot;xiaojianbang&quot;, &quot;Hooking WebView Debugging from: &quot; + loadPackageParam.packageName);
+            }
+        });
+        XposedHelpers.findAndHookMethod(&quot;io.dcloud.common.adapter.ui.WebViewImpl&quot;, loadPackageParam.classLoader, &quot;setWebViewData&quot;, new Object[]{new XC_MethodReplacement() {
+            /* access modifiers changed from: protected */
+            public Object replaceHookedMethod(XC_MethodHook.MethodHookParam methodHookParam) throws Throwable {
+                Log.d(&quot;xiaojianbang&quot;, &quot;setWebViewData is replace&quot;);
+                return null;
+            }
+        }});
+    }
+}
+</code></pre>
+<h3 id="xposed过全局代理检测">Xposed过全局代理检测</h3>
+<pre><code>package com.xiaojianbang.xposed;
+
+import android.util.Log;
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+
+public class Hook implements IXposedHookLoadPackage {
+    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        Log.d(&quot;xiaojianbang&quot;, &quot;Hooking by xiaojianbang ......&quot;);
+        XposedHelpers.findAndHookMethod(System.class, &quot;getProperty&quot;, new Object[]{String.class, new XC_MethodHook() {
+            /* access modifiers changed from: protected */
+            public void afterHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                Log.d(&quot;xiaojianbang&quot;, &quot;Hooking getProperty from: &quot; + loadPackageParam.packageName);
+                String str = (String) param.args[0];
+                if (str.equals(&quot;https.proxyHost&quot;) || str.equals(&quot;http.proxyHost&quot;) || str.equals(&quot;http.proxyPort&quot;) || str.equals(&quot;https.proxyPort&quot;)) {
+                    param.setResult((Object) null);
+                }
+            }
+        }});
+    }
+}
+</code></pre>
+<h3 id="数字证书">数字证书</h3>
+<pre><code>openssl x509 -inform PEM -subject_hash_old -in 1111.cer |head -1
+
+/system/etc/security/cacerts/269953fb.0
+
+/data/misc/keystore/user_0
+
+AOSP包含的所有根证书都位于 libcore/luni/src/main/files/cacerts
+
+certlm.msc
+</code></pre>
+<h3 id="hook过证书检测">Hook过证书检测</h3>
+<p>看JustTrustMePlus的源码，GitHub上搜一下</p>
+<h3 id="justtrustme失效的处理">JustTrustMe失效的处理</h3>
+<p>就是系统库或第三方库做了混淆（即要hook的函数名发生了改变），将JustTrustMePlus源码做个适配与替换就ok</p>
+<h3 id="强制代理">强制代理</h3>
+<pre><code>import android.util.Log;
+import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+
+public class Hello implements IXposedHookLoadPackage {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
+        Log.d(&quot;xiaojianbang&quot;, &quot;hooking Start...&quot;);
+        if (lpparam.packageName.equals(&quot;com.xiaojianbang.https&quot;)) {
+            XposedHelpers.findAndHookMethod(URL.class, &quot;openConnection&quot;, new Object[]{Proxy.class, new XC_MethodHook() {
+                public void beforeHookedMethod(XC_MethodHook.MethodHookParam param) throws Throwable {
+                    param.args[0] = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(&quot;192.168.1.7&quot;, 16666));
+                    Log.d(&quot;xiaojianbang&quot;, &quot;Hooking openConnection&quot;);
+                }
+            }});
+        }
+    }
+}
+</code></pre>
+<h3 id="hook加固app">Hook加固APP</h3>
+<pre><code>import android.content.Context;
+import android.util.Log;
+import android.util.Base64;
+
+import javax.crypto.Mac;
+import javax.crypto.Cipher;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.math.BigInteger;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.PublicKey;
+import java.util.List;
+
+import com.alipay.app.XC_MethodHook;
+import com.alipay.app.AlipayBridge;
+import com.alipay.app.AlipayHelpers;
+import com.alipay.app.IAlipayLoadPackage;
+import com.alipay.app.XC_MethodReplacement;
+import com.alipay.app.callbacks.XC_LoadPackage.LoadPackageParam;
+
+public class Main implements IAlipayLoadPackage {
+    public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
+
+        Log.d(&quot;xiaojianbang&quot;, &quot;hooking...&quot;);
+
+        if(!(lpparam.packageName.equals(&quot;com.oyohotels.consumer&quot;))) return;
+
+//        AlipayHelpers.findAndHookMethod(System.class, &quot;getProperty&quot;, String.class, new XC_MethodHook() {
+//
+//            public void behindTencentMethod(MethodHookParam param) throws Throwable {
+//                StringBuilder sb = new StringBuilder();
+//                sb.append(&quot;Hooking getProperty from: &quot;);
+//                sb.append(lpparam.packageName);
+//                Log.d(&quot;xiaojianbang&quot;, sb.toString());
+//                String str = (String) param.args[0];
+//                if (str.equals(&quot;https.proxyHost&quot;) || str.equals(&quot;http.proxyHost&quot;) || str.equals(&quot;http.proxyPort&quot;) || str.equals(&quot;https.proxyPort&quot;)) {
+//                    param.setResult(null);
+//                }
+//            }
+//        });
+
+        AlipayHelpers.findAndHookMethod(&quot;com.stub.StubApp&quot;, lpparam.classLoader,
+                &quot;attachBaseContext&quot;, Context.class, new XC_MethodHook() {
+                    @Override
+                    protected void behindTencentMethod(MethodHookParam param) throws Throwable {
+                        super.behindTencentMethod(param);
+                        //获取到Context对象，通过这个对象来获取classloader
+                        Context context = (Context) param.args[0];
+                        //获取classloader，之后hook加固后的就使用这个classloader
+                        ClassLoader classLoader = context.getClassLoader();
+                        //下面就是classloader修改成壳的classloader就可以成功的hook了
+
+                        //https://github.com/square/okhttp/blob/parent-3.0.1/okhttp/src/main/java/okhttp3/CertificatePinner.java#L144
+                        Log.d(&quot;xiaojianbang&quot;, &quot;Hooking okhttp3.CertificatePinner.check(String,List) (3.x)&quot;);
+                        try {
+                            classLoader.loadClass(&quot;okhttp3.CertificatePinner&quot;);
+                            Log.d(&quot;xiaojianbang&quot;, &quot;找到CertificatePinner类&quot;);
+                            AlipayHelpers.findAndHookMethod(&quot;okhttp3.CertificatePinner&quot;, classLoader, &quot;check&quot;, String.class, List.class, new XC_MethodReplacement() {
+                                @Override
+                                protected Object displaceTencentMethod(MethodHookParam methodHookParam) throws Throwable {
+                                    return null;
+                                }
+                            });
+                        } catch (ClassNotFoundException e) {
+                            Log.d(&quot;xiaojianbang&quot;, &quot;OKHTTP 3.x not found -- not hooking&quot;);
+                            // pass
+                        }
+
+                        //https://github.com/square/okhttp/blob/parent-3.0.1/okhttp/src/main/java/okhttp3/internal/tls/OkHostnameVerifier.java
+                        try {
+                            classLoader.loadClass(&quot;okhttp3.internal.tls.OkHostnameVerifier&quot;);
+                            AlipayHelpers.findAndHookMethod(&quot;okhttp3.internal.tls.OkHostnameVerifier&quot;, classLoader, &quot;verify&quot;, String.class, javax.net.ssl.SSLSession.class, new XC_MethodReplacement() {
+                                @Override
+                                protected Object displaceTencentMethod(MethodHookParam methodHookParam) throws Throwable {
+                                    return true;
+                                }
+                            });
+                        } catch (ClassNotFoundException e) {
+                            Log.d(&quot;xiaojianbang&quot;, &quot;OKHTTP 3.x not found in -- not hooking OkHostnameVerifier.verify(String, SSLSession)&quot;);
+                            // pass
+                        }
+
+                        //https://github.com/square/okhttp/blob/parent-3.0.1/okhttp/src/main/java/okhttp3/internal/tls/OkHostnameVerifier.java
+                        try {
+                            classLoader.loadClass(&quot;okhttp3.internal.tls.OkHostnameVerifier&quot;);
+                            AlipayHelpers.findAndHookMethod(&quot;okhttp3.internal.tls.OkHostnameVerifier&quot;, classLoader, &quot;verify&quot;, String.class, java.security.cert.X509Certificate.class, new XC_MethodReplacement() {
+                                @Override
+                                protected Object displaceTencentMethod(MethodHookParam methodHookParam) throws Throwable {
+                                    return true;
+                                }
+                            });
+                        } catch (ClassNotFoundException e) {
+                            Log.d(&quot;xiaojianbang&quot;, &quot;OKHTTP 3.x not found in -- not hooking OkHostnameVerifier.verify(String, X509)(&quot;);
+                            // pass
+                        }
+
+
+
+
+                    }
+                });
+
+//        AlipayHelpers.findAndHookMethod(&quot;android.app.Application&quot;, lpparam.classLoader, &quot;attach&quot;, Context.class, new XC_MethodHook() {
+//                    @Override
+//                    protected void behindTencentMethod(MethodHookParam param) throws Throwable {
+//                        // Hook OkHttp or third party libraries.
+//                        Context context = (Context) param.args[0];
+//                        ClassLoader classLoader = context.getClassLoader();
+//
+//
+//
+//
+//
+//                    }
+//                }
+//        );
+
+    }
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#api">API</a>
+<ul>
+<li><a href="#%E9%80%89%E6%8B%A9%E9%9C%80%E8%A6%81hook%E7%9A%84app%E5%8C%85%E5%90%8D%E5%8F%8A%E7%B1%BB%E5%90%8D">选择需要Hook的APP包名及类名</a></li>
+<li><a href="#hook%E4%BF%AE%E6%94%B9%E5%8F%98%E9%87%8F">Hook修改变量</a></li>
+<li><a href="#hook%E4%BF%AE%E6%94%B9%E6%99%AE%E9%80%9A%E6%96%B9%E6%B3%95%E5%B9%B6%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0%E4%B8%8E%E8%BF%94%E5%9B%9E%E5%80%BC">Hook修改普通方法并获取参数与返回值</a></li>
+<li><a href="#hook%E6%97%A0%E5%8F%82%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0">Hook无参构造函数</a></li>
+<li><a href="#hook%E6%9C%89%E5%8F%82%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0">Hook有参构造函数</a></li>
+<li><a href="#hook%E5%A4%8D%E6%9D%82%E5%8F%82%E6%95%B0">Hook复杂参数</a></li>
+<li><a href="#hook%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8F%82%E6%95%B0">Hook自定义类参数</a></li>
+<li><a href="#hook%E6%9B%BF%E6%8D%A2%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%BD%E6%95%B0%E7%BD%AE%E7%A9%BA">Hook替换函数与函数置空</a></li>
+<li><a href="#hook%E5%86%85%E9%83%A8%E7%B1%BB">Hook内部类</a></li>
+<li><a href="#hook%E5%8C%BF%E5%90%8D%E7%B1%BB">Hook匿名类</a></li>
+<li><a href="#xposed%E4%B8%BB%E5%8A%A8%E8%B0%83%E7%94%A8">Xposed主动调用</a></li>
+<li><a href="#java%E5%8F%8D%E5%B0%84">Java反射</a></li>
+<li><a href="#hook%E6%89%80%E6%9C%89%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E6%96%B9%E6%B3%95">Hook所有类的所有方法</a></li>
+<li><a href="#multidex%E7%9A%84hook%E6%96%B9%E6%B3%95">multiDex的Hook方法</a></li>
+</ul>
+</li>
+<li><a href="#java%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E7%A4%BA%E4%BE%8B">Java加密算法示例</a>
+<ul>
+<li><a href="#%E5%8D%95%E5%90%91%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B0%E6%B6%88%E6%81%AF%E6%91%98%E8%A6%81%E7%AE%97%E6%B3%95">单向散列函数(消息摘要算法)</a>
+<ul>
+<li><a href="#utils">Utils</a></li>
+<li><a href="#md5">MD5</a></li>
+<li><a href="#sha">SHA</a></li>
+<li><a href="#mac">Mac</a></li>
+</ul>
+</li>
+<li><a href="#%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E5%9C%A8java%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8">对称加密算法在Java中的调用</a>
+<ul>
+<li><a href="#des">DES</a></li>
+<li><a href="#desede">DESede</a></li>
+<li><a href="#aes">AES</a></li>
+</ul>
+</li>
+<li><a href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95%E5%9C%A8java%E4%B8%AD%E7%9A%84%E8%B0%83%E7%94%A8">数字签名算法在Java中的调用</a>
+<ul>
+<li><a href="#rsa">RSA</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8D%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81">快速定位关键代码</a></li>
+<li><a href="#xposed%E8%BF%87-h5-app-%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95%E9%99%90%E5%88%B6">Xposed过 H5 APP 远程调试限制</a></li>
+<li><a href="#xposed%E8%BF%87%E5%85%A8%E5%B1%80%E4%BB%A3%E7%90%86%E6%A3%80%E6%B5%8B">Xposed过全局代理检测</a></li>
+<li><a href="#%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6">数字证书</a></li>
+<li><a href="#hook%E8%BF%87%E8%AF%81%E4%B9%A6%E6%A3%80%E6%B5%8B">Hook过证书检测</a></li>
+<li><a href="#justtrustme%E5%A4%B1%E6%95%88%E7%9A%84%E5%A4%84%E7%90%86">JustTrustMe失效的处理</a></li>
+<li><a href="#%E5%BC%BA%E5%88%B6%E4%BB%A3%E7%90%86">强制代理</a></li>
+<li><a href="#hook%E5%8A%A0%E5%9B%BAapp">Hook加固APP</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/base64hexbytesstring-zhi-jian-de-hu-xiang-zhuan-huan-javascript-shi-xian/">
+              <h3 class="post-title">
+                Base64、Hex、Bytes、String之间的互相转换(JavaScript实现)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

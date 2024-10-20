@@ -1,0 +1,402 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3使用requests | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3使用requests | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1. 发送请求
+import requests
+
+r = requests.get(url='http://httpbin.org/get')
+r = requests.post('http://httpbin.org/post') 
+r ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3使用requests
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="1-发送请求">1. 发送请求</h3>
+<pre><code>import requests
+
+r = requests.get(url='http://httpbin.org/get')
+r = requests.post('http://httpbin.org/post') 
+r = requests.put('http://httpbin.org/put')
+r = requests.delete('http://httpbin.org/delete')
+r = requests.head('http://httpbin.org/get')
+r = requests.options('http://httpbin.org/get')
+</code></pre>
+<h3 id="2-设置ua">2. 设置UA</h3>
+<pre><code>import requests
+
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'}
+r = requests.get(url='http://httpbin.org/get', headers=headers)
+print(r.text)
+{
+  &quot;args&quot;: {}, 
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;, 
+    &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
+    &quot;Host&quot;: &quot;httpbin.org&quot;, 
+    &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36&quot;
+  }, 
+  &quot;origin&quot;: &quot;180.172.125.179, 180.172.125.179&quot;, 
+  &quot;url&quot;: &quot;https://httpbin.org/get&quot;
+}
+</code></pre>
+<h3 id="3-设置代理">3. 设置代理</h3>
+<pre><code>import requests
+
+proxies = {'http': 'http://47.100.233.103:10250',
+           'https': 'https://47.100.233.103:10250'}
+response = requests.get('https://www.12306.cn', proxies=proxies)
+print(response.status_code)
+
+# HTTP Basic Auth
+import requests
+
+proxies = {'http': 'http://user:password@47.100.233.103:10250',
+           'https': 'https://user:password@47.100.233.103:10250'}
+response = requests.get('https://www.12306.cn', proxies=proxies)
+print(response.status_code)
+
+# SOCKS 协议代理
+import requests
+
+proxies = {'http': 'socks5://user:password@host:port',
+           'https': 'socks5://user:password@host:port'}
+response = requests.get('https://www.12306.cn', proxies=proxies)
+print(response.status_code)
+</code></pre>
+<h3 id="4-身份认证">4. 身份认证</h3>
+<pre><code># 默认使用 HTTPBasicAuth 这个类来认证
+import requests
+
+r = requests.get('http://192.168.30.229:5000', auth=HTTPBasicAuth('username', 'password'))
+print(r.status_code)
+
+# OAuth 认证
+import requests
+from requests_oauthlib import OAuth1
+
+url = 'https://api.twitter/1.1/account/verify_credentials.json'
+auth = OAuth1('YOUR_APP _KEY', ' YOUR_APP_SECRET',
+              'USER_OAUTH_TOKEN', 'USER_OAUTH_TOKEN_SECRET')
+requests.get(url, auth=auth)
+</code></pre>
+<h3 id="5-设置超时">5. 设置超时</h3>
+<pre><code>import requests
+response = requests.get('https://www.taobao.com', timeout=0.01)
+print(response.status_code)
+
+# 请求分为两个阶段，即连接(connect)和读取(read)。
+# 设置的 timeout 将用作连接和读取这二者的 timeout 总和。
+# 如果要分别指定，就可以传入一个元组：
+import requests
+response = requests.get('https://www.taobao.com', timeout=(5, 11))
+print(response.status_code)
+</code></pre>
+<h3 id="6-get传参">6. get传参</h3>
+<pre><code>import requests
+
+params = {'name': 'aici', 'age': 18}
+r = requests.get(url='http://httpbin.org/get', params=params)
+print(r.text)
+{
+  &quot;args&quot;: {
+    &quot;age&quot;: &quot;18&quot;, 
+    &quot;name&quot;: &quot;aici&quot;
+  }, 
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;, 
+    &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
+    &quot;Host&quot;: &quot;httpbin.org&quot;, 
+    &quot;User-Agent&quot;: &quot;python-requests/2.21.0&quot;
+  }, 
+  &quot;origin&quot;: &quot;180.172.125.179, 180.172.125.179&quot;, 
+  &quot;url&quot;: &quot;https://httpbin.org/get?name=aici&amp;age=18&quot;
+}
+</code></pre>
+<h3 id="7-post请求传参">7. post请求传参</h3>
+<pre><code>import requests
+
+data = {'name': 'aici', 'age': 18}
+r = requests.post(url='http://httpbin.org/post', data=data)
+print(r.text)
+{
+  &quot;args&quot;: {}, 
+  &quot;data&quot;: &quot;&quot;, 
+  &quot;files&quot;: {}, 
+  &quot;form&quot;: {
+    &quot;age&quot;: &quot;18&quot;, 
+    &quot;name&quot;: &quot;aici&quot;
+  }, 
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;, 
+    &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
+    &quot;Content-Length&quot;: &quot;16&quot;, 
+    &quot;Content-Type&quot;: &quot;application/x-www-form-urlencoded&quot;, 
+    &quot;Host&quot;: &quot;httpbin.org&quot;, 
+    &quot;User-Agent&quot;: &quot;python-requests/2.21.0&quot;
+  }, 
+  &quot;json&quot;: null, 
+  &quot;origin&quot;: &quot;180.172.125.179, 180.172.125.179&quot;, 
+  &quot;url&quot;: &quot;https://httpbin.org/post&quot;
+}
+</code></pre>
+<h3 id="8-文件上传">8. 文件上传</h3>
+<pre><code>import requests
+
+files = {'file': open('z.py', 'rb')}
+r = requests.post(url='http://httpbin.org/post', files=files)
+print(r.text)
+{
+  &quot;args&quot;: {}, 
+  &quot;data&quot;: &quot;&quot;, 
+  &quot;files&quot;: {
+    &quot;file&quot;: &quot;import requests\r\n\r\nfiles = {'file': open('z.py', 'rb')}\r\nr = requests.post(url='http://httpbin.org/post', files=files)\r\nprint(r.text)\r\n&quot;
+  }, 
+  &quot;form&quot;: {}, 
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;, 
+    &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
+    &quot;Content-Length&quot;: &quot;275&quot;, 
+    &quot;Content-Type&quot;: &quot;multipart/form-data; boundary=845dbe8cf3e79f9268c1126c637eb858&quot;, 
+    &quot;Host&quot;: &quot;httpbin.org&quot;, 
+    &quot;User-Agent&quot;: &quot;python-requests/2.21.0&quot;
+  }, 
+  &quot;json&quot;: null, 
+  &quot;origin&quot;: &quot;180.172.125.179, 180.172.125.179&quot;, 
+  &quot;url&quot;: &quot;https://httpbin.org/post&quot;
+}
+</code></pre>
+<h3 id="9-会话维持">9. 会话维持</h3>
+<pre><code>import requests
+
+s = requests.Session()
+s.get('http://httpbin.org/cookies/set/number/123456789')
+r = s.get('http://httpbin.org/cookies')
+print(r.text)
+{
+  &quot;cookies&quot;: {
+    &quot;number&quot;: &quot;123456789&quot;
+  }
+}
+</code></pre>
+<h3 id="10-prepared-request">10. Prepared Request</h3>
+<pre><code>```
+'''
+将请求表示为数据结构, 其中各个参数都可以通过一个 Request 对象来表示。
+引入Request对象, 然后用url、data和headers参数构造了一个Request对象, 这时需要再调用Session的prepare_request()方法将其转换为一个Prepared Request 对象, 然后调用send()方法发送即可。
+'''
+from requests import Request, Session
+
+url = 'http://httpbin.org/post'
+data = {
+    'name': 'germey'
+}
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.109 Safari/537.36'}
+s = Session()
+req = Request('POST', url, data=data, headers=headers)
+prepped = s.prepare_request(req)
+r = s.send(prepped)
+print(r.text)
+```
+</code></pre>
+<h3 id="11-https的ssl证书验证">11. https的ssl证书验证</h3>
+<pre><code>```
+忽略警告方法一：
+import requests
+import urllib3
+
+urllib3.disable_warnings()
+response = requests.get('https://www.12306.cn', verify=False)
+print(response.status_code)
+
+忽略警告方法二：
+import logging
+import requests
+logging.captureWarnings(True)
+
+response = requests.get('https://www.12306.cn', verify=False)
+print(response.status_code)
+
+证书验证(本地私有证书的key必须是解密状态，加密状态的key是不支持的)：
+import requests
+
+response = requests.get('https://www.12306.cn', cert=('/path/server.crt', '/path/key'))
+print(response .status_code) 
+```
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#1-%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82">1. 发送请求</a></li>
+<li><a href="#2-%E8%AE%BE%E7%BD%AEua">2. 设置UA</a></li>
+<li><a href="#3-%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86">3. 设置代理</a></li>
+<li><a href="#4-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81">4. 身份认证</a></li>
+<li><a href="#5-%E8%AE%BE%E7%BD%AE%E8%B6%85%E6%97%B6">5. 设置超时</a></li>
+<li><a href="#6-get%E4%BC%A0%E5%8F%82">6. get传参</a></li>
+<li><a href="#7-post%E8%AF%B7%E6%B1%82%E4%BC%A0%E5%8F%82">7. post请求传参</a></li>
+<li><a href="#8-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0">8. 文件上传</a></li>
+<li><a href="#9-%E4%BC%9A%E8%AF%9D%E7%BB%B4%E6%8C%81">9. 会话维持</a></li>
+<li><a href="#10-prepared-request">10. Prepared Request</a></li>
+<li><a href="#11-https%E7%9A%84ssl%E8%AF%81%E4%B9%A6%E9%AA%8C%E8%AF%81">11. https的ssl证书验证</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python-cao-zuo-redis/">
+              <h3 class="post-title">
+                Python操作Redis
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

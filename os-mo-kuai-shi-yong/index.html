@@ -1,0 +1,313 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>os模块使用 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="os模块使用 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="os模块使用
+目录管理(os)
+
+
+system：执行系统命令
+# 执行系统命令
+os.system('cls')
+
+
+
+name：获取操作系统名称
+# 操作系统名称，nt代表Windows， posix代表类unix
+print(os.n..." />
+    <meta name="keywords" content="os" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              os模块使用
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-09-03
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/qQms4fD2E3/" class="post-tag">
+                  # os
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="os模块使用">os模块使用</h1>
+<h3 id="目录管理os">目录管理(os)</h3>
+<ul>
+<li>
+<p>system：执行系统命令</p>
+<pre><code class="language-python"># 执行系统命令
+os.system('cls')
+</code></pre>
+</li>
+<li>
+<p>name：获取操作系统名称</p>
+<pre><code class="language-python"># 操作系统名称，nt代表Windows， posix代表类unix
+print(os.name)
+</code></pre>
+</li>
+<li>
+<p>environ</p>
+<pre><code class="language-python"># 获取环境变量
+env = os.environ
+
+print(env['path'])
+print(env.get('path'))
+print(env.get('HELLO'))
+</code></pre>
+</li>
+<li>
+<p>getcwd：# 获取当前工作目录</p>
+<pre><code class="language-python">print(os.getcwd())
+</code></pre>
+</li>
+<li>
+<p>mkdir：创建目录</p>
+<pre><code class="language-python"># 创建目录，只能是单层目录
+# os.mkdir('hello')
+
+# 这里会失败
+# os.mkdir('a/b/c')
+</code></pre>
+</li>
+<li>
+<p>makedirs：创建目录，会创建中间目录</p>
+<pre><code class="language-python"># 会创建中间目录
+# os.makedirs('a/b/c')
+</code></pre>
+</li>
+<li>
+<p>rmdir：删除目录，只能删除空目录</p>
+<pre><code class="language-python"># 删除目录，只能删除空目录
+# os.rmdir('hello')
+# 当目录中有其他文件或目录时删除失败
+# os.rmdir('a')
+</code></pre>
+</li>
+<li>
+<p>rename：修改文件名(可以是目录)</p>
+<pre><code class="language-python"># 修改名字，可以是目录 （old, new）
+# os.rename('a', 'c')
+# 也可以修改文件名
+# os.rename('test.py', '123.py')
+</code></pre>
+</li>
+<li>
+<p>stat：查看文件信息</p>
+<pre><code class="language-python"># 查看文件信息
+print(os.stat('123.py'))
+</code></pre>
+</li>
+<li>
+<p>listdir：列出直接子文件</p>
+<pre><code class="language-python"># 列出直接子文件
+print(os.listdir('c'))
+</code></pre>
+</li>
+<li>
+<p>相对目录、绝对目录</p>
+<pre><code>相对目录：就是有参考的目录
+	. 表示当前目录，通常 ./ 可以省略
+	.. 表示上一级目录
+	
+绝对目录：windows中以某个盘符开头，类unix系统中以'/'开头的目录
+
+目录分隔符：
+	类unix：/
+	windows：/ 或 \
+	建议：统一使用 '/' 表示
+	
+说明：在文件操作时，使用相对目录和绝对目录都可以
+</code></pre>
+</li>
+<li>
+<p>path</p>
+<pre><code class="language-python">from os import path
+
+# 拼接目录
+print(path.join('abc/def', '123.py'))
+
+# 提取文件后缀（切割文件名与后缀）
+name, ext = path.splitext('789.py')
+print(name, ext)
+
+# 提取目录名（最后一个目录分隔符的前面内容）
+print(path.dirname('123/456/789.py'))
+
+# 提取文件名(包括后缀)
+print(path.basename('123/456/789.py'))
+
+# 切割文件名和目录
+print(path.split('123/456/789.py'))
+
+# 判断文件是否存在（可以是目录）
+print(path.exists('123.py'))
+
+# 判断是否是目录文件
+print(path.isdir('c'))
+
+# 判断是否是普通文件
+print(path.isfile('123.py'))
+
+# 获取普通文件大小
+print(path.getsize('01-os.py'))
+# 不可以获取目录大小，始终是0
+print(path.getsize('c'))
+</code></pre>
+</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#os%E6%A8%A1%E5%9D%97%E4%BD%BF%E7%94%A8">os模块使用</a><br>
+*
+<ul>
+<li><a href="#%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86os">目录管理(os)</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/ni-xiang-kai-fa-chang-yong-de-adb-ming-ling/">
+              <h3 class="post-title">
+                逆向开发常用的 adb 命令
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

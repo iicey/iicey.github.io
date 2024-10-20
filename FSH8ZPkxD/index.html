@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>mitmproxy | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="mitmproxy | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Python使用示例
+from loguru import logger
+
+from mitmproxy import http, ctx
+
+
+def request(flow: http.HTTPFlow) -&gt; None:
+   ..." />
+    <meta name="keywords" content="mitmproxy,代理" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              mitmproxy
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-12-01
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/0DYAYDPfMg0/" class="post-tag">
+                  # mitmproxy
+                </a>
+              
+                <a href="https://iicey.github.io/161bBV4y59T/" class="post-tag">
+                  # 代理
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="python使用示例">Python使用示例</h3>
+<pre><code class="language-python">from loguru import logger
+
+from mitmproxy import http, ctx
+
+
+def request(flow: http.HTTPFlow) -&gt; None:
+    # ctx.log.info()
+
+
+def response(flow: http.HTTPFlow):
+    text = flow.response.text
+
+</code></pre>
+<h3 id="设置上游模式代理二级代理">设置上游模式代理(二级代理)</h3>
+<pre><code>mitmdump --mode upstream:http://127.0.0.1:1087/@8888 -s script.py
+
+mitmdump --mode upstream:http://代理服务器ip:port/@本地port -s script.py
+</code></pre>
+<h3 id="在代码中修改二级代理">在代码中修改二级代理</h3>
+<pre><code class="language-python">from mitmproxy import http
+from mitmproxy.connection import Server
+from mitmproxy.net.server_spec import ServerSpec
+
+def request(flow: http.HTTPFlow) -&gt; None:
+    address = (&quot;127.0.0.1&quot;, 1080)
+    flow.server_conn = Server(address=flow.server_conn.address)
+    flow.server_conn.via = ServerSpec((&quot;http&quot;, address))
+</code></pre>
+<h3 id="安装证书">安装证书</h3>
+<ul>
+<li>启动： mitmproxy -p 8888</li>
+<li>配置电脑或手机代理</li>
+<li>访问<a href="http://mitm.it/">mitm.it</a>下载证书安装</li>
+<li>设置信任证书</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#python%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B">Python使用示例</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E4%B8%8A%E6%B8%B8%E6%A8%A1%E5%BC%8F%E4%BB%A3%E7%90%86%E4%BA%8C%E7%BA%A7%E4%BB%A3%E7%90%86">设置上游模式代理(二级代理)</a></li>
+<li><a href="#%E5%9C%A8%E4%BB%A3%E7%A0%81%E4%B8%AD%E4%BF%AE%E6%94%B9%E4%BA%8C%E7%BA%A7%E4%BB%A3%E7%90%86">在代码中修改二级代理</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6">安装证书</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/32t7aBd2r/">
+              <h3 class="post-title">
+                线程池传递多个参数
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

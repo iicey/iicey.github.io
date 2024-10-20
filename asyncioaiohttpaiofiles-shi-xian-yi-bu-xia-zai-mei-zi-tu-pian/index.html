@@ -1,0 +1,255 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>asyncio+aiohttp+aiofiles实现异步下载妹子图片 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="asyncio+aiohttp+aiofiles实现异步下载妹子图片 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="因为不熟悉的缘故，总觉得写的不好，一种异步代码与同步代码参杂着的感觉，希望能够得到指点。
+import os
+import re
+
+import aiofiles
+import aiohttp
+import asyncio
+from lxm..." />
+    <meta name="keywords" content="asyncio,aiohttp,aiofiles" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              asyncio+aiohttp+aiofiles实现异步下载妹子图片
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-17
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/fJ8J5RLM5b/" class="post-tag">
+                  # asyncio
+                </a>
+              
+                <a href="https://iicey.github.io/FuRhyOf2Zfr/" class="post-tag">
+                  # aiohttp
+                </a>
+              
+                <a href="https://iicey.github.io/ztBXjKlSWSU/" class="post-tag">
+                  # aiofiles
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>因为不熟悉的缘故，总觉得写的不好，一种异步代码与同步代码参杂着的感觉，希望能够得到指点。</p>
+<pre><code>import os
+import re
+
+import aiofiles
+import aiohttp
+import asyncio
+from lxml import etree
+
+
+# 发请求获取html文本
+async def fetch(session, url):
+    async with session.get(url) as response:
+        return await response.text()
+
+
+# 解析html获取每组的列表页链接
+async def parser(html):
+    tree = etree.HTML(html)
+    pic_href_list = tree.xpath('//*[@class=&quot;listbox&quot;]/a/@href')
+    pic_title_list = tree.xpath('//*[@class=&quot;listbox&quot;]/a/@title')
+    for href, title in zip(pic_href_list, pic_title_list):
+        path_id = re.findall('\d+', href)[0]
+        dir_path = os.path.join(os.getcwd(), 'zdqx', f&quot;{path_id}_{title}&quot;)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        yield 'http://' + href[2:], dir_path
+
+
+# 获取每组图片的所有的链接
+async def detail_parser(html):
+    tree = etree.HTML(html)
+    src_list = tree.xpath('//div[@class=&quot;img-box&quot;]/div/a/img/@src')
+    return src_list[:-1]
+
+
+# 下载图片并用异步文件库aiofiles进行存储
+async def content(session, url, dir_path):
+    async with session.get(url) as response:
+        img = await response.read()
+        async with aiofiles.open(dir_path, mode='wb') as f:
+            await f.write(img)
+            await f.close()
+
+
+async def download(url):
+    async with aiohttp.ClientSession() as session:
+        html_text = await fetch(session, url)
+        async for detail_url, dir_path in parser(html_text):
+            detail_text = await fetch(session, detail_url)
+            src_list = await detail_parser(detail_text)
+            for index, src in enumerate(src_list):
+                file_path = os.path.join(dir_path, f&quot;{index}.jpg&quot;)
+                if not os.path.exists(file_path):
+                    try:
+                        await content(session, src, file_path)
+                    except AssertionError as e:
+                        print(e)
+                    finally:
+                        print(src)
+
+
+if __name__ == '__main__':
+    urls = ['http://www.zdqx.com/qingchun/index.html'] + [f'http://www.zdqx.com/qingchun/index_{i}.html' for i in
+                                                          range(2, 41)]
+
+    loop = asyncio.get_event_loop()
+    tasks = [asyncio.ensure_future(download(url)) for url in urls]
+    tasks = asyncio.gather(*tasks)
+    loop.run_until_complete(tasks)
+
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/linuxxi-tong-de-xiang-guan-pei-zhi/">
+              <h3 class="post-title">
+                Linux：系统的相关配置
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

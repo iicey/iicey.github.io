@@ -1,0 +1,233 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JavaScript的async与await应用 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="JavaScript的async与await应用 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在Chrome的Console下处理1000个请求，耗时50s内全部完成
+const fetch = require('node-fetch')
+
+async function fetchAndDecode(url, i) {
+    le..." />
+    <meta name="keywords" content="async" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              JavaScript的async与await应用
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/FsbguOUVh/" class="post-tag">
+                  # async
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="在chrome的console下处理1000个请求耗时50s内全部完成">在Chrome的Console下处理1000个请求，耗时50s内全部完成</h3>
+<pre><code class="language-javascript">const fetch = require('node-fetch')
+
+async function fetchAndDecode(url, i) {
+    let response = await fetch(url, {
+        &quot;headers&quot;: {
+            &quot;Accept&quot;: &quot;text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,&quot; +
+                &quot;image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9&quot;,
+            &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;,
+            &quot;Accept-Language&quot;: &quot;zh-CN,zh;q=0.9&quot;,
+            &quot;Cache-Control&quot;: &quot;no-cache&quot;,
+            &quot;Host&quot;: &quot;httpbin.org&quot;,
+            &quot;Pragma&quot;: &quot;no-cache&quot;,
+            &quot;Upgrade-Insecure-Requests&quot;: &quot;1&quot;,
+            &quot;User-Agent&quot;: &quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (&quot; +
+                &quot;KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36&quot;,
+        },
+        &quot;referrerPolicy&quot;: &quot;strict-origin-when-cross-origin&quot;,
+        &quot;body&quot;: null,
+        &quot;method&quot;: &quot;GET&quot;,
+        &quot;mode&quot;: &quot;cors&quot;,
+        &quot;credentials&quot;: &quot;omit&quot;
+    });
+
+    let content = await response.text();
+    console.log(&quot;=&quot; + i)
+    return content;
+}
+
+
+async function displayContent() {
+    const start_time = new Date();
+    let tasks = []
+    for (let i = 0; i &lt; 1000; i++) {
+        tasks.push(fetchAndDecode('http://httpbin.org/get', i))
+    }
+    let values = await Promise.all(tasks);
+    for (const value of values) {
+        console.log(value)
+    }
+    const end_time = new Date();
+    const diff_time = end_time.getTime() - start_time.getTime()
+    console.log(&quot;diff_time: &quot; + diff_time / 1000)
+}
+
+displayContent()
+    .catch((e) =&gt;
+        console.log(e)
+    );
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%9C%A8chrome%E7%9A%84console%E4%B8%8B%E5%A4%84%E7%90%861000%E4%B8%AA%E8%AF%B7%E6%B1%82%E8%80%97%E6%97%B650s%E5%86%85%E5%85%A8%E9%83%A8%E5%AE%8C%E6%88%90">在Chrome的Console下处理1000个请求，耗时50s内全部完成</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python-bian-ma-andjie-ma/">
+              <h3 class="post-title">
+                Python编码&amp;解码
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

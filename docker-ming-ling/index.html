@@ -1,0 +1,287 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Docker命令 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Docker命令 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="基本用法
+在后台运行容器并打印容器ID
+docker run -d
+
+容器退出时应用的重新启动策略（默认为“否”）
+docker run --restart always
+
+添加host
+docker run --add-host=&quo..." />
+    <meta name="keywords" content="Docker" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Docker命令
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-09-09
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/cLUWyd24H/" class="post-tag">
+                  # Docker
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="基本用法">基本用法</h1>
+<h3 id="在后台运行容器并打印容器id">在后台运行容器并打印容器ID</h3>
+<pre><code>docker run -d
+</code></pre>
+<h3 id="容器退出时应用的重新启动策略默认为否">容器退出时应用的重新启动策略（默认为“否”）</h3>
+<pre><code>docker run --restart always
+</code></pre>
+<h3 id="添加host">添加host</h3>
+<pre><code>docker run --add-host=&quot;127.0.0.1&quot;
+</code></pre>
+<h3 id="将容器的端口映射到主机">将容器的端口映射到主机</h3>
+<pre><code>docker run -p ${容器外端口}:容器内端口
+</code></pre>
+<h3 id="查询在运行的所有容器">查询在运行的所有容器</h3>
+<pre><code>docker ps
+</code></pre>
+<h3 id="查询主机上的所有容器">查询主机上的所有容器</h3>
+<pre><code>docker ps -a
+</code></pre>
+<h3 id="实时输出容器日志">实时输出容器日志</h3>
+<pre><code>docker logs -f -t 容器ID
+</code></pre>
+<h3 id="输出容器最后10行日志">输出容器最后10行日志</h3>
+<pre><code>docker logs --tail 10 容器ID
+</code></pre>
+<h3 id="容器名匹配">容器名匹配</h3>
+<pre><code>docker ps | grep 容器名
+</code></pre>
+<h3 id="awk加工匹配结果">awk加工匹配结果</h3>
+<pre><code>docker ps | grep 容器名 | awk '{print $1}' | xargs
+</code></pre>
+<h3 id="停止容器">停止容器</h3>
+<pre><code>docker stop 容器ID
+</code></pre>
+<h3 id="删除容器">删除容器</h3>
+<pre><code>docker rm -f 容器ID
+</code></pre>
+<h3 id="匹配容器名并删除">匹配容器名并删除</h3>
+<pre><code>docker ps | grep telegram-spider-master | awk '{print $1}' | xargs docker rm -f
+</code></pre>
+<h1 id="runsh">run.sh</h1>
+<h3 id="启动命令">启动命令</h3>
+<pre><code class="language-shell">sh run.sh 1
+</code></pre>
+<h3 id="拉镜像并启动的shell文件">拉镜像并启动的shell文件</h3>
+<pre><code class="language-shell">num=$1
+
+ports=(1000 1001 1002 1003 1004)
+
+docker=harbor.it/k8s/telegram-spider-master:2022.05.30-19.46.11
+
+for (( i=0;i&lt;num;i++))
+ do
+
+docker run -d \
+  --restart always \
+  --add-host='cdh001-192-168-0-60:192.168.0.60'  \
+  --add-host='cdh002-192-168-0-61:192.168.0.61'  \
+  --add-host='cdh003-192-168-0-62:192.168.0.62'  \
+  --add-host='cdh004-192-168-0-63:192.168.0.63'  \
+  --add-host='cdh005-192-168-0-64:192.168.0.64'  \
+  --add-host='cdh006-192-168-0-65:192.168.0.65'  \
+  --add-host='cdh007-192-168-0-66:192.168.0.66'  \
+  --add-host='cdh008-192-168-0-67:192.168.0.67'  \
+  --add-host='cdh009-192-168-0-68:192.168.0.68'  \
+  --add-host='ip-pool-service-master.prod.k8s.it:192.168.0.11'  \
+  --add-host='mongo.prod.it:192.168.0.137' \
+  --add-host='redis.prod.it:192.168.0.154' \
+  --add-host='redis.dev.it:192.168.0.175' \
+  -p ${ports[i]}:8080 \
+   ${docker}
+
+ done
+</code></pre>
+<h1 id="stopsh">stop.sh</h1>
+<h3 id="容器删除命令">容器删除命令</h3>
+<pre><code class="language-shell">docker ps | grep telegram-spider-master | awk '{print $1}' | xargs docker rm -f
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95">基本用法</a><br>
+*
+<ul>
+<li><a href="#%E5%9C%A8%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8%E5%B9%B6%E6%89%93%E5%8D%B0%E5%AE%B9%E5%99%A8id">在后台运行容器并打印容器ID</a></li>
+<li><a href="#%E5%AE%B9%E5%99%A8%E9%80%80%E5%87%BA%E6%97%B6%E5%BA%94%E7%94%A8%E7%9A%84%E9%87%8D%E6%96%B0%E5%90%AF%E5%8A%A8%E7%AD%96%E7%95%A5%E9%BB%98%E8%AE%A4%E4%B8%BA%E5%90%A6">容器退出时应用的重新启动策略（默认为“否”）</a></li>
+<li><a href="#%E6%B7%BB%E5%8A%A0host">添加host</a></li>
+<li><a href="#%E5%B0%86%E5%AE%B9%E5%99%A8%E7%9A%84%E7%AB%AF%E5%8F%A3%E6%98%A0%E5%B0%84%E5%88%B0%E4%B8%BB%E6%9C%BA">将容器的端口映射到主机</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E5%9C%A8%E8%BF%90%E8%A1%8C%E7%9A%84%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8">查询在运行的所有容器</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E4%B8%BB%E6%9C%BA%E4%B8%8A%E7%9A%84%E6%89%80%E6%9C%89%E5%AE%B9%E5%99%A8">查询主机上的所有容器</a></li>
+<li><a href="#%E5%AE%9E%E6%97%B6%E8%BE%93%E5%87%BA%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97">实时输出容器日志</a></li>
+<li><a href="#%E8%BE%93%E5%87%BA%E5%AE%B9%E5%99%A8%E6%9C%80%E5%90%8E10%E8%A1%8C%E6%97%A5%E5%BF%97">输出容器最后10行日志</a></li>
+<li><a href="#%E5%AE%B9%E5%99%A8%E5%90%8D%E5%8C%B9%E9%85%8D">容器名匹配</a></li>
+<li><a href="#awk%E5%8A%A0%E5%B7%A5%E5%8C%B9%E9%85%8D%E7%BB%93%E6%9E%9C">awk加工匹配结果</a></li>
+<li><a href="#%E5%81%9C%E6%AD%A2%E5%AE%B9%E5%99%A8">停止容器</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8">删除容器</a></li>
+<li><a href="#%E5%8C%B9%E9%85%8D%E5%AE%B9%E5%99%A8%E5%90%8D%E5%B9%B6%E5%88%A0%E9%99%A4">匹配容器名并删除</a></li>
+</ul>
+</li>
+<li><a href="#runsh">run.sh</a><br>
+*
+<ul>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4">启动命令</a></li>
+<li><a href="#%E6%8B%89%E9%95%9C%E5%83%8F%E5%B9%B6%E5%90%AF%E5%8A%A8%E7%9A%84shell%E6%96%87%E4%BB%B6">拉镜像并启动的shell文件</a></li>
+</ul>
+</li>
+<li><a href="#stopsh">stop.sh</a><br>
+*
+<ul>
+<li><a href="#%E5%AE%B9%E5%99%A8%E5%88%A0%E9%99%A4%E5%91%BD%E4%BB%A4">容器删除命令</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/v2ray-wen-dang-ji-lu/">
+              <h3 class="post-title">
+                V2ray文档记录
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

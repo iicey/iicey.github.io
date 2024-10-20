@@ -1,0 +1,244 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python编码&amp;解码 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python编码&amp;解码 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="python常用的十进制、16进制、字符串、字节串之间的转换（长期更新帖）
+python处理html字符实体&amp; # 34 或&amp; quot 格式
+import html
+ 
+data = '&amp;#34;xxId&amp;..." />
+    <meta name="keywords" content="编码解码" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python编码&amp;解码
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/sLBTIJeHa/" class="post-tag">
+                  # 编码解码
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="python常用的十进制-16进制-字符串-字节串之间的转换长期更新帖"><a href="https://blog.csdn.net/crylearner/article/details/38521685">python常用的十进制、16进制、字符串、字节串之间的转换（长期更新帖）</a></h1>
+<h1 id="python处理html字符实体-34-或-quot-格式"><a href="https://blog.csdn.net/qq_23948283/article/details/107673564">python处理html字符实体&amp; # 34 或&amp; quot 格式</a></h1>
+<pre><code class="language-python">import html
+ 
+data = '&amp;#34;xxId&amp;#34;: &amp;#34;pingyi.huang&amp;#34';
+data = html.unescape(data)
+print(data)
+
+print(bytes(map(ord, '\x26amp;')))
+print(html.unescape('\x26amp;'))
+</code></pre>
+<h1 id="unicode解码">unicode解码</h1>
+<pre><code class="language-python">&quot;&quot;.encode('utf-8').decode('unicode_escape')
+</code></pre>
+<h1 id="base64">base64</h1>
+<pre><code class="language-python"># Some byte data
+s = b'hello'
+import base64
+
+# Encode as Base64
+a = base64.b64encode(s)
+
+# Decode from Base64
+base64.b64decode(a)
+</code></pre>
+<p>Base64编码仅仅用于面向字节的数据比如字节字符串和字节数组。 此外，编码处理的输出结果总是一个字节字符串。 如果你想混合使用Base64编码的数据和Unicode文本，你必须添加一个额外的解码步骤。例如：</p>
+<pre><code class="language-python">import base64
+
+s = b'hello'
+a = base64.b64encode(s).decode('ascii')
+</code></pre>
+<h1 id="2进制">2进制</h1>
+<pre><code class="language-python">from struct import Struct
+</code></pre>
+<h1 id="8进制">8进制</h1>
+<h1 id="16进制">16进制</h1>
+<p>简单的解码或编码一个十六进制的原始字符串，可以使用　binascii 模块。例如：</p>
+<pre><code class="language-python"># Initial byte string
+s = b'hello'
+# Encode as hex
+import binascii
+h = binascii.b2a_hex(s)
+
+# Decode back to bytes
+binascii.a2b_hex(h)
+
+print(hex(11242521))
+print(int(&quot;ab8c19&quot;, 16))
+print(int(&quot;0xab8c19&quot;, 16))
+</code></pre>
+<p>类似的功能同样可以在 base64 模块中找到。例如：</p>
+<pre><code class="language-python">import base64
+h = base64.b16encode(s)
+
+base64.b16decode(h)
+</code></pre>
+<p>大部分情况下，通过使用上述的函数来转换十六进制是很简单的。 上面两种技术的主要不同在于大小写的处理。 函数 base64.b16decode() 和 base64.b16encode() 只能操作大写形式的十六进制字母， 而 binascii 模块中的函数大小写都能处理。</p>
+<p>还有一点需要注意的是编码函数所产生的输出总是一个字节字符串。 如果想强制以Unicode形式输出，你需要增加一个额外的界面步骤。例如：</p>
+<pre><code class="language-python">h = base64.b16encode(s)
+print(h)
+
+print(h.decode('ascii'))
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#python%E5%B8%B8%E7%94%A8%E7%9A%84%E5%8D%81%E8%BF%9B%E5%88%B6-16%E8%BF%9B%E5%88%B6-%E5%AD%97%E7%AC%A6%E4%B8%B2-%E5%AD%97%E8%8A%82%E4%B8%B2%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BD%AC%E6%8D%A2%E9%95%BF%E6%9C%9F%E6%9B%B4%E6%96%B0%E5%B8%96">python常用的十进制、16进制、字符串、字节串之间的转换（长期更新帖）</a></li>
+<li><a href="#python%E5%A4%84%E7%90%86html%E5%AD%97%E7%AC%A6%E5%AE%9E%E4%BD%93-34-%E6%88%96-quot-%E6%A0%BC%E5%BC%8F">python处理html字符实体&amp; # 34 或&amp; quot 格式</a></li>
+<li><a href="#unicode%E8%A7%A3%E7%A0%81">unicode解码</a></li>
+<li><a href="#base64">base64</a></li>
+<li><a href="#2%E8%BF%9B%E5%88%B6">2进制</a></li>
+<li><a href="#8%E8%BF%9B%E5%88%B6">8进制</a></li>
+<li><a href="#16%E8%BF%9B%E5%88%B6">16进制</a></li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python-yi-bu-lian-jie-duo-ge-fu-wu-zu-jian/">
+              <h3 class="post-title">
+                Python连接多个服务组件
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

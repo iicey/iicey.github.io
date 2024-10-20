@@ -1,0 +1,212 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3认识Mixin模式 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3认识Mixin模式 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接
+那我们今天就来讲讲这个 Mixin，对于这个Mixin，如何理解？它其实是一种设计模式，如果开发者之间没有产生这样一种设计模式的共识，那么设计模式将不复存在。
+为了让大家，对这个 Mixin 有一个更直观的理解，我摘录了网上一段说..." />
+    <meta name="keywords" content="Mixin" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3认识Mixin模式
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-02
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://iicey.github.io/uVP92RS5zMt/" class="post-tag">
+                  # Mixin
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="http://python-online.cn/zh_CN/latest/c01/c01_09.html#id1">原文链接</a></p>
+<p>那我们今天就来讲讲这个 Mixin，对于这个Mixin，如何理解？它其实是一种设计模式，如果开发者之间没有产生这样一种设计模式的共识，那么设计模式将不复存在。</p>
+<p>为了让大家，对这个 Mixin 有一个更直观的理解，我摘录了网上一段说明。</p>
+<p>继承是一个”is-a”关系。比如轿车类继承交通工具类，因为轿车是一个(“is-a”)交通工具。一个物品不可能是多种不同的东西，因此就不应该存在多重继承。不过有没有这种情况，一个类的确是需要继承多个类呢？</p>
+<p>答案是有，我们还是拿交通工具来举例子，民航飞机是一种交通工具，对于土豪们来说直升机也是一种交通工具。对于这两种交通工具，它们都有一个功能是飞行，但是轿车没有。所以，我们不可能将飞行功能写在交通工具这个父类中。但是如果民航飞机和直升机都各自写自己的飞行方法，又违背了代码尽可能重用的原则（如果以后飞行工具越来越多，那会出现许多重复代码）。</p>
+<p>怎么办，那就只好让这两种飞机同时继承交通工具以及飞行器两个父类，这样就出现了多重继承。这时又违背了继承必须是”is-a”关系。这个难题该怎么破？</p>
+<p>这时候 Mixin 就闪亮登场了。飞行只是飞机做为交通工具的一种（增强）属性，我们可以为这个飞行的功能单独定义一个（增强）类，称之为 Mixin 类。这个类，是做为增强功能，添加到子类中的。为了让其他开发者，一看就知道这是个 Mixin 类，一般都要求开发者遵循规范，在类名末尾加上 Mixin 。</p>
+<p>举个例子</p>
+<pre><code>class Vehicle(object):
+    pass
+
+class PlaneMixin(object):
+    def fly(self):
+        print('I am flying')
+
+class Airplane(Vehicle, PlaneMixin):
+    pass
+</code></pre>
+<p>使用Mixin类实现多重继承要遵循以下几个规范</p>
+<ul>
+<li>责任明确：必须表示某一种功能，而不是某个物品；</li>
+<li>功能单一：若有多个功能，那就写多个Mixin类；</li>
+<li>绝对独立：不能依赖于子类的实现；子类即便没有继承这个Mixin类，也照样可以工作，就是缺少了某个功能。</li>
+</ul>
+<h2 id="192-不使用mixin的弊端">1.9.2 不使用Mixin的弊端</h2>
+<p>你肯定会问，不使用 Mixin 行吗？</p>
+<p>当然可以，这个问题就像在问，我不遵循 PEP8 代码规范行吗？完全没问题，只是不推荐那样做。</p>
+<p>那么到底有什么理由，让我们要去用到 Mixin 设计模式呢？</p>
+<p>不使用的话，大概有如下三点弊端：</p>
+<p><strong>1、结构复杂</strong></p>
+<p>单继承中一个类的父类是什么，父类的父类是什么非常明确。多继承一个类有多个父类，父类又有多个父类，继承关系复杂。</p>
+<p><strong>2、优先顺序模糊</strong></p>
+<p>多个父类中有同名方法，在开发过程中，容易造成思维混乱，子类不知道继承哪个父类，会增加开发难度。关于子类的继承顺序，有一个比较复杂的 C3 算法，如果你还不清楚，可以点击我的另一篇文章 ，了解一下。</p>
+<p><strong>3、功能冲突</strong></p>
+<p>多重继承有多个父类，但是子类只能继承一个，对于同名方法，就会导致另一个父类的方法失效。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#192-%E4%B8%8D%E4%BD%BF%E7%94%A8mixin%E7%9A%84%E5%BC%8A%E7%AB%AF">1.9.2 不使用Mixin的弊端</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-jian-ce-qing-qiu-xiang-ying-wen-ben-de-bian-ma/">
+              <h3 class="post-title">
+                Python3检测请求响应文本的编码
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

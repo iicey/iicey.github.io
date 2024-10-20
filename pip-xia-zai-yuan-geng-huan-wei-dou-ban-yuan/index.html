@@ -1,0 +1,211 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>pip下载源更换为清华源 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="pip下载源更换为清华源 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Windows配置
+在C:\Users\ice(你的用户名)\AppData\Roaming目录下创建pip目录
+创建后-&gt;C:\Users\ice\AppData\Roaming\pip
+在此目录下创建pip.ini配置文件，写入以..." />
+    <meta name="keywords" content="pip" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              pip下载源更换为清华源
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/wSuPhSP_AuG/" class="post-tag">
+                  # pip
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h4 id="windows配置">Windows配置</h4>
+<pre><code>在C:\Users\ice(你的用户名)\AppData\Roaming目录下创建pip目录
+创建后-&gt;C:\Users\ice\AppData\Roaming\pip
+在此目录下创建pip.ini配置文件，写入以下内容
+[global]
+timeout = 60 
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple    
+</code></pre>
+<h4 id="ubuntu配置">Ubuntu配置</h4>
+<pre><code>在/home/ice(你的用户名)目录下创建.pip目录
+创建后-&gt;/home/ice/.pip
+在此目录下创建pip.conf配置文件，写入以下内容
+[global]
+timeout = 60 
+index-url = https://pypi.tuna.tsinghua.edu.cn/simple  
+</code></pre>
+<h3 id="依赖环境写入requirementstxt文件">依赖环境写入requirements.txt文件</h3>
+<pre><code>pip freeze &gt; requirements.txt
+</code></pre>
+<h3 id="pip使用临时源链接">pip使用临时源链接</h3>
+<pre><code>pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#windows%E9%85%8D%E7%BD%AE">Windows配置</a></li>
+<li><a href="#ubuntu%E9%85%8D%E7%BD%AE">Ubuntu配置</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BE%9D%E8%B5%96%E7%8E%AF%E5%A2%83%E5%86%99%E5%85%A5requirementstxt%E6%96%87%E4%BB%B6">依赖环境写入requirements.txt文件</a></li>
+<li><a href="#pip%E4%BD%BF%E7%94%A8%E4%B8%B4%E6%97%B6%E6%BA%90%E9%93%BE%E6%8E%A5">pip使用临时源链接</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/jupyter-notebook-shi-xian-yuan-cheng-deng-lu/">
+              <h3 class="post-title">
+                Jupyter notebook实现远程登陆
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,308 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>百行代码实现一个分布式爬虫 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="百行代码实现一个分布式爬虫 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="仅需三步
+
+首先开发一个单机爬虫，需要set对url去重，List的pop与append实现任务队列
+然后将set与List改用为Redis的set与List
+最后使用多进程或者在多台服务器上跑起来即可
+
+示例代码
+# -*- coding..." />
+    <meta name="keywords" content="分布式爬虫" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              百行代码实现一个分布式爬虫
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-21
+              </span>
+              <span>
+                4 min read
+              </span>
+              
+                <a href="https://iicey.github.io/5rRRdnRSZx/" class="post-tag">
+                  # 分布式爬虫
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="仅需三步">仅需三步</h3>
+<ol>
+<li><strong>首先开发一个单机爬虫，需要set对url去重，List的pop与append实现任务队列</strong></li>
+<li><strong>然后将set与List改用为Redis的set与List</strong></li>
+<li><strong>最后使用多进程或者在多台服务器上跑起来即可</strong></li>
+</ol>
+<h3 id="示例代码">示例代码</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+import asyncio
+import logging
+import os
+
+import aiohttp
+import aioredis
+from aiomultiprocess import Pool
+from lxml import etree
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(os.path.split(os.path.basename(__file__))[0])
+user = 'root'
+password = '123546'
+host = '127.0.0.1'
+port = 6379
+
+
+class MoreAuthor:
+
+    def __init__(self, conn, redis):
+        self.conn = conn
+        self.redis = redis
+
+    async def req_res(self, session, url: str, result_type: str = 'text'):
+        if result_type not in {'text', 'bytes', 'json'}:
+            raise TypeError(f&quot;The result_type cannot be {result_type}. Use only: text, bytes, json!&quot;)
+        if await self.redis.sismember('already_crawl_urls', url):
+            logger.debug(f&quot;重复的URL: {url}&quot;)
+            return
+        else:
+            self.redis.sadd('already_crawl_urls', url)
+        async with session.get(url, verify_ssl=False) as result:
+            if result_type == 'text':
+                return await result.text()
+            if result_type == 'bytes':
+                return await result.read()
+            if result_type == 'json':
+                return await result.json()
+
+    async def product_and_consumer(self, session, main_url):
+        if 'follow' not in main_url:
+            main_url += '/follow?condition=0&amp;p=1'
+        main_result = await self.req_res(session, main_url)
+        if main_result:
+            logger.info(f&quot;auth_main: {main_url}&quot;)
+            author_url_list = await self.parse_more_author(session, main_result)
+            for author_url in author_url_list:
+                author_url = str(author_url)
+                if not await self.redis.sismember('already_crawl_urls', author_url):
+                    logger.info(f&quot;新增作者URl：{author_url}&quot;)
+                    await self.redis.sadd('already_crawl_urls', author_url)
+                    await self.redis.rpush('author_url_queue', author_url)
+
+    async def parse_more_author(self, session, main_result):
+        tree = etree.HTML(main_result)
+        author_url_list = list(tree.xpath('//*[@class=&quot;author-info-title&quot;]/a/@href'))
+        page_url_list = tree.xpath('//*[@id=&quot;laypage_0&quot;]/a/@href')
+        for page_url in page_url_list:
+            if page_url[0] == '/':
+                page_url = ''.join(['https://www.zcool.com.cn', page_url])
+            page_result = await self.req_res(session, str(page_url))
+            if page_result:
+                # logger.info(f&quot;author_page: {page_url}&quot;)
+                next_author_url_list = await self.parse_more_author(session, page_result)
+                author_url_list.extend(next_author_url_list)
+        return author_url_list
+
+    async def author_run(self):
+        start_url = 'https://morncolour.zcool.com.cn/follow?condition=0&amp;p=1'
+        sleep_count = 0
+        async with aiohttp.ClientSession() as session:
+            if not await self.redis.sismember('already_crawl_urls', start_url):
+                await asyncio.create_task(self.product_and_consumer(session, start_url))
+            while 1:
+                if sleep_count &gt;= 60:
+                    break
+                if await self.redis.llen('author_url_queue') == 0:
+                    sleep_count += 1
+                    await asyncio.sleep(1)
+                    continue
+                sleep_count = 0
+                task = asyncio.create_task(self.product_and_consumer
+                                           (session, await self.redis.lpop('author_url_queue')))
+                await task
+
+
+async def run(num):
+    logger.info(f&quot;这是第{num}个进程任务&quot;)
+    conn = await aioredis.create_pool(f'redis://{user}:{password}@{host}:{port}', encoding='utf-8')
+    redis = aioredis.Redis(pool_or_conn=conn)
+    m = MoreAuthor(conn, redis)
+    await m.author_run()
+    conn.close()
+    await conn.wait_closed()
+
+
+async def main():
+    async with Pool() as pool:
+        result = await pool.map(run, range(4))
+        logger.info(result)
+
+
+if __name__ == '__main__':
+    asyncio.run(main())
+</code></pre>
+<h3 id="项目地址">项目地址</h3>
+<p>github.com/iicey/zcool</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%BB%85%E9%9C%80%E4%B8%89%E6%AD%A5">仅需三步</a></li>
+<li><a href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81">示例代码</a></li>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80">项目地址</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/ru-he-shi-yong-asyncio/">
+              <h3 class="post-title">
+                如何使用asyncio
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,229 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>逆向开发工具扫盲 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="逆向开发工具扫盲 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+工欲善其事,必先利其器
+
+下载地址 -&gt; 链接：https://share.weiyun.com/5fifL3J 密码：f4jp93
+反编译无壳app
+apktool
+反编译命令
+apktool d app名.apk
+
+重新打包成a..." />
+    <meta name="keywords" content="逆向" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              逆向开发工具扫盲
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-16
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/M_U4kv6HUE/" class="post-tag">
+                  # 逆向
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>工欲善其事,必先利其器</p>
+</blockquote>
+<p>下载地址 -&gt; 链接：https://share.weiyun.com/5fifL3J 密码：f4jp93</p>
+<h2 id="反编译无壳app">反编译无壳app</h2>
+<h3 id="apktool">apktool</h3>
+<h5 id="反编译命令">反编译命令</h5>
+<pre><code>apktool d app名.apk
+</code></pre>
+<h5 id="重新打包成apk">重新打包成apk</h5>
+<pre><code>apktool b 反编译后的目录名
+</code></pre>
+<p><strong>提示：需要给重新打包后的apk签名后才能在安卓手机上安装</strong></p>
+<h5 id="首先生成证书dist目录下">首先生成证书(dist目录下)</h5>
+<pre><code>keytool -genkey -keystore my-release-key.keystore -alias my_alias -keyalg RSA -keysize 4096 -validity 10000
+</code></pre>
+<h5 id="然后签名">然后签名</h5>
+<pre><code>jarsigner -sigalg MD5withRSA -digestalg SHA1 -keystore my-release-key.keystore -signedjar com.新包名.apk com.原包名.apk my_alias
+</code></pre>
+<p><strong>提示：使用 keytool jarsigner 需要先安装 Java JDK</strong></p>
+<h3 id="jadx">JADX</h3>
+<p>请参考这篇https://mp.weixin.qq.com/s/Inaz3_rfRo833EqkuQClGg</p>
+<h2 id="脱壳">脱壳</h2>
+<h3 id="xposed-fdex2">Xposed + FDex2</h3>
+<p><strong>需要先 root ，然后安装xposed -&gt; 进入xposed点击安装 -&gt; 重启 -&gt; 安装FDex2 -&gt; 重启</strong></p>
+<p><strong>然后进入xposed -&gt; 点击左上角，选择模块 -&gt; 点击FDex2 -&gt; 点击要hook的app -&gt; 记下输出目录</strong></p>
+<p><strong>最后将目录里后缀为dex的文件使用 JADX 打开。有好多dex文件，需要一个一个的找。</strong></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E5%8F%8D%E7%BC%96%E8%AF%91%E6%97%A0%E5%A3%B3app">反编译无壳app</a>
+<ul>
+<li><a href="#apktool">apktool</a><br>
+*
+<ul>
+<li><a href="#%E5%8F%8D%E7%BC%96%E8%AF%91%E5%91%BD%E4%BB%A4">反编译命令</a></li>
+<li><a href="#%E9%87%8D%E6%96%B0%E6%89%93%E5%8C%85%E6%88%90apk">重新打包成apk</a></li>
+<li><a href="#%E9%A6%96%E5%85%88%E7%94%9F%E6%88%90%E8%AF%81%E4%B9%A6dist%E7%9B%AE%E5%BD%95%E4%B8%8B">首先生成证书(dist目录下)</a></li>
+<li><a href="#%E7%84%B6%E5%90%8E%E7%AD%BE%E5%90%8D">然后签名</a></li>
+</ul>
+</li>
+<li><a href="#jadx">JADX</a></li>
+</ul>
+</li>
+<li><a href="#%E8%84%B1%E5%A3%B3">脱壳</a>
+<ul>
+<li><a href="#xposed-fdex2">Xposed + FDex2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/li-yong-fabric-huo-qu-bo-hao-fu-wu-qi-dai-li/">
+              <h3 class="post-title">
+                利用fabric获取拨号服务器代理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

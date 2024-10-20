@@ -1,0 +1,341 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3+requests：使用post实现文件上传服务器 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3+requests：使用post实现文件上传服务器 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接 www.cnblogs.com/insane-Mr-L…
+此文的multipart方式解决了我需要把图片文件上传服务器的问题
+我们要知道post请求四种传送正文方式首先需要先了解一下常见的四种编码方式：
+HTTP 协议规定 POS..." />
+    <meta name="keywords" content="requests,文件上传" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3+requests：使用post实现文件上传服务器
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                6 min read
+              </span>
+              
+                <a href="https://iicey.github.io/aLYzduws6TH/" class="post-tag">
+                  # requests
+                </a>
+              
+                <a href="https://iicey.github.io/wuDhQkdSZzQ/" class="post-tag">
+                  # 文件上传
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>原文链接 <a href="https://link.juejin.im/?target=https%3A%2F%2Fwww.cnblogs.com%2Finsane-Mr-Li%2Fp%2F9145152.html">www.cnblogs.com/insane-Mr-L…</a></p>
+<p>此文的multipart方式解决了我需要把图片文件上传服务器的问题</p>
+<h3 id="我们要知道post请求四种传送正文方式首先需要先了解一下常见的四种编码方式"><strong>我们要知道post请求四种传送正文方式首先需要先了解一下常见的四种编码方式：</strong></h3>
+<p>HTTP 协议规定 POST 提交的数据必须放在消息主体（entity-body）中，但协议并没有规定数据必须使用什么编码方式。常见的四种编码方式如下：</p>
+<p>1、application/x-www-form-urlencoded</p>
+<p>这应该是最常见的 POST 提交数据的方式了。浏览器的原生 form 表单，如果不设置 enctype 属性，那么最终就会以 application/x-www-form-urlencoded 方式提交数据。请求类似于下面这样（无关的请求头在本文中都省略掉了）：</p>
+<pre><code>POST http://www.example.com HTTP/1.1    Content-Type:
+application/x-www-form-urlencoded;charset=utf-8
+title=test&amp;sub%5B%5D=1&amp;sub%5B%5D=2&amp;sub%5B%5D=3
+</code></pre>
+<p></p>
+<p>2、multipart/form-data</p>
+<p>除了传统的application/x-www-form-urlencoded表单，我们另一个经常用到的是上传文件用的表单，这种表单的类型为multipart/form-data。   这又是一个常见的 POST 数据提交的方式。我们使用表单上传文件时，必须让 form 的 enctyped 等于这个值，下面是示例</p>
+<p>接下来我们就来说一下post请求四种传送正文方式：</p>
+<pre><code>POST http://www.example.com HTTP/1.1
+Content-Type:multipart/form-data; boundary=----WebKitFormBoundaryrGKCBY7qhFd3TrwA
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA
+Content-Disposition: form-data; name=&quot;text&quot;
+title
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA
+Content-Disposition: form-data; name=&quot;file&quot;; filename=&quot;chrome.png&quot;
+Content-Type: image/png
+PNG ... content of chrome.png ...
+------WebKitFormBoundaryrGKCBY7qhFd3TrwA--
+</code></pre>
+<p></p>
+<p>3、application/json   application/json 这个 Content-Type 作为响应头大家肯定不陌生。实际上，现在越来越多的人把它作为请求头，用来告诉服务端消息主体是序列化后的 JSON 字符串。由于 JSON 规范的流行，除了低版本 IE 之外的各大浏览器都原生支持 JSON.stringify，服务端语言也都有处理 JSON 的函数，使用 JSON 不会遇上什么麻烦。</p>
+<p></p>
+<p>4、text/xml   它是一种使用 HTTP 作为传输协议，XML 作为编码方式的远程调用规范。</p>
+<h3 id="post请求四种传送正文方式"><strong>post请求四种传送正文方式：</strong></h3>
+<p>（1）请求正文是application/x-www-form-urlencoded</p>
+<p>（2）请求正文是multipart/form-data</p>
+<p>（3）请求正文是raw</p>
+<p>（4）请求正文是binary</p>
+<p><strong>（1）请求正文是application/x-www-form-urlencoded</strong></p>
+<p>形式：</p>
+<pre><code>1 requests.post(url='',data={'key1':'value1','key2':'value2'},headers={'Content-Type':'application/x-www-form-urlencoded'})
+</code></pre>
+<p>Reqeusts支持以form表单形式发送post请求，只需要将请求的参数构造成一个字典，然后传给requests.post()的<code>data</code>参数即可。</p>
+<p>输入：</p>
+<pre><code>url = 'http://httpbin.org/post'
+d = {'key1': 'value1', 'key2': 'value2'}
+r = requests.post(url, data=d)
+print r.text
+</code></pre>
+<p>输出：</p>
+<pre><code>{ 
+“args”: {}, 
+“data”: “”, 
+“files”: {}, 
+“form”: { 
+“key1”: “value1”, 
+“key2”: “value2” 
+}, 
+“headers”: { 
+…… 
+“Content-Type”: “application/x-www-form-urlencoded”, 
+…… 
+}, 
+“json”: null, 
+…… 
+}
+</code></pre>
+<p>可以看到，请求头中的Content-Type字段已设置为application/x-www-form-urlencoded，且<code>d = {'key1': 'value1', 'key2': 'value2'}</code>以form表单的形式提交到服务端，服务端返回的form字段即是提交的数据。</p>
+<p><strong>（2）请求正文是multipart/form-data</strong></p>
+<p><strong>除了传统的application/x-www-form-urlencoded表单，我们另一个经常用到的是上传文件用的表单，这种表单的类型为multipart/form-data。</strong></p>
+<p>形式：</p>
+<pre><code>1 requests.post(url='',data={'key1':'value1','key2':'value2'},headers={'Content-Type':'multipart/form-data'})
+</code></pre>
+<p>发送文件中的数据需要（安装requests_toolbelt）</p>
+<pre><code>from requests_toolbelt import MultipartEncoder
+import requests
+
+m = MultipartEncoder(
+    fields={'field0': 'value', 'field1': 'value',
+            'field2': ('filename', open('file.py', 'rb'), 'text/plain')}
+    )
+
+r = requests.post('http://httpbin.org/post', data=m,
+                  headers={'Content-Type': m.content_type})
+</code></pre>
+<p>不需要文件</p>
+<pre><code>from requests_toolbelt import MultipartEncoder
+import requests
+
+m = MultipartEncoder(fields={'field0': 'value', 'field1': 'value'})
+
+r = requests.post('http://httpbin.org/post', data=m,
+                  headers={'Content-Type': m.content_type})
+</code></pre>
+<p><strong>（3）请求正文是raw</strong></p>
+<p>形式：</p>
+<pre><code>♦传入xml格式文本
+1 requests.post(url='',data='&lt;?xml  ?&gt;',headers={'Content-Type':'text/xml'})
+♦传入json格式文本
+1 requests.post(url='',data=json.dumps({'key1':'value1','key2':'value2'}),headers={'Content-Type':'application/json'})
+</code></pre>
+<p>或者：</p>
+<pre><code>1  requests.post(url='',json={{'key1':'value1','key2':'value2'}},headers={'Content-Type':'application/json'})
+</code></pre>
+<p>可以将一json串传给requests.post()的data参数，</p>
+<p>输入：</p>
+<pre><code>url = 'http://httpbin.org/post'
+s = json.dumps({'key1': 'value1', 'key2': 'value2'})
+r = requests.post(url, data=s)
+print r.text
+</code></pre>
+<p>输出：</p>
+<pre><code>{ 
+“args”: {}, 
+“data”: “{\”key2\”: \”value2\”, \”key1\”: \”value1\”}”, 
+“files”: {}, 
+“form”: {}, 
+“headers”: { 
+…… 
+“Content-Type”: “application/json”, 
+…… 
+}, 
+“json”: { 
+“key1”: “value1”, 
+“key2”: “value2” 
+}, 
+…… 
+}
+</code></pre>
+<p><strong>（4）请求正文是binary</strong></p>
+<p>形式：</p>
+<pre><code>1 requests.post(url='',files={'file':open('test.xls','rb')},headers={'Content-Type':'binary'})
+</code></pre>
+<p>Requests也支持以multipart形式发送post请求，只需将一文件传给requests.post()的<code>files</code>参数即可。</p>
+<p>输入：</p>
+<pre><code>url = 'http://httpbin.org/post'
+files = {'file': open('report.txt', 'rb')}
+r = requests.post(url, files=files)
+print r.text
+</code></pre>
+<p>输出：</p>
+<pre><code>{ 
+“args”: {}, 
+“data”: “”, 
+“files”: { 
+“file”: “Hello world!” 
+}, 
+“form”: {}, 
+“headers”: {…… 
+“Content-Type”: “multipart/form-data; boundary=467e443f4c3d403c8559e2ebd009bf4a”, 
+…… 
+}, 
+“json”: null, 
+…… 
+}
+</code></pre>
+<p>文本文件report.txt的内容只有一行：Hello world!，从请求的响应结果可以看到数据已上传到服务端中。</p>
+<p>注意：一定要注意headers的类型。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E6%88%91%E4%BB%AC%E8%A6%81%E7%9F%A5%E9%81%93post%E8%AF%B7%E6%B1%82%E5%9B%9B%E7%A7%8D%E4%BC%A0%E9%80%81%E6%AD%A3%E6%96%87%E6%96%B9%E5%BC%8F%E9%A6%96%E5%85%88%E9%9C%80%E8%A6%81%E5%85%88%E4%BA%86%E8%A7%A3%E4%B8%80%E4%B8%8B%E5%B8%B8%E8%A7%81%E7%9A%84%E5%9B%9B%E7%A7%8D%E7%BC%96%E7%A0%81%E6%96%B9%E5%BC%8F"><strong>我们要知道post请求四种传送正文方式首先需要先了解一下常见的四种编码方式：</strong></a></li>
+<li><a href="#post%E8%AF%B7%E6%B1%82%E5%9B%9B%E7%A7%8D%E4%BC%A0%E9%80%81%E6%AD%A3%E6%96%87%E6%96%B9%E5%BC%8F"><strong>post请求四种传送正文方式：</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/selenium-de-cookies-zhuan-wei-requests-de-cookie/">
+              <h3 class="post-title">
+                Selenium的cookies转为requests的cookie
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

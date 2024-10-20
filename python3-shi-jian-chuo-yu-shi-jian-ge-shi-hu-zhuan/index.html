@@ -1,0 +1,279 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3时间戳与时间格式互转 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3时间戳与时间格式互转 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="time
+时间戳转化时间格式
+dt = time.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;, time.localtime(time.time()))
+
+时间格式转时间戳
+timestamp = int(..." />
+    <meta name="keywords" content="时间转换" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3时间戳与时间格式互转
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-24
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/cwQkxdil7Xs/" class="post-tag">
+                  # 时间转换
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="time">time</h1>
+<h2 id="时间戳转化时间格式">时间戳转化时间格式</h2>
+<pre><code>dt = time.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;, time.localtime(time.time()))
+</code></pre>
+<h2 id="时间格式转时间戳">时间格式转时间戳</h2>
+<pre><code>timestamp = int(time.mktime(time.strptime(dt, &quot;%Y-%m-%d %H:%M:%S&quot;)))
+</code></pre>
+<h1 id="datetime">datetime</h1>
+<h2 id="时区">时区</h2>
+<pre><code>sha_tz = datetime.timezone(
+    datetime.timedelta(hours=8),
+    name='Asia/Shanghai',
+)
+</code></pre>
+<pre><code>timestamp = datetime.datetime.now().timestamp()
+datetime_obj = datetime.datetime.utcfromtimestamp(timestamp).replace(tzinfo=timezone.utc).astimezone(sha_tz)
+datetime_obj.strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
+</code></pre>
+<h2 id=""></h2>
+<h2 id="时间戳转化时间格式-2">时间戳转化时间格式</h2>
+<pre><code>datetime.datetime.now().strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
+</code></pre>
+<pre><code>timestamp = datetime.datetime.now().timestamp()
+datetime.datetime.fromtimestamp(timestamp).strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
+</code></pre>
+<pre><code>timestamp = datetime.datetime.now().timestamp()
+datetime.datetime.utcfromtimestamp(timestamp).strftime(&quot;%Y-%m-%d %H:%M:%S&quot;)
+</code></pre>
+<h2 id="时间格式转时间戳-2">时间格式转时间戳</h2>
+<pre><code>datetime_obj = datetime.datetime.strptime(&quot;2022-01-01 00:00:00&quot;, &quot;%Y-%m-%d %H:%M:%S&quot;)
+datetime_obj.timestamp()
+</code></pre>
+<h1 id="format">format</h1>
+<center>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">时间单位</th>
+<th style="text-align:center">符号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">周</td>
+<td style="text-align:center">%a</td>
+</tr>
+<tr>
+<td style="text-align:center">月</td>
+<td style="text-align:center">%b</td>
+</tr>
+<tr>
+<td style="text-align:center">日</td>
+<td style="text-align:center">%d</td>
+</tr>
+<tr>
+<td style="text-align:center">时</td>
+<td style="text-align:center">%H</td>
+</tr>
+<tr>
+<td style="text-align:center">分</td>
+<td style="text-align:center">%M</td>
+</tr>
+<tr>
+<td style="text-align:center">秒</td>
+<td style="text-align:center">%S</td>
+</tr>
+<tr>
+<td style="text-align:center">年</td>
+<td style="text-align:center">%Y</td>
+</tr>
+<tr>
+<td style="text-align:center">时区</td>
+<td style="text-align:center">%z</td>
+</tr>
+</tbody>
+</table>
+</center>
+<h2 id="示例">示例</h2>
+<ul>
+<li>&quot;2022-01-01 00:00:00&quot;</li>
+<li>&quot;%Y-%m-%d %H:%M:%S&quot;<br>
+<br></li>
+<li>&quot;Fri Oct 14 09:01:06 +0000 2022&quot;</li>
+<li>&quot;%a %b %d %H:%M:%S %z %Y&quot;</li>
+</ul>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#time">time</a>
+<ul>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%88%B3%E8%BD%AC%E5%8C%96%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F">时间戳转化时间格式</a></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%97%B6%E9%97%B4%E6%88%B3">时间格式转时间戳</a></li>
+</ul>
+</li>
+<li><a href="#datetime">datetime</a>
+<ul>
+<li><a href="#%E6%97%B6%E5%8C%BA">时区</a></li>
+<li></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%88%B3%E8%BD%AC%E5%8C%96%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F-2">时间戳转化时间格式</a></li>
+<li><a href="#%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%97%B6%E9%97%B4%E6%88%B3-2">时间格式转时间戳</a></li>
+</ul>
+</li>
+<li><a href="#format">format</a>
+<ul>
+<li><a href="#%E7%A4%BA%E4%BE%8B">示例</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-yong-configparser-du-qu-ini-pei-zhi-wen-jian/">
+              <h3 class="post-title">
+                Python3使用configparser读取ini配置文件
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

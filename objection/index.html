@@ -1,0 +1,333 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Objection | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Objection | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接，这里做了简单的摘取，便于查找粘贴，更多API可以通过源码进行学习。
+如下图：
+
+1.1 获取基本信息
+首先查看一下“设置”应用的包名
+frida-ps -U|grep -i setting
+
+再使用objection注入“设置”应..." />
+    <meta name="keywords" content="objection,hook" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Objection
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/3F7TV6kJ3/" class="post-tag">
+                  # objection
+                </a>
+              
+                <a href="https://iicey.github.io/6TMbAERr1/" class="post-tag">
+                  # hook
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="https://www.anquanke.com/post/id/197657#h2-5">原文链接</a>，这里做了简单的摘取，便于查找粘贴，更多API可以通过源码进行学习。</p>
+<p>如下图：</p>
+<figure data-type="image" tabindex="1"><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2020/5/7/171ecc1cb318548d~tplv-t2oaga2asx-image.image" alt="" loading="lazy"></figure>
+<h3 id="11-获取基本信息">1.1 获取基本信息</h3>
+<h5 id="首先查看一下设置应用的包名">首先查看一下“设置”应用的包名</h5>
+<pre><code>frida-ps -U|grep -i setting
+</code></pre>
+<h5 id="再使用objection注入设置应用">再使用<code>objection</code>注入“设置”应用</h5>
+<pre><code>objection -g com.android.settings explore
+</code></pre>
+<pre><code>objection -N -h IP -p port -g pkgName explore
+</code></pre>
+<h3 id="12-提取内存信息">1.2 提取内存信息</h3>
+<h5 id="查看内存中加载的库">查看内存中加载的库</h5>
+<pre><code>memory list modules
+</code></pre>
+<h5 id="查看库的导出函数">查看库的导出函数</h5>
+<pre><code>memory list exports libssl.so
+</code></pre>
+<h5 id="将结果保存到json文件中">将结果保存到<code>json</code>文件中</h5>
+<pre><code>memory list exports libart.so --json /root/libart.json 
+</code></pre>
+<h5 id="提取整个或部分内存">提取整个(或部分)内存</h5>
+<pre><code>memory dump all from_base
+</code></pre>
+<h5 id="搜索整个内存">搜索整个内存</h5>
+<pre><code>memory search --string --offsets-only
+</code></pre>
+<h3 id="13-内存堆搜索与执行">1.3 内存堆搜索与执行</h3>
+<h5 id="在堆上搜索实例">在堆上搜索实例</h5>
+<pre><code>android heap search instances com.android.settings.DisplaySettings 
+</code></pre>
+<h5 id="调用实例的方法">调用实例的方法</h5>
+<pre><code>android heap execute 地址 getPreferenceScreenResId  
+</code></pre>
+<h5 id="在实例上执行js代码">在实例上执行<code>js</code>代码</h5>
+<pre><code>android heap evaluate 地址 
+</code></pre>
+<p>执行命令后，会进入一个迷你编辑器环境，输入</p>
+<pre><code>console.log(&quot;evaluate result:&quot;+clazz.getPreferenceScreenResId()) 
+</code></pre>
+<p>按<code>ESC</code>退出编辑器，然后按回车</p>
+<h3 id="14-启动activity或service">1.4 启动<code>activity</code>或<code>service</code></h3>
+<h5 id="直接启动activity">直接启动<code>activity</code></h5>
+<pre><code>android intent launch_activity com.android.settings.DisplaySettings  
+</code></pre>
+<h5 id="查看当前可用的activity">查看当前可用的<code>activity</code></h5>
+<pre><code>android hooking list activities
+</code></pre>
+<h5 id="直接启动service">直接启动<code>service</code></h5>
+<p>查看可供开启的服务</p>
+<pre><code>android hooking list services
+</code></pre>
+<p>开启服务</p>
+<pre><code>android intent launch_service com.android.settings.bluetooth.BluetoothPairingService
+</code></pre>
+<h3 id="21-objection内存漫游">2.1 objection（内存漫游）</h3>
+<h5 id="列出内存中所有的类">列出内存中所有的类</h5>
+<pre><code>android hooking list classes
+</code></pre>
+<h5 id="内存中搜索所有的类">内存中搜索所有的类</h5>
+<pre><code>android hooking search classes display  
+</code></pre>
+<h5 id="内存中搜索所有的方法">内存中搜索所有的方法</h5>
+<pre><code>android hooking search methods display
+</code></pre>
+<h5 id="列出类的所有方法">列出类的所有方法</h5>
+<pre><code>android hooking list class_methods com.android.settings.DisplaySettings
+</code></pre>
+<h5 id="直接生成hook代码">直接生成<code>hook</code>代码</h5>
+<pre><code>android hooking generate  simple  com.android.settings.DisplaySettings  
+</code></pre>
+<h3 id="22-objectionhook">2.2 objection（hook）</h3>
+<h5 id="hook类的所有方法"><code>hook</code>类的所有方法</h5>
+<pre><code>android hooking watch class android.bluetooth.BluetoothDevice
+</code></pre>
+<h5 id="统计hook了多少个方法">统计Hook了多少个方法</h5>
+<pre><code>jobs list
+</code></pre>
+<h5 id="hook方法的参数-返回值和调用栈"><code>hook</code>方法的参数、返回值和调用栈</h5>
+<pre><code>android hooking watch class_method android.bluetooth.BluetoothDevice.getName --dump-args --dump-return --dump-backtrace
+</code></pre>
+<h5 id="删除hook点">删除<code>hook</code>点</h5>
+<pre><code>jobs list jobs kill
+</code></pre>
+<h5 id="hook方法的所有重载"><code>hook</code>方法的所有重载</h5>
+<pre><code>android hooking watch class_method
+</code></pre>
+<p>例子：用<code>File</code>类的构造器来试一下效果</p>
+<pre><code>android hooking watch class_method java.io.File.$init --dump-args
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#11-%E8%8E%B7%E5%8F%96%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF">1.1 获取基本信息</a><br>
+*
+<ul>
+<li><a href="#%E9%A6%96%E5%85%88%E6%9F%A5%E7%9C%8B%E4%B8%80%E4%B8%8B%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8%E7%9A%84%E5%8C%85%E5%90%8D">首先查看一下“设置”应用的包名</a></li>
+<li><a href="#%E5%86%8D%E4%BD%BF%E7%94%A8objection%E6%B3%A8%E5%85%A5%E8%AE%BE%E7%BD%AE%E5%BA%94%E7%94%A8">再使用<code>objection</code>注入“设置”应用</a></li>
+</ul>
+</li>
+<li><a href="#12-%E6%8F%90%E5%8F%96%E5%86%85%E5%AD%98%E4%BF%A1%E6%81%AF">1.2 提取内存信息</a><br>
+*
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98%E4%B8%AD%E5%8A%A0%E8%BD%BD%E7%9A%84%E5%BA%93">查看内存中加载的库</a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%BA%93%E7%9A%84%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0">查看库的导出函数</a></li>
+<li><a href="#%E5%B0%86%E7%BB%93%E6%9E%9C%E4%BF%9D%E5%AD%98%E5%88%B0json%E6%96%87%E4%BB%B6%E4%B8%AD">将结果保存到<code>json</code>文件中</a></li>
+<li><a href="#%E6%8F%90%E5%8F%96%E6%95%B4%E4%B8%AA%E6%88%96%E9%83%A8%E5%88%86%E5%86%85%E5%AD%98">提取整个(或部分)内存</a></li>
+<li><a href="#%E6%90%9C%E7%B4%A2%E6%95%B4%E4%B8%AA%E5%86%85%E5%AD%98">搜索整个内存</a></li>
+</ul>
+</li>
+<li><a href="#13-%E5%86%85%E5%AD%98%E5%A0%86%E6%90%9C%E7%B4%A2%E4%B8%8E%E6%89%A7%E8%A1%8C">1.3 内存堆搜索与执行</a><br>
+*
+<ul>
+<li><a href="#%E5%9C%A8%E5%A0%86%E4%B8%8A%E6%90%9C%E7%B4%A2%E5%AE%9E%E4%BE%8B">在堆上搜索实例</a></li>
+<li><a href="#%E8%B0%83%E7%94%A8%E5%AE%9E%E4%BE%8B%E7%9A%84%E6%96%B9%E6%B3%95">调用实例的方法</a></li>
+<li><a href="#%E5%9C%A8%E5%AE%9E%E4%BE%8B%E4%B8%8A%E6%89%A7%E8%A1%8Cjs%E4%BB%A3%E7%A0%81">在实例上执行<code>js</code>代码</a></li>
+</ul>
+</li>
+<li><a href="#14-%E5%90%AF%E5%8A%A8activity%E6%88%96service">1.4 启动<code>activity</code>或<code>service</code></a><br>
+*
+<ul>
+<li><a href="#%E7%9B%B4%E6%8E%A5%E5%90%AF%E5%8A%A8activity">直接启动<code>activity</code></a></li>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E5%8F%AF%E7%94%A8%E7%9A%84activity">查看当前可用的<code>activity</code></a></li>
+<li><a href="#%E7%9B%B4%E6%8E%A5%E5%90%AF%E5%8A%A8service">直接启动<code>service</code></a></li>
+</ul>
+</li>
+<li><a href="#21-objection%E5%86%85%E5%AD%98%E6%BC%AB%E6%B8%B8">2.1 objection（内存漫游）</a><br>
+*
+<ul>
+<li><a href="#%E5%88%97%E5%87%BA%E5%86%85%E5%AD%98%E4%B8%AD%E6%89%80%E6%9C%89%E7%9A%84%E7%B1%BB">列出内存中所有的类</a></li>
+<li><a href="#%E5%86%85%E5%AD%98%E4%B8%AD%E6%90%9C%E7%B4%A2%E6%89%80%E6%9C%89%E7%9A%84%E7%B1%BB">内存中搜索所有的类</a></li>
+<li><a href="#%E5%86%85%E5%AD%98%E4%B8%AD%E6%90%9C%E7%B4%A2%E6%89%80%E6%9C%89%E7%9A%84%E6%96%B9%E6%B3%95">内存中搜索所有的方法</a></li>
+<li><a href="#%E5%88%97%E5%87%BA%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E6%96%B9%E6%B3%95">列出类的所有方法</a></li>
+<li><a href="#%E7%9B%B4%E6%8E%A5%E7%94%9F%E6%88%90hook%E4%BB%A3%E7%A0%81">直接生成<code>hook</code>代码</a></li>
+</ul>
+</li>
+<li><a href="#22-objectionhook">2.2 objection（hook）</a><br>
+*
+<ul>
+<li><a href="#hook%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E6%96%B9%E6%B3%95"><code>hook</code>类的所有方法</a></li>
+<li><a href="#%E7%BB%9F%E8%AE%A1hook%E4%BA%86%E5%A4%9A%E5%B0%91%E4%B8%AA%E6%96%B9%E6%B3%95">统计Hook了多少个方法</a></li>
+<li><a href="#hook%E6%96%B9%E6%B3%95%E7%9A%84%E5%8F%82%E6%95%B0-%E8%BF%94%E5%9B%9E%E5%80%BC%E5%92%8C%E8%B0%83%E7%94%A8%E6%A0%88"><code>hook</code>方法的参数、返回值和调用栈</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4hook%E7%82%B9">删除<code>hook</code>点</a></li>
+<li><a href="#hook%E6%96%B9%E6%B3%95%E7%9A%84%E6%89%80%E6%9C%89%E9%87%8D%E8%BD%BD"><code>hook</code>方法的所有重载</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/frida-api-shi-li/">
+              <h3 class="post-title">
+                Frida API示例
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

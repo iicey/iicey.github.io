@@ -1,0 +1,346 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python连接多个服务组件 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python连接多个服务组件 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="同步
+PyMongo
+import pymongo
+
+client = pymongo.MongoClient(&quot;mongodb://localhost:27017/&quot;)
+client = pymongo.MongoCl..." />
+    <meta name="keywords" content="redis,pymongo,aiokafka,kafka,telegram,组件,asyncio,aiomysql,aioredis" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python连接多个服务组件
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/NXwF8ogUB/" class="post-tag">
+                  # redis
+                </a>
+              
+                <a href="https://iicey.github.io/IAss1EbBM/" class="post-tag">
+                  # pymongo
+                </a>
+              
+                <a href="https://iicey.github.io/QrYr6wzG9K/" class="post-tag">
+                  # aiokafka
+                </a>
+              
+                <a href="https://iicey.github.io/RcnGbgN2R/" class="post-tag">
+                  # kafka
+                </a>
+              
+                <a href="https://iicey.github.io/mT65Y0R4RX/" class="post-tag">
+                  # telegram
+                </a>
+              
+                <a href="https://iicey.github.io/drSZMgaC7/" class="post-tag">
+                  # 组件
+                </a>
+              
+                <a href="https://iicey.github.io/fJ8J5RLM5b/" class="post-tag">
+                  # asyncio
+                </a>
+              
+                <a href="https://iicey.github.io/MG6pdGAF-H/" class="post-tag">
+                  # aiomysql
+                </a>
+              
+                <a href="https://iicey.github.io/TeyXIWZ5uF/" class="post-tag">
+                  # aioredis
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="同步">同步</h1>
+<h2 id="pymongo">PyMongo</h2>
+<pre><code class="language-python">import pymongo
+
+client = pymongo.MongoClient(&quot;mongodb://localhost:27017/&quot;)
+client = pymongo.MongoClient(&quot;mongodb://user:password@localhost:27017/&quot;)
+
+db = client.test_database
+</code></pre>
+<h2 id="redis">Redis</h2>
+<pre><code class="language-python">import redis
+
+redis_pool = redis.ConnectionPool(host='localhost', port=6379, decode_responses=True)
+redis_client = redis.Redis(connection_pool=redis_pool, decode_responses=True)
+</code></pre>
+<h1 id="异步">异步</h1>
+<h2 id="aiomysql">AioMysql</h2>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+import asyncio
+
+import aiomysql
+
+
+async def main():
+    loop = asyncio.get_event_loop()
+    conn = await aiomysql.connect(host='127.0.0.1',
+                                  port=3306,
+                                  user='root',
+                                  password='',
+                                  db='aio_test',
+                                  loop=loop)
+
+    sql = &quot;INSERT INTO table_name(`field1`, `field2`) VALUES (%s, %s);&quot;
+    values = (&quot;value1&quot;, &quot;value2&quot;)
+
+    async with conn.cursor() as cur:
+        await cur.execute(query=sql, args=values)
+        await conn.commit()
+
+    conn.close()
+
+async def test_example(loop):
+    pool = await aiomysql.create_pool(host='127.0.0.1', port=3306,
+                                      user='root', password='',
+                                      db='mysql', loop=loop)
+    async with pool.acquire() as conn:
+        async with conn.cursor() as cur:
+            await cur.execute(&quot;SELECT 42;&quot;)
+            # 批量操作
+            # values = []
+            #     values.append(tuple(value), )
+            # await cur.executemany(query=sql, args=values)
+            print(cur.description)
+            (r,) = await cur.fetchone()
+            assert r == 42
+    pool.close()
+    await pool.wait_closed()
+
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(test_example(loop))
+
+if __name__ == '__main__':
+    asyncio.run(main())
+</code></pre>
+<h2 id="aiokafka">AioKafka</h2>
+<pre><code class="language-python">from aiokafka import AIOKafkaProducer
+
+# 生产
+async def kafka_producer():
+    producer = AIOKafkaProducer(bootstrap_servers=bootstrap_servers)
+    await producer.start()
+    # 不等待
+    await producer.send(topic, json.dumps(data, ensure_ascii=False).encode(&quot;utf-8&quot;))
+    # 等待
+    await producer.send_and_wait(topic, json.dumps(data, ensure_ascii=False).encode(&quot;utf-8&quot;))
+
+# 消费
+async def kafka_consumer():
+    consumer = AIOKafkaConsumer(topic=topic, group_id=group_id, auto_offset_reset=&quot;earliest&quot;,bootstrap_servers=bootstrap_servers)
+    await consumer.start()
+    try:
+        async for msg in consumer:
+            print(msg.value.decode())
+    finally:
+        await consumer.stop()
+</code></pre>
+<h2 id="aioredis">AioRedis</h2>
+<pre><code class="language-python">import aioredis
+
+# 1.0版本
+async def redis_connect():
+    connection = await aioredis.create_pool(
+        redis_address, password=redis_password,
+        db=redis_db, encoding='utf-8'
+    )
+    # connection = await aioredis.create_pool('redis://{user}:{password}@{host}:{port}', encoding='utf-8')
+    redis = aioredis.Redis(pool_or_conn=connection)
+    return redis
+
+# 2.0版本
+async def redis_connect():
+    pool = aioredis.ConnectionPool.from_url(
+        redis_address, password=redis_password,
+        db=redis_db, encoding='utf-8', decode_responses=True
+    )
+    redis = aioredis.Redis(connection_pool=pool)
+    return redis
+</code></pre>
+<h2 id="telegram">Telegram</h2>
+<pre><code class="language-python">from telethon import TelegramClient
+
+async def tg_client():
+    client = TelegramClient(
+        session=session_name,
+        api_id=api_id, api_hash=api_hash,
+        proxy=api_proxy
+    )
+    return client
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E5%90%8C%E6%AD%A5">同步</a>
+<ul>
+<li><a href="#pymongo">PyMongo</a></li>
+<li><a href="#redis">Redis</a></li>
+</ul>
+</li>
+<li><a href="#%E5%BC%82%E6%AD%A5">异步</a>
+<ul>
+<li><a href="#aiomysql">AioMysql</a></li>
+<li><a href="#aiokafka">AioKafka</a></li>
+<li><a href="#aioredis">AioRedis</a></li>
+<li><a href="#telegram">Telegram</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/redis-bitmap-xue-xi-he-shi-yong/">
+              <h3 class="post-title">
+                Redis Bitmap 学习和使用
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

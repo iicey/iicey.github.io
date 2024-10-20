@@ -1,0 +1,721 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Linux：系统的相关配置 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Linux：系统的相关配置 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一、用户的创建与python3.6环境的安装
+
+
+新的虚拟机或服务器，首先添加用户：useradd -m ice
+
+
+为用户添加密码：passwd ice
+
+
+新建的用户不能使用sudo, 为创建的普通用户添加sudo权限：
+usermod..." />
+    <meta name="keywords" content="Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Linux：系统的相关配置
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                10 min read
+              </span>
+              
+                <a href="https://iicey.github.io/77ESWp7F7_r/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="一-用户的创建与python36环境的安装">一、用户的创建与python3.6环境的安装</h3>
+<ol>
+<li>
+<p>新的虚拟机或服务器，首先添加用户：useradd -m ice</p>
+</li>
+<li>
+<p>为用户添加密码：passwd ice</p>
+</li>
+<li>
+<p>新建的用户不能使用sudo, 为创建的普通用户添加sudo权限：</p>
+<pre><code>usermod -a -G adm wcy
+usermod -a -G sudo wcy
+vim /etc/sudoers 修改用户权限
+</code></pre>
+</li>
+<li>
+<p>修改~/.vimrc配置</p>
+<pre><code>syntax on
+set nu
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set showmatch
+set ruler
+set cindent
+set background=dark
+set mouse=a
+set mouse=h
+</code></pre>
+</li>
+<li>
+<p>安装python3.6</p>
+<pre><code>sudo apt-get update
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:jonathonf/python-3.6
+sudo apt-get update
+sudo apt-get install python3.6
+cd /usr/bin
+ls | grep python
+sudo rm python
+sudo ln -s python3.6 python
+sudo apt-get install python3-pip
+pip --version
+sudo python pip install --upgrade pip
+pip --version
+</code></pre>
+</li>
+<li>
+<p>安装虚拟环境</p>
+<pre><code>sudo pip install virtualenv
+sudo pip install virtualenvwrapper
+mkdir  ~/.virtualenvs
+sudo vim  ~/.bashrc 
+    添加export WORKON_HOME=$HOME/.virtualenvs
+    source /usr/local/bin/virtualenvwrapper.sh
+</code></pre>
+</li>
+</ol>
+<h3 id="二-安装mysql">二、安装MySQL</h3>
+<ol>
+<li>
+<p>安装过程中输入用户名和密码：</p>
+<pre><code>sudo apt-get install mysql-server 
+</code></pre>
+</li>
+<li>
+<p>登录数据库：</p>
+<pre><code>sudo mysql -u root -p
+</code></pre>
+</li>
+<li>
+<p>开启root用户的全称访问权限</p>
+<pre><code>mysql –u root –p
+use mysql;
+update user set host = '%' where user = 'root';
+grant all privileges on *.* to 'root'@'%' identified by '你的密码';
+flush privileges;
+quit;
+</code></pre>
+</li>
+<li>
+<p>修改my.conf中的ip绑定</p>
+<pre><code>sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf
+将bind-address = 127.0.0.1改为0.0.0.0
+保存退出
+</code></pre>
+</li>
+<li>
+<p>重启服务：</p>
+<pre><code>sudo service mysql restart
+</code></pre>
+</li>
+</ol>
+<h3 id="三-安装mongodb">三、安装mongodb</h3>
+<ol>
+<li>
+<p>远程上传至服务器</p>
+<ul>
+<li>
+<p>若在linux直接使用scp协议：</p>
+<p>切换至所要上传的文件目录下</p>
+<p>scp  -r 文件名 用户名@IP(或域名):上传至服务器所在 的路径</p>
+<p>scp 用户名@IP(或域名):上传至服务器所在的路径 本地路径</p>
+</li>
+<li>
+<p>使用winscp可以直接拖动</p>
+</li>
+<li>
+<p>使用gitbash可以模拟linux系统，方法与（1）相同</p>
+</li>
+</ul>
+</li>
+<li>
+<p>mongodb的安装与配置</p>
+<pre><code>tar -zxvf mongodb-linux-x86_64-ubuntu1604-3.4.0.tgz
+sudo mv mongodb-linux-x86_64-ubuntu1604-3.4.0/ /usr/local/mongodb
+</code></pre>
+<pre><code>sudo vim /etc/profile 
+最后一行添加export PATH=/usr/local/mongodb/bin:$PATH
+保存退出
+source /etc/profile
+</code></pre>
+<pre><code>sudo vim /etc/mongod.conf
+
+verbose=true
+port=27017
+logpath=/var/log/mongodb/logs/mongodb.log
+logappend=true
+dbpath=/var/lib/mongodb/db
+directoryperdb=true
+auth=false
+fork=true
+quiet=true
+</code></pre>
+<pre><code>sudo mkdir /var/log/mongodb/logs/ -p
+sudo touch /var/log/mongodb/logs/mongodb.log
+sudo mkdir /var/lib/mongodb/db -p
+</code></pre>
+<pre><code>注册开机启动：sudo vim /etc/init.d/mongodb
+!/bin/sh
+### BEGIN INIT INFO
+# Provides: mongodb
+# Required-Start:
+# Required-Stop:
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: mongodb
+# Description: mongo db server
+### END INIT INFO
+. /lib/lsb/init-functions
+PROGRAM=/usr/local/mongodb/bin/mongod
+MONGOPID=`ps -ef | grep 'mongod' | grep -v grep | awk '{print $2}'`
+test -x $PROGRAM || exit 0
+case &quot;$1&quot; in
+start)
+ulimit -n 3000
+log_begin_msg &quot;Starting MongoDB server&quot;
+$PROGRAM -f /etc/mongod.conf
+log_end_msg 0
+;;
+stop)
+log_begin_msg &quot;Stopping MongoDB server&quot;
+if [ ! -z &quot;$MONGOPID&quot; ]; then
+kill -15 $MONGOPID
+fi
+log_end_msg 0
+;;
+status)
+;;
+*)
+log_success_msg &quot;Usage: /etc/init.d/mongodb {start|stop|status}&quot;
+exit 1
+esac
+exit 0
+</code></pre>
+<pre><code>sudo chmod +x /etc/init.d/mongodb
+</code></pre>
+</li>
+<li>
+<p>注册开机脚本：</p>
+<pre><code>sudo update-rc.d mongodb defaults
+（注意：移除使用sudo update-rc.d –f mongodb remove）
+</code></pre>
+</li>
+<li>
+<p>启动服务：</p>
+<pre><code>sudo service mongodb start
+</code></pre>
+</li>
+<li>
+<p>客户端连接：</p>
+<pre><code>mongo
+</code></pre>
+</li>
+</ol>
+<h3 id="四-安装redis">四、安装redis</h3>
+<ol>
+<li>
+<p>安装tcl：</p>
+<pre><code>sudo apt-get install tcl
+</code></pre>
+</li>
+<li>
+<p>解压安装包：</p>
+<pre><code>tar -zxvf  redis-3.2.5.tar.gz
+</code></pre>
+</li>
+<li>
+<p>创建安装目录并进入该目录：</p>
+<pre><code>sudo mv redis-3.2.5/ /usr/local/redis  
+cd /usr/local/redis
+</code></pre>
+</li>
+<li>
+<p>编译安装：</p>
+<pre><code>sudo make   
+sudo make test   
+sudo make install
+</code></pre>
+</li>
+<li>
+<p>测试：</p>
+<pre><code>/usr/local/redis/src/redis-server
+/usr/local/redis/src/redis-cli
+set name ice
+get name
+</code></pre>
+</li>
+<li>
+<p>创建相关目录：</p>
+<pre><code>sudo mkdir /etc/redis(配置文件路径)
+sudo mkdir /var/lib/redis(redis数据存储路径)
+</code></pre>
+</li>
+<li>
+<p>安装服务：</p>
+<pre><code>cd /usr/local/redis/utils         
+sudo ./install_server.sh
+</code></pre>
+</li>
+<li>
+<p>重启服务：</p>
+<pre><code>ps  ajx | grep redis     
+sudo kill -9 对应进程号
+</code></pre>
+</li>
+<li>
+<p>测试：</p>
+<pre><code>redis-server       
+redis-cli
+</code></pre>
+</li>
+<li>
+<p>配置文件：</p>
+<pre><code>cd /etc/redis
+sudo vim /etc/redis/6379.conf
+
+bind 127.0.0.1 绑定IP
+daemonize yes 是否以守护进程运行
+requirepass 密码
+重启服务：
+ps ajx | grep redis
+kill -9 对应进程号
+sudo redis-server /etc/redis/6379.conf
+</code></pre>
+</li>
+<li>
+<p>直接开启客户机：</p>
+<pre><code>redis-cli
+</code></pre>
+</li>
+</ol>
+<h3 id="五-安装git">五、安装git</h3>
+<ol>
+<li>
+<p>安装：</p>
+<pre><code>sudo apt-get install git
+</code></pre>
+</li>
+<li>
+<p>配置git：</p>
+<pre><code>git config –global user.name “ice”
+git config –global user.email “152516xxxx@qq.com”
+</code></pre>
+</li>
+<li>
+<p>生成秘钥：</p>
+<pre><code>ssh-keygen –t rsa –C 152516xxxx@qq.com
+</code></pre>
+</li>
+<li>
+<p>在~/.ssh/ id_rsa.pub文件中复制生成的秘钥，打开GitHub<a href="https://github.com">网管</a>，创建一个公钥</p>
+</li>
+<li>
+<p>验证秘钥：</p>
+<pre><code>ssh –T git@github.com
+</code></pre>
+</li>
+<li>
+<p>测试：</p>
+<pre><code>git clone git@github.com:用户名/用户名.git
+</code></pre>
+</li>
+</ol>
+<h3 id="六-nginx安装">六、nginx安装</h3>
+<ol>
+<li>
+<p>安装zlib依赖库：</p>
+<pre><code>sudo apt-get install zlib1g-dev
+</code></pre>
+</li>
+<li>
+<p>进入解压相关文件：</p>
+<pre><code>tar –xzvf openssl-1.0.1.tar.gz
+tar –xzvf nginx-1.11.3.tar.gz
+tar –xzvf pcre-8.41. tar.gz, 
+</code></pre>
+</li>
+<li>
+<p>进入Nginx解压目录：</p>
+<pre><code>cd /home/ice/ nginx-1.11.3/
+</code></pre>
+</li>
+<li>
+<p>配置环境：</p>
+<pre><code>./configure  --prefix=/usr/local/nginx  
+--with-http_ssl_module  
+--with-http_flv_module  
+--with-http_stub_status_module   
+--with-http_gzip_static_module 
+--with-pcre=../pcre-8.41  
+--with-openssl=../openssl-1.0.1
+</code></pre>
+</li>
+<li>
+<p>编译：</p>
+<pre><code>make
+如果出现”pcre.h No such file or directory”，
+安装”sudo apt-get install libpcre3-dev”
+</code></pre>
+</li>
+<li>
+<p>安装</p>
+<pre><code>sudo make install
+</code></pre>
+</li>
+<li>
+<p>说明：</p>
+<pre><code>nginx会被安装在/usr/local/nginx目录下
+conf：存放配置文件     html：静态网页    
+logs：存放日志文件     sbin：存放可执行文件
+</code></pre>
+</li>
+<li>
+<p>相关命令</p>
+<pre><code>启动Nginx服务： sudo /usr/local/nginx/sbin/nginx
+关闭Nginx服务： sudo /usr/local/nginx/sbin/nginx -s stop
+重新加载配置：  sudo /usr/local/nginx/sbin/nginx –s reload
+指定配置文件：  sudo /usr/local/nginx/sbin/nginx –c /usr/local/nginx/conf/nginx.conf
+查看版本信息：  sudo /usr/local/nginx/sbin/nginx –V
+查看80端口的程序：nesta –ano | grep 80
+关闭占用80端口的程序：sudo fuser –k 80/tcp
+</code></pre>
+</li>
+<li>
+<p>启动服务：</p>
+<pre><code>sudo /usr/local/nginx/sbin/nginx 或cd切换到sbin目录下执行./nginx
+</code></pre>
+</li>
+<li>
+<p>打开浏览器，输入Nginx服务器IP地址</p>
+</li>
+<li>
+<p>配置</p>
+<ul>
+<li>
+<pre><code>/usr/local/nginx/conf/nginx.conf
+</code></pre>
+</li>
+<li>
+<pre><code>全局设置：
+定义全局错误日志文件，需要什么等级可以设置开启
+error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+worker_rlimit_nofile：指定一个nginx可以打开的最多文件描述符，可以使用“ulimit –n 65535”进行设置（虚拟机默认设置1024），阿里云服务器默认就是65535
+</code></pre>
+</li>
+<li>
+<pre><code>events(nginx工作模式)
+events {
+use epoll;   linux标准的工作模式，nginx高效的基石
+worker_connections  1024;    定义nginx每个进程的最大连接数
+}
+</code></pre>
+</li>
+<li>
+<pre><code>http(http设置)
+sendfile   on;   开启高效文件传输模式
+tcp_nopush  on;   防止网络阻塞
+tcp_nodelay  on;
+keepalive_timeout  65;    设置客户端连接活动的超时时间
+gzip on;   使用压缩模块
+</code></pre>
+</li>
+<li>
+<pre><code>server(主机设置)
+			server{
+			  listen          80;
+			  server_name    localhsot www.ice.xin 39.105.61.52;
+			  charser utf-8;
+			# 负载均衡模块，upstream是负载均衡器
+			upstream ice {
+				server 39.105.61.52:8000 weight=1 max_fails=1 fail_timeout=300s;
+				server 39.105.61.53:8000 weight=1 max_fails=1 fail_timeout=300s;
+			}
+
+			  # 负载均衡采用轮循方式
+			  server server 39.105.61.52:8000 weight=1 max_fails=1 fail_timeout=300s;
+			}
+			  # 反向代理配置， 
+			  location / {
+#适用于django自带的runserver方式启动
+				#proxy_pass http://www.ice.xin:8000;
+				#proxy_pass http://www.ice.xin:8000;
+				#proxy_set_header Host $http_host;
+				# 设置uwsgi启动
+				include uwsgi_params;
+				uwsgi_pass ice;
+			  }
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>重启nginx服务：</p>
+<pre><code>sudo /usr/local/nginx/sbin/nginx
+</code></pre>
+</li>
+</ol>
+<h3 id="七-部署django项目">七、部署Django项目</h3>
+<ol>
+<li>
+<p>安装Django：</p>
+<pre><code>sudo pip install Django==1.11.4
+</code></pre>
+</li>
+<li>
+<p>创建Django项目：部署前需要关闭调试，允许任何机器访问</p>
+</li>
+<li>
+<p>安装uwsgi：</p>
+<pre><code>sudo apt-get install libpython3.6-dev(2.7不用安装)
+pip install uwsgi
+</code></pre>
+</li>
+<li>
+<p>创建：在工程目录下创建名为uwsgi.ini的文件</p>
+</li>
+<li>
+<p>配置uwsgi.ini：</p>
+<pre><code>[uwsgi]
+#使用nginx连接时使用功能，上线时才使用socket
+socket=0.0.0.0:8000
+#直接做web项目服务器使用
+#http=0.0.0.0:8000
+#项目目录
+chdir=/home/'/project
+#项目中wsgi.py文件的目录，相对于项目目录
+wsgi-file=project/wsgi.py
+processess=2
+threads=2
+master=True
+pidfile=uwsgi.pid
+#是否以守护进程的方式启动
+daemonize=uwsgi.log
+</code></pre>
+</li>
+<li>
+<p>启动：</p>
+<pre><code>uwsgi --ini uwsgi.ini
+
+</code></pre>
+</li>
+<li>
+<p>停止：</p>
+<pre><code>uwsgi --stop uwsgi.pid
+</code></pre>
+</li>
+<li>
+<p>配置Nginx：</p>
+<ul>
+<li>
+<pre><code>在/usr/local/nginx/conf/nginx.conf中添加：
+		location /static {
+			alias /var/www/xxx/static/;
+}
+</code></pre>
+</li>
+<li>
+<pre><code>创建静态文件的存储文件
+		sudo mkdir –vp /var/www/xxx/static/
+		sudo chmod 777 /var/www/xxx/static/
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p>配置静态文件</p>
+<ul>
+<li>
+<pre><code>在settings.py中添加：
+STATIC_ROOT = ‘var/www/xxx/static/'
+STATIC_URL = ‘/static/'
+</code></pre>
+</li>
+<li>
+<pre><code>迁移静态文件
+python manage.py collectstatic
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E4%B8%80-%E7%94%A8%E6%88%B7%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8Epython36%E7%8E%AF%E5%A2%83%E7%9A%84%E5%AE%89%E8%A3%85">一、用户的创建与python3.6环境的安装</a></li>
+<li><a href="#%E4%BA%8C-%E5%AE%89%E8%A3%85mysql">二、安装MySQL</a></li>
+<li><a href="#%E4%B8%89-%E5%AE%89%E8%A3%85mongodb">三、安装mongodb</a></li>
+<li><a href="#%E5%9B%9B-%E5%AE%89%E8%A3%85redis">四、安装redis</a></li>
+<li><a href="#%E4%BA%94-%E5%AE%89%E8%A3%85git">五、安装git</a></li>
+<li><a href="#%E5%85%AD-nginx%E5%AE%89%E8%A3%85">六、nginx安装</a></li>
+<li><a href="#%E4%B8%83-%E9%83%A8%E7%BD%B2django%E9%A1%B9%E7%9B%AE">七、部署Django项目</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/linux-pei-zhi-http-dai-li/">
+              <h3 class="post-title">
+                Linux配置http代理
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

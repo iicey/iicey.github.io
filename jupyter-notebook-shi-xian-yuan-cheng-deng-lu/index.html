@@ -1,0 +1,196 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jupyter notebook实现远程登陆 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Jupyter notebook实现远程登陆 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="在服务器上配置jupyter, 方便我们远程登录．
+第一步：安装jupyter, pip3 install jupyter (此处使用的是python3)
+第二步：生成配置文件jupyter notebook --generate-conf..." />
+    <meta name="keywords" content="Jupyter notebook" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Jupyter notebook实现远程登陆
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/arWNvdtLLT_/" class="post-tag">
+                  # Jupyter notebook
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>在服务器上配置jupyter, 方便我们远程登录．</p>
+<p>第一步：安装jupyter, pip3 install jupyter (此处使用的是python3)</p>
+<p>第二步：生成配置文件jupyter notebook --generate-config</p>
+<p>第三步：生成密钥　打开python3</p>
+<pre><code>from notebook.auth import passwd
+
+passwd()
+
+此时会让你两次输入密码，然后就会生成秘钥
+
+＊＊＊＊＊＊＊＊＊＊＊＊
+'sha1:171c6e03b2bd:1e2401f7e84d13ab51d1f34df4b910b6f9800a65'
+</code></pre>
+<p>修改配置文件</p>
+<p>vim ~/.jupyter/jupyter_notebook_config.py</p>
+<pre><code>c.NotebookApp.ip='0.0.0.0'                    # 就是设置所有ip皆可访问
+
+c.NotebookApp.password = u'sha1:ce...'      # 刚才复制的那个密文
+
+c.NotebookApp.open_browser = False       # 禁止自动打开浏览器
+
+c.NotebookApp.port =8888              # 随便指定一个端口
+</code></pre>
+<p>第四步：配置一下路由器的端口转发，</p>
+<p>第五步：在服务器端启动 jupyter notebook</p>
+<p>第六步：本地地址栏输入服务器ip:8888 就OK了</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-xian-shu-ju-cun-chu-wei-jsoncsvxlsx/">
+              <h3 class="post-title">
+                Python3实现数据存储为json、csv、xlsx
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,934 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Frida API示例 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Frida API示例 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="Java层
+hook普通方法
+# -*- coding: utf-8 -*-
+import frida
+import sys
+
+hook_code = &quot;&quot;&quot;
+Java.perform(function(){
+..." />
+    <meta name="keywords" content="hook,frida" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Frida API示例
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-06-07
+              </span>
+              <span>
+                16 min read
+              </span>
+              
+                <a href="https://iicey.github.io/6TMbAERr1/" class="post-tag">
+                  # hook
+                </a>
+              
+                <a href="https://iicey.github.io/fCODZ-IDa/" class="post-tag">
+                  # frida
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="java层">Java层</h1>
+<h3 id="hook普通方法">hook普通方法</h3>
+<pre><code># -*- coding: utf-8 -*-
+import frida
+import sys
+
+hook_code = &quot;&quot;&quot;
+Java.perform(function(){
+
+    var utils = Java.use(&quot;类名路径&quot;);
+    utils.方法名.implementation = function(a, b){
+        
+        a = 123;
+        b = 456;
+
+        var retval = this.方法名(a, b);
+        console.log(a, b, retval);
+
+        return retval;
+    }
+});
+&quot;&quot;&quot;
+process = frida.get_usb_device().attach('包名')
+script = process.create_script(hook_code)
+script.load()
+sys.stdin.read()
+
+</code></pre>
+<h3 id="hook多个重载方法">hook多个重载方法</h3>
+<pre><code># -*- coding: utf-8 -*-
+import frida
+import sys
+
+hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest3(){
+    var utils = Java.use(&quot;类名路径&quot;);
+    utils.方法名.overload('重载的参数1').implementation = function(a){
+        a = 888;
+        var retval = this.方法名();
+        console.log(a, retval);
+        return retval;
+    }
+    utils.方法名.overload(无参).implementation = function(){
+        var retval = this.方法名();
+        console.log(retval);
+        return retval;
+    }
+    utils.方法名.overload('重载的参数2').implementation = function(a){
+        var retval = this.方法名(a);
+        console.log(retval);
+        return retval;
+    }
+});
+&quot;&quot;&quot;
+process = frida.get_usb_device().attach('包名')
+script = process.create_script(hook_code)
+script.load()
+sys.stdin.read()
+</code></pre>
+<h3 id="hook所有重载方法">hook所有重载方法</h3>
+<p>与 “多个重载方法” 不同点在于写了参数判断逻辑</p>
+<pre><code># -*- coding: utf-8 -*-
+import frida
+import sys
+
+hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest3(){
+    var utils = Java.use(&quot;类名路径&quot;);
+    //console.log(utils.方法名.overloads.length);
+    for(var i = 0; i &lt; utils.方法名.overloads.length; i++){
+        utils.方法名.overloads[i].implementation = function(){
+            //console.log(JSON.stringify(arguments));
+
+            if(arguments.length == 0){
+                return &quot;调用了没有参数的&quot;;
+            }else if(arguments.length == 1){
+                if(JSON.stringify(arguments).indexOf(&quot;Money&quot;) != -1){
+                    return &quot;调用了Money参数的&quot;;
+                }else{
+                    return &quot;调用了int参数的&quot;;
+                }
+            }
+
+            arguments[0] = 1000;
+            return this.方法名.apply(this, arguments);
+        }
+    }
+});
+&quot;&quot;&quot;
+process = frida.get_usb_device().attach('包名')
+script = process.create_script(hook_code)
+script.load()
+sys.stdin.read()
+
+</code></pre>
+<h3 id="hook构造方法">hook构造方法</h3>
+<pre><code>Java.perform(function hookTest4(){
+    var money = Java.use(&quot;类名路径&quot;);
+    money.$init.overload('重载的参数1', '重载的参数2').implementation = function(str, num){
+        console.log(str, num);
+        str = &quot;欧元&quot;;
+        num = 2000;
+        this.$init(str, num);
+    }
+});
+</code></pre>
+<h3 id="对象实例化">对象实例化</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest2(){
+    var utils = Java.use(&quot;utils类路径&quot;);
+    var money = Java.use(&quot;money类路径&quot;);
+    utils.方法名.overload('重载参数').implementation = function(a){
+        a = 888;
+        var retval = this.方法名(money.$new(&quot;日元&quot;, 100000));//对象实例化
+        console.log(a, retval);
+        return retval;
+    }
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="修改类的字段">修改类的字段</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function(){
+    //静态字段的修改
+    var money = Java.use(&quot;money类路径&quot;);
+    //console.log(JSON.stringify(money.字段名));
+    money.字段名.value = &quot;xxxxx&quot;;
+    console.log(money.flag.value);
+
+    //非静态字段的修改
+    Java.choose(&quot;money类路径&quot;, {
+        onMatch: function(obj){
+            obj._name.value = &quot;ouyuan&quot;; //字段名与函数名相同
+            obj.name.value = &quot;ouyuan&quot;; //字段名与函数名不同
+            前面加个下划线
+            obj.num.value = 150000;
+        },
+        onComplete: function(){
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="hook内部类与匿名类">hook内部类与匿名类</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest6(){
+    Java.perform(function(){
+        var innerClass = Java.use(&quot;money类路径$内部类名&quot;);
+        console.log(innerClass);
+        innerClass.$init.implementation = function(a, b){
+            a = &quot;nb&quot;;
+            b = 888;
+            return this.$init(a, b);
+        }
+
+        var xxx = Java.use(&quot;xxx类路径$smali中查看匿名类数字编号&quot;);
+        console.log(xxx);
+        xxx.getInfo.implementation = function(){
+            return &quot;匿名类被Hook了&quot;
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="枚举所有的类与类的所有方法">枚举所有的类与类的所有方法</h3>
+<pre><code># -*- coding: utf-8 -*-
+hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest7(){
+    Java.perform(function(){
+        // Java.enumerateLoadedClasses({
+        //     onMatch: function(name, handle){
+        //         if(name.indexOf(&quot;包名&quot;) != -1){
+        //             console.log(name);
+        //             var clazz = Java.use(name);
+        //             console.log(clazz);
+        //             var methods = clazz.class.getDeclaredMethods();
+        //             for(var i = 0; i &lt; methods.length; i++){
+        //                 console.log(methods[i]);
+        //             }
+        //         }
+        //     },
+        //     onComplete: function(){
+        //     }
+        // }); 两种写法
+
+        var classes = Java.enumerateLoadedClassesSync();
+        for(var i = 0; i &lt; classes.length; i++){
+            if(classes[i].indexOf(&quot;包名&quot;) != -1){
+                console.log(classes[i]);
+                var clazz = Java.use(classes[i]);
+                var methods = clazz.class.getDeclaredMethods();
+                for(var j = 0; j &lt; methods.length; j++){
+                    console.log(methods[j]);
+                }
+            }
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="hook类的所有方法">hook类的所有方法</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest8(){
+    Java.perform(function(){
+        var md5 = Java.use(&quot;md5类路径&quot;);
+        var methods = md5.class.getDeclaredMethods();
+        for(var j = 0; j &lt; methods.length; j++){
+            var methodName = methods[j].getName();
+            console.log(methodName);
+
+            for(var k = 0; k &lt; md5[methodName].overloads.length; k++){
+
+                md5[methodName].overloads[k].implementation = function(){
+                    for(var i = 0; i &lt; arguments.length; i++){
+                        console.log(arguments[i]);
+                    }
+                    return this[methodName].apply(this, arguments);
+                }
+            }
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="hook动态加载的dexandroid-7以上">Hook动态加载的dex(Android 7以上)</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function () {
+    Java.enumerateClassLoaders({
+        onMatch: function (loader) {
+            try {
+                if (loader.loadClass(&quot;com.xiaojianbang.app.Dynamic&quot;)) {
+                    Java.classFactory.loader = loader;
+                    var Dynamic = Java.use(&quot;com.xiaojianbang.app.Dynamic&quot;);
+                    console.log(Dynamic);
+                    Dynamic.sayHello.implementation = function () {
+                        return &quot;9999999&quot;;
+                    }
+                }
+            } catch (error) {
+            }
+        },
+        onComplete: function () {
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="java特殊类型的遍历与修改">Java特殊类型的遍历与修改</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function () {
+    var ShufferMap = Java.use(&quot;com.xiaojianbang.app.ShufferMap&quot;);
+    console.log(ShufferMap);
+    ShufferMap.show.implementation = function (map) {
+        console.log(JSON.stringify(map));
+        //Java map的遍历
+        var key = map.keySet();
+        var it = key.iterator();
+        var result = &quot;&quot;;
+        while(it.hasNext()){
+            var keystr = it.next();
+            var valuestr = map.get(keystr);
+            result += valuestr;
+        }
+        console.log(result);
+        // return result;
+
+        //Java map的修改
+        map.put(&quot;pass&quot;, &quot;zygx8&quot;);
+        map.put(&quot;guanwang&quot;, &quot;www.zygx8.com&quot;);
+
+        var retval = this.show(map);
+        console.log(retval);
+        return retval;
+    }
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="打印hashmap">打印HashMap</h3>
+<pre><code>console.log(JSON.stringify(arguments))
+var Map = Java.use('java.util.HashMap');
+var args_map = Java.cast(arguments[1], Map);
+console.log(args_map.toString());
+</code></pre>
+<h3 id="java层主动调用">Java层主动调用</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function () {
+    //静态方法的主动调用
+    var rsa = Java.use(&quot;com.xiaojianbang.app.RSA&quot;);
+    var str = Java.use(&quot;java.lang.String&quot;);
+    var base64 = Java.use(&quot;android.util.Base64&quot;);
+    var bytes = str.$new(&quot;xiaojianbang&quot;).getBytes();
+    console.log(JSON.stringify(bytes));
+    var retval = rsa.encrypt(bytes);
+    var result = base64.encodeToString(retval, 0);
+    console.log(result);
+    //非静态方法的主动调用1 (新建一个对象去调用)
+    var res = Java.use(&quot;com.xiaojianbang.app.Money&quot;).$new(&quot;日元&quot;, 300000).getInfo();
+    console.log(res);
+    var utils = Java.use(&quot;com.xiaojianbang.app.Utils&quot;);
+    res = utils.$new().myPrint([&quot;xiaojianbang&quot;, &quot;is very good&quot;, &quot; &quot;, &quot;zygx8&quot;, &quot;is very good&quot;]);
+    console.log(res);
+    //非静态方法的主动调用2 (获取已有的对象调用)
+    Java.choose(&quot;com.xiaojianbang.app.Money&quot;, {
+        onMatch: function (obj) {
+            if (obj._name.value == &quot;美元&quot;) {
+                res = obj.getInfo();
+                console.log(res);
+            }
+        },
+        onComplete: function () {
+        }
+    });
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="删除对象引用">删除对象引用</h3>
+<pre><code>$.dispose
+</code></pre>
+<h3 id="获取参数类型">获取参数类型</h3>
+<pre><code>xxx.class.getType()
+</code></pre>
+<h3 id="打印java层函数堆栈定位关键代码">打印Java层函数堆栈定位关键代码</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function () {
+    var MessageDigest = Java.use(&quot;java.security.MessageDigest&quot;);
+    MessageDigest.digest.overload().implementation = function () {
+        var stack = Java.use(&quot;android.util.Log&quot;).getStackTraceString(Java.use(&quot;java.lang.Throwable&quot;).$new());
+        console.log(stack);
+        return this.digest();
+    }
+
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="用frida注入dex文件">用frida注入dex文件</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function () {
+    Java.openClassFile(&quot;/data/local/tmp/xiaojianbang.dex&quot;).load();
+    var xiaojianbang = Java.use(&quot;com.xiaojianbang.test.xiaojianbang&quot;);
+
+    var ShufferMap = Java.use(&quot;com.xiaojianbang.app.ShufferMap&quot;);
+    ShufferMap.show.implementation = function (map) {
+        var retval = xiaojianbang.sayHello(map);
+        console.log(retval);
+        return retval;
+    }
+
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="端口检测解决方案">端口检测解决方案</h3>
+<pre><code>./data/local/tmp/frida_server_arm64 -l 127.0.0.1:9999
+</code></pre>
+<pre><code>adb forward tcp:9999 tcp:9999
+</code></pre>
+<h3 id="frida启动前注入">frida启动前注入</h3>
+<pre><code>frida -H 127.0.0.1:9999 -f com.xjb.cpp -l hook.js --no-pause
+</code></pre>
+<h3 id="frida同时hook多个设备">frida同时Hook多个设备</h3>
+<h5 id="获取当前的连接设备">获取当前的连接设备</h5>
+<pre><code>adb devices
+</code></pre>
+<h5 id="指定连接某个设备">指定连接某个设备</h5>
+<pre><code>adb -s 127.0.0.1:5555 shell
+</code></pre>
+<h5 id="端口转发">端口转发</h5>
+<pre><code>adb -s 127.0.0.1:5555 forward tcp:27042 tcp:27042
+</code></pre>
+<h5 id="hook代码">hook代码</h5>
+<pre><code># -*- coding: UTF-8 -*-
+import frida, sys
+
+jscode = &quot;&quot;&quot;
+setImmediate(function(){
+    Java.perform(function () {
+        var utils = Java.use(&quot;com.xiaojianbang.app.Utils&quot;);
+        utils.getCalc.implementation = function(a, b){
+            a = 12345;
+            b = 54321;
+            var retval = this.getCalc(a, b);
+            console.log(a, b, retval);
+            return retval;
+        }
+	});
+});
+&quot;&quot;&quot;
+
+
+def message(message, data):
+    if message[&quot;type&quot;] == 'send':
+        print(&quot;[*] {0}&quot;.format(message['payload']))
+    else:
+        print(message)
+
+
+# rdev = frida.get_device_manager().enumerate_devices()
+rdev = frida.enumerate_devices()
+print(rdev)
+rdev = rdev[int(sys.argv[1])]
+process = rdev.attach('com.xiaojianbang.app')  # pid
+script = process.create_script(jscode)
+script.on('message', message)
+script.load()
+sys.stdin.read()
+
+</code></pre>
+<h1 id="so层">so层</h1>
+<h3 id="枚举导入导出表elf即so文件">枚举导入导出表(ELF即so文件)</h3>
+<h5 id="枚举导入表">枚举导入表</h5>
+<pre><code>var imports = Module.enumerateImports(&quot;libxiaojianbang.so&quot;);
+for(var i = 0; i &lt; imports.length; i++){
+    if(imports[i].name == &quot;strncat&quot;){
+        console.log(JSON.stringify(imports[i]));
+        console.log(imports[i].address);
+    }
+}
+</code></pre>
+<h5 id="枚举导出表">枚举导出表</h5>
+<pre><code>var exports = Module.enumerateExports(&quot;libxiaojianbang.so&quot;);
+for(var i = 0; i &lt; exports.length; i++){
+    //if(exports[i].name == &quot;strncat&quot;){
+        console.log(JSON.stringify(exports[i]));
+    //}
+}
+</code></pre>
+<h3 id="hook导出函数">hook导出函数</h3>
+<pre><code>hook_code = &quot;&quot;&quot;
+Java.perform(function hookTest2() {
+    var helloAddr = Module.findExportByName(&quot;libxiaojianbang.so&quot;, &quot;Java_com_xiaojianbang_app_NativeHelper_add&quot;);
+    console.log(helloAddr);
+    if (helloAddr != null) {
+        Interceptor.attach(helloAddr, {
+            onEnter: function (args) {
+                //args参数数组
+                console.log(args[0]);
+                console.log(args[1]);
+                console.log(args[2]);
+                console.log(args[3]);
+                console.log(args[4].toInt32());
+            },
+            onLeave: function (retval) {
+                //retval函数返回值
+                console.log(retval);
+                console.log(&quot;retval&quot;, retval.toInt32());
+            }
+        });
+    }
+});
+&quot;&quot;&quot;
+</code></pre>
+<h3 id="函数地址计算">函数地址计算</h3>
+<pre><code>function hookTest14(){
+    var soAddr = Module.findBaseAddress(&quot;libxiaojianbang.so&quot;);
+    console.log(soAddr);
+    var funcAddr = soAddr.add(0x23F4);
+    console.log(funcAddr);
+}
+</code></pre>
+<h3 id="hook未导出函数">Hook未导出函数</h3>
+<pre><code>function hookTest14(){
+    var soAddr = Module.findBaseAddress(&quot;libxiaojianbang.so&quot;);
+    console.log(soAddr);
+    var funcAddr = soAddr.add(0x23F4);
+    console.log(funcAddr);
+
+    if(funcAddr != null){
+        Interceptor.attach(funcAddr,{
+            onEnter: function(args){
+
+            },
+            onLeave: function(retval){
+                console.log(hexdump(retval));
+            }
+        });
+     }
+}
+</code></pre>
+<h3 id="获取指针参数返回值">获取指针参数返回值</h3>
+<pre><code>function hookTest5(){
+    var soAddr = Module.findBaseAddress(&quot;libxiaojianbang.so&quot;);
+    console.log(soAddr);
+    var sub_930 = soAddr.add(0x930); //函数地址计算 thumb+1 ARM不加
+    console.log(sub_930);
+
+     var sub_208C = soAddr.add(0x208C); //函数地址计算 thumb+1 ARM不加
+     console.log(sub_208C);
+     if(sub_208C != null){
+        Interceptor.attach(sub_208C,{
+            onEnter: function(args){
+                this.args1 = args[1];
+            },
+            onLeave: function(retval){
+                console.log(hexdump(this.args1));
+            }
+        });
+     }
+}
+</code></pre>
+<h3 id="hook_dlopen">Hook_dlopen</h3>
+<pre><code>/data/app/com.xxx.app-l/lib/arm64/xxxxxx.so
+</code></pre>
+<pre><code>function hookTest6(){
+    var dlopen = Module.findExportByName(null, &quot;dlopen&quot;);
+    console.log(dlopen);
+    if(dlopen != null){
+        Interceptor.attach(dlopen,{
+            onEnter: function(args){
+                var soName = args[0].readCString();
+                console.log(soName);
+                if(soName.indexOf(&quot;libxiaojianbang.so&quot;) != -1){
+                    this.hook = true;
+                }
+            },
+            onLeave: function(retval){
+                if(this.hook) { hookTest5() };
+            }
+        });
+    }
+
+    var android_dlopen_ext = Module.findExportByName(null, &quot;android_dlopen_ext&quot;);
+    console.log(android_dlopen_ext);
+    if(android_dlopen_ext != null){
+        Interceptor.attach(android_dlopen_ext,{
+            onEnter: function(args){
+                var soName = args[0].readCString();
+                console.log(soName);
+                if(soName.indexOf(&quot;libxiaojianbang.so&quot;) != -1){
+                    this.hook = true;
+                }
+            },
+            onLeave: function(retval){
+                if(this.hook) { hookTest5() };
+            }
+        });
+    }
+
+}
+</code></pre>
+<h3 id="内存读写">内存读写</h3>
+<pre><code>function hookTest7(){
+    var soAddr = Module.findBaseAddress(&quot;libxiaojianbang.so&quot;);
+    console.log(soAddr);
+    if(soAddr != null){
+        //console.log(soAddr.add(0x2C00).readCString());
+        //console.log(hexdump(soAddr.add(0x2C00)));  //读取指定地址的字符串
+
+        //var strByte = soAddr.add(0x2C00).readByteArray(16); //读内存
+        //console.log(strByte);
+        
+        //soAddr.add(0x2C00).writeByteArray(stringToBytes(&quot;xiaojianbang&quot;)); //写内存
+        //console.log(hexdump(soAddr.add(0x2C00)));  //dump指定内存
+
+        //var bytes = Module.readByteArray(soAddr.add(0x2C00), 16);
+        //console.log(bytes);
+
+    }
+}
+</code></pre>
+<h3 id="主动调用jni函数">主动调用JNI函数</h3>
+<pre><code>function hookTest8(){
+    var funcAddr = Module.findExportByName(&quot;libxiaojianbang.so&quot;, &quot;Java_com_xiaojianbang_app_NativeHelper_helloFromC&quot;);
+    console.log(funcAddr);
+    if(funcAddr != null){
+        Interceptor.attach(funcAddr,{
+            onEnter: function(args){
+
+            },
+            onLeave: function(retval){
+                var env = Java.vm.tryGetEnv();
+                var jstr = env.newStringUtf(&quot;www.zygx8.com&quot;);  //主动调用jni函数 cstr转jstr
+                retval.replace(jstr);
+                var cstr = env.getStringUtfChars(jstr); //主动调用 jstr转cstr
+                console.log(cstr.readCString());
+                console.log(hexdump(cstr));
+            }
+        });
+    }
+}
+</code></pre>
+<h3 id="jni函数hook计算地址方式">jni函数Hook(计算地址方式)</h3>
+<pre><code>function hookTest9(){
+    Java.perform(function(){
+        //console.log(JSON.stringify(Java.vm.tryGetEnv()));
+        var envAddr = ptr(Java.vm.tryGetEnv().handle).readPointer();
+        var newStringUtfAddr = envAddr.add(0x538).readPointer();
+        var registerNativesAddr = envAddr.add(1720).readPointer();
+        console.log(&quot;newStringUtfAddr&quot;, newStringUtfAddr);
+        console.log(&quot;registerNativesAddr&quot;, registerNativesAddr)
+        if(newStringUtfAddr != null){
+            Interceptor.attach(newStringUtfAddr,{
+                onEnter: function(args){
+                    console.log(args[1].readCString());
+                    //args[1] = &quot;xiaojianbang is very good!&quot;;
+                },
+                onLeave: function(retval){
+
+                }
+            });
+        }
+        if(registerNativesAddr != null){     //Hook registerNatives获取动态注册的函数地址
+            Interceptor.attach(registerNativesAddr,{
+                onEnter: function(args){
+                    console.log(args[2].readPointer().readCString());
+                    console.log(args[2].add(Process.pointerSize).readPointer().readCString());
+                    console.log(args[2].add(Process.pointerSize * 2).readPointer());
+                    console.log(hexdump(args[2]));
+                    console.log(&quot;sub_289C&quot;, Module.findBaseAddress(&quot;libxiaojianbang.so&quot;).add(0x289C));
+                },
+                onLeave: function(retval){
+
+                }
+            });
+        }
+
+    });
+}
+
+</code></pre>
+<h3 id="jni函数hooklibartso">jni函数Hook(libart.so)</h3>
+<pre><code>function hookTest10(){
+    var artSym = Module.enumerateSymbols(&quot;libart.so&quot;);
+    var NewStringUTFAddr = null;
+    for(var i = 0; i &lt; artSym.length; i++){
+        if(artSym[i].name.indexOf(&quot;CheckJNI&quot;) == -1 &amp;&amp; artSym[i].name.indexOf(&quot;NewStringUTF&quot;) != -1){
+            console.log(JSON.stringify(artSym[i]));
+            NewStringUTFAddr = artSym[i].address;
+        }
+    };
+
+    if(NewStringUTFAddr != null){
+        Interceptor.attach(NewStringUTFAddr,{
+            onEnter: function(args){
+                console.log(args[1].readCString());
+            },
+            onLeave: function(retval){
+
+            }
+        });
+    }
+
+}
+</code></pre>
+<h3 id="so层堆栈_快速定位函数注册在哪个so">so层堆栈_快速定位函数注册在哪个so</h3>
+<pre><code>
+</code></pre>
+<h3 id="so层函数主动调用">so层函数主动调用</h3>
+<pre><code>function hookTest11(){
+    Java.perform(function(){
+        var funcAddr = Module.findBaseAddress(&quot;libxiaojianbang.so&quot;).add(0x23F4);
+        var func = new NativeFunction(funcAddr, &quot;pointer&quot;, ['pointer', 'pointer']);
+        var env = Java.vm.tryGetEnv();
+        console.log(&quot;env: &quot;, JSON.stringify(env));
+        if(env != null){
+            var jstr = env.newStringUtf(&quot;xiaojianbang is very good!!!&quot;);
+            //console.log(&quot;jstr: &quot;, hexdump(jstr));
+            var cstr = func(env, jstr);
+            console.log(cstr.readCString());
+            console.log(hexdump(cstr));
+        }
+    });
+}
+</code></pre>
+<h3 id="frida读写文件">frida读写文件</h3>
+<pre><code>//frida API 读写文件
+function hookTest12(){
+    var ios = new File(&quot;/sdcard/xiaojianbang.txt&quot;, &quot;w&quot;);
+    ios.write(&quot;xiaojianbang is very good!!!\n&quot;);
+    ios.flush();
+    ios.close();
+}
+//Hook libc 读写文件
+function hookTest13() {
+
+    var addr_fopen = Module.findExportByName(&quot;libc.so&quot;, &quot;fopen&quot;);
+    var addr_fputs = Module.findExportByName(&quot;libc.so&quot;, &quot;fputs&quot;);
+    var addr_fclose = Module.findExportByName(&quot;libc.so&quot;, &quot;fclose&quot;);
+
+    console.log(&quot;addr_fopen:&quot;, addr_fopen, &quot;addr_fputs:&quot;, addr_fputs, &quot;addr_fclose:&quot;, addr_fclose);
+    var fopen = new NativeFunction(addr_fopen, &quot;pointer&quot;, [&quot;pointer&quot;, &quot;pointer&quot;]);
+    var fputs = new NativeFunction(addr_fputs, &quot;int&quot;, [&quot;pointer&quot;, &quot;pointer&quot;]);
+    var fclose = new NativeFunction(addr_fclose, &quot;int&quot;, [&quot;pointer&quot;]);
+
+    var filename = Memory.allocUtf8String(&quot;/sdcard/xiaojianbang.txt&quot;);
+    var open_mode = Memory.allocUtf8String(&quot;w&quot;);
+    var file = fopen(filename, open_mode);
+    console.log(&quot;fopen:&quot;, file);
+
+    var buffer = Memory.allocUtf8String(&quot;zygxb\n&quot;);
+    var retval = fputs(buffer, file);
+    console.log(&quot;fputs:&quot;, retval);
+
+    fclose(file);
+
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#java%E5%B1%82">Java层</a><br>
+*
+<ul>
+<li><a href="#hook%E6%99%AE%E9%80%9A%E6%96%B9%E6%B3%95">hook普通方法</a></li>
+<li><a href="#hook%E5%A4%9A%E4%B8%AA%E9%87%8D%E8%BD%BD%E6%96%B9%E6%B3%95">hook多个重载方法</a></li>
+<li><a href="#hook%E6%89%80%E6%9C%89%E9%87%8D%E8%BD%BD%E6%96%B9%E6%B3%95">hook所有重载方法</a></li>
+<li><a href="#hook%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95">hook构造方法</a></li>
+<li><a href="#%E5%AF%B9%E8%B1%A1%E5%AE%9E%E4%BE%8B%E5%8C%96">对象实例化</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E7%B1%BB%E7%9A%84%E5%AD%97%E6%AE%B5">修改类的字段</a></li>
+<li><a href="#hook%E5%86%85%E9%83%A8%E7%B1%BB%E4%B8%8E%E5%8C%BF%E5%90%8D%E7%B1%BB">hook内部类与匿名类</a></li>
+<li><a href="#%E6%9E%9A%E4%B8%BE%E6%89%80%E6%9C%89%E7%9A%84%E7%B1%BB%E4%B8%8E%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E6%96%B9%E6%B3%95">枚举所有的类与类的所有方法</a></li>
+<li><a href="#hook%E7%B1%BB%E7%9A%84%E6%89%80%E6%9C%89%E6%96%B9%E6%B3%95">hook类的所有方法</a></li>
+<li><a href="#hook%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD%E7%9A%84dexandroid-7%E4%BB%A5%E4%B8%8A">Hook动态加载的dex(Android 7以上)</a></li>
+<li><a href="#java%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E9%81%8D%E5%8E%86%E4%B8%8E%E4%BF%AE%E6%94%B9">Java特殊类型的遍历与修改</a></li>
+<li><a href="#%E6%89%93%E5%8D%B0hashmap">打印HashMap</a></li>
+<li><a href="#java%E5%B1%82%E4%B8%BB%E5%8A%A8%E8%B0%83%E7%94%A8">Java层主动调用</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E5%AF%B9%E8%B1%A1%E5%BC%95%E7%94%A8">删除对象引用</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B">获取参数类型</a></li>
+<li><a href="#%E6%89%93%E5%8D%B0java%E5%B1%82%E5%87%BD%E6%95%B0%E5%A0%86%E6%A0%88%E5%AE%9A%E4%BD%8D%E5%85%B3%E9%94%AE%E4%BB%A3%E7%A0%81">打印Java层函数堆栈定位关键代码</a></li>
+<li><a href="#%E7%94%A8frida%E6%B3%A8%E5%85%A5dex%E6%96%87%E4%BB%B6">用frida注入dex文件</a></li>
+<li><a href="#%E7%AB%AF%E5%8F%A3%E6%A3%80%E6%B5%8B%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">端口检测解决方案</a></li>
+<li><a href="#frida%E5%90%AF%E5%8A%A8%E5%89%8D%E6%B3%A8%E5%85%A5">frida启动前注入</a></li>
+<li><a href="#frida%E5%90%8C%E6%97%B6hook%E5%A4%9A%E4%B8%AA%E8%AE%BE%E5%A4%87">frida同时Hook多个设备</a><br>
+*
+<ul>
+<li><a href="#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%9A%84%E8%BF%9E%E6%8E%A5%E8%AE%BE%E5%A4%87">获取当前的连接设备</a></li>
+<li><a href="#%E6%8C%87%E5%AE%9A%E8%BF%9E%E6%8E%A5%E6%9F%90%E4%B8%AA%E8%AE%BE%E5%A4%87">指定连接某个设备</a></li>
+<li><a href="#%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91">端口转发</a></li>
+<li><a href="#hook%E4%BB%A3%E7%A0%81">hook代码</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#so%E5%B1%82">so层</a><br>
+*
+<ul>
+<li><a href="#%E6%9E%9A%E4%B8%BE%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA%E8%A1%A8elf%E5%8D%B3so%E6%96%87%E4%BB%B6">枚举导入导出表(ELF即so文件)</a><br>
+*
+<ul>
+<li><a href="#%E6%9E%9A%E4%B8%BE%E5%AF%BC%E5%85%A5%E8%A1%A8">枚举导入表</a></li>
+<li><a href="#%E6%9E%9A%E4%B8%BE%E5%AF%BC%E5%87%BA%E8%A1%A8">枚举导出表</a></li>
+</ul>
+</li>
+<li><a href="#hook%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0">hook导出函数</a></li>
+<li><a href="#%E5%87%BD%E6%95%B0%E5%9C%B0%E5%9D%80%E8%AE%A1%E7%AE%97">函数地址计算</a></li>
+<li><a href="#hook%E6%9C%AA%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0">Hook未导出函数</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC">获取指针参数返回值</a></li>
+<li><a href="#hook_dlopen">Hook_dlopen</a></li>
+<li><a href="#%E5%86%85%E5%AD%98%E8%AF%BB%E5%86%99">内存读写</a></li>
+<li><a href="#%E4%B8%BB%E5%8A%A8%E8%B0%83%E7%94%A8jni%E5%87%BD%E6%95%B0">主动调用JNI函数</a></li>
+<li><a href="#jni%E5%87%BD%E6%95%B0hook%E8%AE%A1%E7%AE%97%E5%9C%B0%E5%9D%80%E6%96%B9%E5%BC%8F">jni函数Hook(计算地址方式)</a></li>
+<li><a href="#jni%E5%87%BD%E6%95%B0hooklibartso">jni函数Hook(libart.so)</a></li>
+<li><a href="#so%E5%B1%82%E5%A0%86%E6%A0%88_%E5%BF%AB%E9%80%9F%E5%AE%9A%E4%BD%8D%E5%87%BD%E6%95%B0%E6%B3%A8%E5%86%8C%E5%9C%A8%E5%93%AA%E4%B8%AAso">so层堆栈_快速定位函数注册在哪个so</a></li>
+<li><a href="#so%E5%B1%82%E5%87%BD%E6%95%B0%E4%B8%BB%E5%8A%A8%E8%B0%83%E7%94%A8">so层函数主动调用</a></li>
+<li><a href="#frida%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6">frida读写文件</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/xposed-yong-fa-shi-li/">
+              <h3 class="post-title">
+                Xposed用法示例
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

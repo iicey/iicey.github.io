@@ -1,0 +1,205 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3使用zlib对网页文本进行压缩解压 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3使用zlib对网页文本进行压缩解压 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="业务场景：选择存储网页是应对产品频繁变更需求(产品之间能力的差距也是蛮大的)，使用zlib压缩网页文本是为了节约磁盘空间。
+压缩
+import zlib
+
+text = '网页文本'
+compressed = zlib.compress(t..." />
+    <meta name="keywords" content="zlib" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3使用zlib对网页文本进行压缩解压
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-29
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/QcSHwJckQdv/" class="post-tag">
+                  # zlib
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>业务场景：选择存储网页是应对产品频繁变更需求(产品之间能力的差距也是蛮大的)，使用zlib压缩网页文本是为了节约磁盘空间。</p>
+<h3 id="压缩">压缩</h3>
+<pre><code>import zlib
+
+text = '网页文本'
+compressed = zlib.compress(text.encode('utf-8'))
+print(compressed)
+</code></pre>
+<h3 id="解压">解压</h3>
+<pre><code>decompressed = zlib.decompress(compressed)
+print(decompressed.decode('utf-8'))
+</code></pre>
+<h4 id="如果出现异常syntaxerror-non-utf-8-code-starting-with-xe4请在py文件第一行添加">如果出现异常SyntaxError: Non-UTF-8 code starting with '\xe4'，请在py文件第一行添加</h4>
+<pre><code># -*- coding: utf-8 -*-
+</code></pre>
+<p>其它压缩模块zlib，zip，zipfile，gzip</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%8E%8B%E7%BC%A9">压缩</a></li>
+<li><a href="#%E8%A7%A3%E5%8E%8B">解压</a>
+<ul>
+<li><a href="#%E5%A6%82%E6%9E%9C%E5%87%BA%E7%8E%B0%E5%BC%82%E5%B8%B8syntaxerror-non-utf-8-code-starting-with-xe4%E8%AF%B7%E5%9C%A8py%E6%96%87%E4%BB%B6%E7%AC%AC%E4%B8%80%E8%A1%8C%E6%B7%BB%E5%8A%A0">如果出现异常SyntaxError: Non-UTF-8 code starting with '\xe4'，请在py文件第一行添加</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-cao-zuo-mongodb-cun-chu-tu-pian/">
+              <h3 class="post-title">
+                Python3操作MongoDB存储图片
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

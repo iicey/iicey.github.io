@@ -1,0 +1,217 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3的for else 与 try else | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3的for else 与 try else | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="原文链接
+if else 用法可以说最基础的语法表达式之一，但是今天不是讲这个的，一定要讲点不一样的。
+if else 早已烂大街，但可能有很多人都不曾见过 for else 和 try else 的用法。为什么说它曾让我晕头转向，因为它不..." />
+    <meta name="keywords" content="for else,try else" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3的for else 与 try else
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-02
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://iicey.github.io/86BW4cxduf8/" class="post-tag">
+                  # for else
+                </a>
+              
+                <a href="https://iicey.github.io/c3DNUKrg1hL/" class="post-tag">
+                  # try else
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="http://python-online.cn/zh_CN/latest/c01/c01_10.html#else">原文链接</a></p>
+<p>if else 用法可以说最基础的语法表达式之一，但是今天不是讲这个的，一定要讲点不一样的。</p>
+<p>if else 早已烂大街，但可能有很多人都不曾见过 for else 和 try else 的用法。为什么说它曾让我晕头转向，因为它不像 if else 那么直白，非黑即白，脑子经常要想一下才能才反应过来代码怎么走。反正我是这样的。</p>
+<p>先来说说，for else</p>
+<pre><code>def check_item(source_list, target):
+    for item in source_list:
+        if item == target:
+            print(&quot;Exists!&quot;)
+            break
+
+    else:
+        print(&quot;Does not exist&quot;)
+</code></pre>
+<p>在往下看之前，你可以思考一下，什么情况下才会走 else。是循环被 break，还是没有break？</p>
+<p>给几个例子，你体会一下。</p>
+<pre><code>check_item([&quot;apple&quot;, &quot;huawei&quot;, &quot;oppo&quot;], &quot;oppo&quot;)
+# Exists!
+
+check_item([&quot;apple&quot;, &quot;huawei&quot;, &quot;oppo&quot;], &quot;vivo&quot;)
+# Does not exist
+</code></pre>
+<p>可以看出，没有被 break 的程序才会正常走else流程。</p>
+<p>再来看看，try else 用法。</p>
+<pre><code>def test_try_else(attr1 = None):
+    try:
+        if attr1:
+            pass
+        else:
+            raise
+    except:
+        print(&quot;Exception occurred...&quot;)
+    else:
+        print(&quot;No Exception occurred...&quot;)
+</code></pre>
+<p>同样来几个例子。当不传参数时，就抛出异常。</p>
+<pre><code>test_try_else()
+# Exception occurred...
+
+test_try_else(&quot;ming&quot;)
+# No Exception occurred...
+</code></pre>
+<p>可以看出，没有 try 里面的代码块没有抛出异常的，会正常走else。</p>
+<p>总结一下，for else 和 try else 相同，只要代码正常走下去不被 break，不抛出异常，就可以走else。</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-ren-shi-mixin-mo-shi/">
+              <h3 class="post-title">
+                Python3认识Mixin模式
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

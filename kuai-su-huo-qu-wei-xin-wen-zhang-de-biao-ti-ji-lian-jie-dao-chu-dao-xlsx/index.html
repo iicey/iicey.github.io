@@ -1,0 +1,213 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>快速获取微信文章的标题及链接导出到xlsx | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="快速获取微信文章的标题及链接导出到xlsx | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+起因：关注了几个优质的公众号进行学习，发现PC端的微信在翻阅历史文章的操作上严重缺乏用户体验。
+目的：将作者所有的历史文章的标题及链接保存到xlsx方便查阅
+
+项目地址
+https://github.com/iicey/mitm
+使用说明..." />
+    <meta name="keywords" content="mitmproxy" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              快速获取微信文章的标题及链接导出到xlsx
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-31
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/0DYAYDPfMg0/" class="post-tag">
+                  # mitmproxy
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>起因：关注了几个优质的公众号进行学习，发现PC端的微信在翻阅历史文章的操作上严重缺乏用户体验。</p>
+<p>目的：将作者所有的历史文章的标题及链接保存到xlsx方便查阅</p>
+</blockquote>
+<h2 id="项目地址">项目地址</h2>
+<p>https://github.com/iicey/mitm</p>
+<h2 id="使用说明">使用说明</h2>
+<h3 id="安装第三方库python3">安装第三方库(Python3)</h3>
+<pre><code>pip install openpyxl
+pip install mitmproxy
+</code></pre>
+<h3 id="设置代理1270018080">设置代理(127.0.0.1:8080)</h3>
+<p><img src="https://iicey.github.io//post-images/1564574235236.png" alt="" loading="lazy"><br>
+<img src="https://iicey.github.io//post-images/1564574240482.png" alt="" loading="lazy"></p>
+<h3 id="安装证书">安装证书</h3>
+<p>访问http://mitm.it/	安装Windows证书</p>
+<h3 id="启动脚本">启动脚本</h3>
+<p>开启cmd切换到mitm目录下，执行下面这段代码</p>
+<pre><code>mitmdump -s script.py
+</code></pre>
+<h3 id="最后一步">最后一步</h3>
+<p>点开PC微信里微信公众号的列表页，向下滑动即可<br>
+<img src="https://iicey.github.io//post-images/1564574252618.png" alt="" loading="lazy"></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E9%A1%B9%E7%9B%AE%E5%9C%B0%E5%9D%80">项目地址</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E">使用说明</a>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93python3">安装第三方库(Python3)</a></li>
+<li><a href="#%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%861270018080">设置代理(127.0.0.1:8080)</a></li>
+<li><a href="#%E5%AE%89%E8%A3%85%E8%AF%81%E4%B9%A6">安装证书</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC">启动脚本</a></li>
+<li><a href="#%E6%9C%80%E5%90%8E%E4%B8%80%E6%AD%A5">最后一步</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/asyncioqueue/">
+              <h3 class="post-title">
+                asyncio.Queue生产者消费者实现示例
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

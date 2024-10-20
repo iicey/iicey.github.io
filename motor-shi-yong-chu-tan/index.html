@@ -1,0 +1,391 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Motor使用教程 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Motor使用教程 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+Motor提供了一个基于协程的API，用于对MongoDB的非阻塞访问。
+译者：桑葚ICE
+
+安装
+python3 -m pip install motor
+
+创建客户端
+指定主机和端口号
+import motor.motor_async..." />
+    <meta name="keywords" content="motor" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Motor使用教程
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-24
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://iicey.github.io/m1M9SRGfrUk/" class="post-tag">
+                  # motor
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>Motor提供了一个基于协程的API，用于对MongoDB的非阻塞访问。</p>
+<p>译者：桑葚ICE</p>
+</blockquote>
+<h3 id="安装">安装</h3>
+<pre><code class="language-python">python3 -m pip install motor
+</code></pre>
+<h3 id="创建客户端">创建客户端</h3>
+<h5 id="指定主机和端口号">指定主机和端口号</h5>
+<pre><code class="language-python">import motor.motor_asyncio
+client = motor.motor_asyncio.AsyncIOMotorClient('localhost', 27017)
+</code></pre>
+<h5 id="使用用户名和密码">使用用户名和密码</h5>
+<pre><code class="language-python">motor.motor_asyncio.AsyncIOMotorClient('mongodb://root:123456@localhost:27017')
+</code></pre>
+<h3 id="获取数据库">获取数据库</h3>
+<p>MongoDB的单个实例可以支持多个独立的数据库。在开放式客户端中，您可以使用点表示法或括号表示法来获取对特定数据库的引用：</p>
+<pre><code class="language-python">db = client.test_database
+db = client['test_database']
+</code></pre>
+<p>创建对数据库的引用不会执行I / O，也不需要 <strong><font color=#ff502c>await</font></strong> 表达式。</p>
+<h3 id="获取集合">获取集合</h3>
+<p>一个集合是一组存储在MongoDB中的文档，并且可以被认为是大致在关系数据库中的表的当量。获取Motor中的集合与获取数据库的工作方式相同：</p>
+<pre><code class="language-python">collection = db.test_collection
+collection = db['test_collection']
+</code></pre>
+<p>就像获取对数据库的引用一样，获取对集合的引用不会产生I / O并且不需要 <strong><font color=#ff502c>await</font></strong> 表达式。</p>
+<h3 id="插入文档insert_one">插入文档（insert_one）</h3>
+<p>与PyMongo一样，Motor使用Python字典表示MongoDB文档。要存储在MongoDB中的文档，在 <strong><font color=#ff502c>await</font></strong> 表达式中调用 <strong><font color=#ff502c>insert_one()</font></strong> ：</p>
+<pre><code class="language-python">async def do_insert():
+    document = {'key': 'value'}
+    result = await db.test_collection.insert_one(document)  # insert_one只能插入一条数据
+    print('result %s' % repr(result.inserted_id))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_insert())
+# result ObjectId('...')
+</code></pre>
+<h3 id="批量插入文档insert_many">批量插入文档（insert_many）</h3>
+<pre><code class="language-python">async def do_insert():
+    result = await db.test_collection.insert_many(
+        [{'i': i} for i in range(2000)])  # insert_many可以插入一条或多条数据，但是必须以列表(list)的形式组织数据
+    print('inserted %d docs' % (len(result.inserted_ids),))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_insert())
+# inserted 2000 docs
+</code></pre>
+<h3 id="查询一个文档find_one">查询一个文档（find_one）</h3>
+<p>使用 <strong><font color=#ff502c>find_one()</font></strong> 得到匹配查询的第一个文档。例如，要获取密钥“i”的值小于1的文档：</p>
+<pre><code class="language-python">async def do_find_one():
+    document = await db.test_collection.find_one({'i': {'$lt': 1}})  # find_one只能查询一条数据
+    pprint.pprint(document)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_find_one())
+# {'_id': ObjectId('...'), 'i': 0}
+</code></pre>
+<p><strong><font color=#ff502c>注意：结果是一个字典匹配我们之前插入的字典。</font></strong></p>
+<h3 id="查询多个文档find">查询多个文档（find）</h3>
+<p>使用 <strong><font color=#ff502c>find()</font></strong> 要查询的一组文档。 <strong><font color=#ff502c>find()</font></strong> 没有I / O，也不需要 <strong><font color=#ff502c>await</font></strong>  表达式。它只是创建一个 <strong><font color=#ff502c>AsyncIOMotorCursor</font></strong> 实例。当您调用 <strong><font color=#ff502c>to_list()</font></strong> 或为循环执行异步时 <strong><font color=#ff502c>(async for)</font></strong> ，查询实际上是在服务器上执行的。</p>
+<p>查询 “ i ” 小于5的所有文档：</p>
+<pre><code class="language-python">async def do_find():
+    cursor = db.test_collection.find({'i': {'$lt': 5}}).sort('i')
+    for document in await cursor.to_list(length=100):
+        pprint.pprint(document)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_find())
+# {'_id': ObjectId('...'), 'i': 0}
+# {'_id': ObjectId('...'), 'i': 1}
+# {'_id': ObjectId('...'), 'i': 2}
+# {'_id': ObjectId('...'), 'i': 3}
+# {'_id': ObjectId('...'), 'i': 4}
+</code></pre>
+<p><strong><font color=#ff502c>一length</font></strong> ，调用方法 <strong><font color=#ff502c>to_list</font></strong> 的必传参数，防止 <strong><font color=#ff502c>Motor</font></strong> 从缓冲中获取的文档数量不受限制，此处限制为100。</p>
+<h3 id="使用-async-for-查询所有文档">使用 async for 查询所有文档</h3>
+<p>您可以在循环中一次处理一个文档：<strong><font color=#ff502c>async for</font></strong></p>
+<pre><code class="language-python">async def do_find():
+    c = db.test_collection
+    async for document in c.find({}):  # 查询所有文档
+        pprint.pprint(document)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_find())
+# {'_id': ObjectId('...'), 'i': 0}
+# {'_id': ObjectId('...'), 'i': 1}
+</code></pre>
+<p>您可以在开始迭代之前对查询应用排序，跳过或限制：</p>
+<pre><code class="language-python">async def do_find():
+    cursor = db.test_collection.find({'i': {'$lt': 4}})
+    # Modify the query before iterating
+    cursor.sort('i', -1).skip(1).limit(2)  # 对查询应用排序(sort)，跳过(skip)或限制(limit)
+    async for document in cursor:
+        pprint.pprint(document)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_find())
+# {'_id': ObjectId('...'), 'i': 2}
+# {'_id': ObjectId('...'), 'i': 1}
+</code></pre>
+<p>游标 <strong><font color=#ff502c>(cursor)</font></strong> 实际上并不是单独从服务器检索每个文档; 它可以大批量地获取文档。</p>
+<h3 id="使用count_documents查询集合中的文档数量">使用count_documents()查询集合中的文档数量</h3>
+<pre><code class="language-python">async def do_count():
+    n = await db.test_collection.count_documents({})  # 查询集合内所有文档数量
+    print('%s documents in collection' % n)
+    n = await db.test_collection.count_documents({'i': {'$gt': 1000}})  # 按条件查询集合内文档数量
+    print('%s documents where i &gt; 1000' % n)
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_count())
+# 2000 documents in collection
+# 999 documents where i &gt; 1000
+</code></pre>
+<h3 id="更新文档推荐使用update_one或update_many">更新文档（推荐使用update_one或update_many）</h3>
+<p><strong><font color=#ff502c>replace_one()</font></strong> 更改文档。它需要两个参数：一个指定要替换哪个文档的<em>查询</em>和一个替换文档。该查询遵循与 <strong><font color=#ff502c>find()</font></strong> 或 相同的语法 <strong><font color=#ff502c>find_one()</font></strong> 。替换一个文档的示例：</p>
+<pre><code class="language-python">async def do_replace():
+    coll = db.test_collection
+    old_document = await coll.find_one({'i': 50})
+    print('found document: %s' % pprint.pformat(old_document))
+    _id = old_document['_id']
+
+    old_document['i'] = -1  # 修改文档(dict)的key, value
+    old_document['new'] = 'new'  # 增加文档(dict)的key, value
+    del old_document['i']  # 删除文档(dict)的key, value
+
+    result = await coll.replace_one(
+        {'_id': _id}, old_document)  # replace_one第一个参数为查询条件, 第二个参数为更新后的文档
+    print('replaced %s document' % result.modified_count)
+    new_document = await coll.find_one({'_id': _id})
+    print('document is now %s' % pprint.pformat(new_document))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_replace())
+# found document: {'_id': ObjectId('...'), 'i': 50}
+# replaced 1 document
+# document is now {'_id': ObjectId('...'), 'key': 'value'}
+</code></pre>
+<p>除了 <strong><font color=#ff502c>_id</font></strong> 不变，<strong><font color=#ff502c>replace_one()</font></strong> 会对修改后文档的所有字段做更新操作， <strong><font color=#ff502c>慎用</font></strong> 。</p>
+<p><strong><font color=#ff502c>update_one()</font></strong> 与MongoDB的修饰符运算符一起使用来更新文档的一部分并保持其余部分不变。我们将找到“i”为51的文档，并使用 <strong><font color=#ff502c>$set</font></strong> 运算符将“key”设置为“value”：</p>
+<pre><code class="language-python">async def do_update():
+    coll = db.test_collection
+    result = await coll.update_one({'i': 51}, {'$set': {'key': 'value'}})  # 仅新增或更改该文档的某个key
+    print('updated %s document' % result.modified_count)
+    new_document = await coll.find_one({'i': 51})
+    print('document is now %s' % pprint.pformat(new_document))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_update())
+# updated 1 document
+# document is now {'_id': ObjectId('...'), 'i': 51, 'key': 'value'}
+</code></pre>
+<p>“key”设置为“value”，“i”仍为51。</p>
+<p><strong><font color=#ff502c>update_one()</font></strong> 只影响它找到的第一个文档，您可以使用 <strong><font color=#ff502c>update_many()</font></strong> 更新所有文档：</p>
+<pre><code class="language-python">await coll.update_many({'i': {'$gt': 100}}, {'$set': {'key': 'value'}})
+</code></pre>
+<h3 id="删除文档">删除文档</h3>
+<p><strong><font color=#ff502c>delete_many()</font></strong> 采用与语法相同的 <strong><font color=#ff502c>find()</font></strong> 查询。<strong><font color=#ff502c>delete_many()</font></strong> 立即删除所有匹配的文档。</p>
+<pre><code class="language-python">async def do_delete_many():
+    coll = db.test_collection
+    n = await coll.count_documents({})
+    print('%s documents before calling delete_many()' % n)
+    result = await db.test_collection.delete_many({'i': {'$gte': 1000}})
+    print('%s documents after' % (await coll.count_documents({})))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(do_delete_many())
+# 2000 documents before calling delete_many()
+# 1000 documents after
+</code></pre>
+<h3 id="commands">Commands</h3>
+<p>MongoDB上的所有操作都在内部实现为命令。</p>
+<p>使用以下 <strong><font color=#ff502c>command()</font></strong> 方法 运行它们 <strong><font color=#ff502c>AsyncIOMotorDatabase</font></strong> ：</p>
+<pre><code class="language-python">from bson import SON
+
+async def use_distinct_command():
+    response = await db.command(SON([(&quot;distinct&quot;, &quot;test_collection&quot;),
+                                     (&quot;key&quot;, &quot;i&quot;)]))
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(use_distinct_command())
+</code></pre>
+<p>由于命令参数的顺序很重要，因此不要使用Python dict来传递命令的参数。相反，养成使用PyMongo附带bson.SON的 <strong><font color=#ff502c>bson</font></strong> 模块的习惯。</p>
+<p>许多命令都有特殊的辅助方法，例如 <strong><font color=#ff502c>create_collection()</font></strong> or <strong><font color=#ff502c>aggregate()</font></strong> ，但这些方便的命令基于 <strong><font color=#ff502c>command()</font></strong> 方法。</p>
+<p>推荐阅读：<a href="https://motor.readthedocs.io/en/stable/">官方文档</a>, <a href="https://juejin.im/post/5d0f34c7f265da1ba25268ee#heading-1">MongoDB的基本概念和操作</a></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E5%AE%89%E8%A3%85">安装</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%AE%A2%E6%88%B7%E7%AB%AF">创建客户端</a><br>
+*
+<ul>
+<li><a href="#%E6%8C%87%E5%AE%9A%E4%B8%BB%E6%9C%BA%E5%92%8C%E7%AB%AF%E5%8F%A3%E5%8F%B7">指定主机和端口号</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E7%94%A8%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81">使用用户名和密码</a></li>
+</ul>
+</li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E5%BA%93">获取数据库</a></li>
+<li><a href="#%E8%8E%B7%E5%8F%96%E9%9B%86%E5%90%88">获取集合</a></li>
+<li><a href="#%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3insert_one">插入文档（insert_one）</a></li>
+<li><a href="#%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5%E6%96%87%E6%A1%A3insert_many">批量插入文档（insert_many）</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E4%B8%80%E4%B8%AA%E6%96%87%E6%A1%A3find_one">查询一个文档（find_one）</a></li>
+<li><a href="#%E6%9F%A5%E8%AF%A2%E5%A4%9A%E4%B8%AA%E6%96%87%E6%A1%A3find">查询多个文档（find）</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-async-for-%E6%9F%A5%E8%AF%A2%E6%89%80%E6%9C%89%E6%96%87%E6%A1%A3">使用 async for 查询所有文档</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8count_documents%E6%9F%A5%E8%AF%A2%E9%9B%86%E5%90%88%E4%B8%AD%E7%9A%84%E6%96%87%E6%A1%A3%E6%95%B0%E9%87%8F">使用count_documents()查询集合中的文档数量</a></li>
+<li><a href="#%E6%9B%B4%E6%96%B0%E6%96%87%E6%A1%A3%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8update_one%E6%88%96update_many">更新文档（推荐使用update_one或update_many）</a></li>
+<li><a href="#%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3">删除文档</a></li>
+<li><a href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/pyppeteer-shi-yong-xi-jie/">
+              <h3 class="post-title">
+                pyppeteer使用细节
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

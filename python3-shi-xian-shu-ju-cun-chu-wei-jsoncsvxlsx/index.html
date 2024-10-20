@@ -1,0 +1,277 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Python3实现数据存储为json、csv、xlsx | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="Python3实现数据存储为json、csv、xlsx | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="json文件存储
+   import json
+   # 读
+   with open('data.json', 'r', encoding='utf-8') as fp:
+       data = json.loads(fp.read(..." />
+    <meta name="keywords" content="json,csv,xlsx" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              Python3实现数据存储为json、csv、xlsx
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-06-13
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/Ebn-_jfk-AK/" class="post-tag">
+                  # json
+                </a>
+              
+                <a href="https://iicey.github.io/-Ux1GSHaGy7/" class="post-tag">
+                  # csv
+                </a>
+              
+                <a href="https://iicey.github.io/i2ehuMJ9mCr/" class="post-tag">
+                  # xlsx
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="json文件存储">json文件存储</h3>
+<pre><code>   import json
+   # 读
+   with open('data.json', 'r', encoding='utf-8') as fp:
+       data = json.loads(fp.read())
+   # 写，且具备缩进与中文显示
+   with open('data.json', 'w', encoding='utf-8') as fp:
+       fp.write(json.dumps(data, indent=2, ensure_ascii=False))
+</code></pre>
+<h3 id="xlsx文件存储">xlsx文件存储</h3>
+<pre><code># 写
+from openpyxl import Workbook
+
+wb = Workbook()
+ws = wb.active
+ws.append([&quot;我&quot;, &quot;你&quot;, &quot;她&quot;])
+
+wb.save(filename=&quot;data.xlsx&quot;)
+
+
+# 读
+from openpyxl import load_workbook
+
+# 打开一个workbook
+wb = load_workbook(filename=&quot;data.xlsx&quot;)
+
+# 获取当前活跃的worksheet,默认就是第一个worksheet
+# ws = wb.active
+
+# 当然也可以使用下面的方法
+
+sheets = wb.sheetnames
+sheet_first = sheets[0]
+ws = wb[sheet_first]
+
+rows = ws.rows
+columns = ws.columns
+
+# 迭代所有的行
+for row in rows:
+    line = [col.value for col in row]
+    print(line)
+
+# 迭代所有的列
+for column in columns:
+    line = [ro.value for ro in column]
+    print(line)
+</code></pre>
+<h3 id="cvs文件存储">cvs文件存储</h3>
+<pre><code>   import csv
+   
+   # 写入, 方法一(追加用a)：
+   # 参数newline，防止行与行之间多处空行；想修改列与列之间的分隔符，可以传入delimiter参数
+   # 出现中文乱码改用encoding='utf-8-sig'
+   with open('data.csv', 'w', encoding='utf-8', newline='') as csv_file:
+       writer = csv.writer(csv_file, delimiter=',')
+       writer.writerow(['id', 'name', 'age'])
+       writer.writerow(['1001', 'aici', '22'])
+       writer.writerow(['1002', 'iicey', '24'])
+       writer.writerow(['1003', 'ice', '18'])
+   # 写入, 方法二(二维列表)：
+   with open('data.csv', 'w', encoding='utf-8', newline='') as csv_file:
+       writer = csv.writer(csv_file, delimiter=',')
+       writer.writerow(['id', 'name', 'age'])
+       writer.writerows([['1001', 'aici', '22'], ['1002', 'iicey', '24'], ['1003', 'ice', '18']])
+   # 写入, 方法三(字典)：
+   with open('data.csv', 'w', encoding='utf-8', newline='') as csv_file:
+       fieldnames = ['id', 'name', 'age']
+       writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+       writer.writeheader()
+       writer.writerow({'id': '1001', 'name': 'aici', 'age': '22'})
+       writer.writerow({'id': '1002', 'name': 'iicey', 'age': '24'})
+       writer.writerow({'id': '1003', 'name': 'ice', 'age': '18'})
+   
+   # 读取, 方法一：
+   import csv
+   with open('data.csv', 'r', encoding='utf-8', newline='') as csv_file:
+       reader = csv.reader(csv_file)
+       print(list(reader))
+   # 读取, 方法二：
+   import pandas as pd
+   df = pd.read_csv('data.csv')
+   print(df)
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#json%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8">json文件存储</a></li>
+<li><a href="#xlsx%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8">xlsx文件存储</a></li>
+<li><a href="#cvs%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8">cvs文件存储</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/python3-shi-xian-you-xiang-fa-song/">
+              <h3 class="post-title">
+                Python3实现邮箱发送
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

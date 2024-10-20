@@ -1,0 +1,644 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>aioredis - API中文参考文档 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="aioredis - API中文参考文档 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="
+asyncio (PEP 3156) Redis客户端库。
+该库旨在基于asyncio为Redis提供简单而清晰的接口。
+译者：桑葚ICE
+
+Connection
+
+Redis Connection是库的核心功能。连接实例可以按原样使用，..." />
+    <meta name="keywords" content="aioredis" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              aioredis - API中文参考文档
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-08-20
+              </span>
+              <span>
+                13 min read
+              </span>
+              
+                <a href="https://iicey.github.io/TeyXIWZ5uF/" class="post-tag">
+                  # aioredis
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <blockquote>
+<p>asyncio (PEP 3156) Redis客户端库。<br>
+该库旨在基于asyncio为Redis提供简单而清晰的接口。</p>
+<p>译者：桑葚ICE</p>
+</blockquote>
+<h2 id="connection">Connection</h2>
+<blockquote>
+<p>Redis Connection是库的核心功能。连接实例可以按原样使用，也可以通过 <a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis-pool">pool</a> 或 <a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis-redis">高级API</a>。</p>
+</blockquote>
+<h3 id="连接使用示例">连接使用示例：</h3>
+<pre><code class="language-python">import asyncio
+import aioredis
+
+async def connect_uri():
+    conn = await aioredis.create_connection(
+        'redis://localhost/0')
+    val = await conn.execute('GET', 'my-key')
+
+async def connect_tcp():
+    conn = await aioredis.create_connection(
+        ('localhost', 6379))
+    val = await conn.execute('GET', 'my-key')
+
+async def connect_unixsocket():
+    conn = await aioredis.create_connection(
+        '/path/to/redis/socket')
+    # or uri 'unix:///path/to/redis/socket?db=1'
+    val = await conn.execute('GET', 'my-key')
+
+asyncio.get_event_loop().run_until_complete(connect_tcp())
+asyncio.get_event_loop().run_until_complete(connect_unixsocket())
+</code></pre>
+<h3 id="创建redis连接create_connection">创建Redis连接(create_connection)</h3>
+<blockquote>
+<p><strong><font color=#6ab0de>coroutine</font> aioredis.create_connection(<font color=#6ab0de>address，*，db = 0，password = None，ssl = None，encoding = None，parser = None，loop = None，timeout = None</font>)</strong></p>
+</blockquote>
+<h4 id="参数">参数：</h4>
+<ul>
+<li>
+<p>地址（元组或str） -</p>
+</li>
+<li>
+<p>一个地址连接。可以是以下之一：</p>
+<ul>
+<li>
+<p>Redis URI - <code>&quot;redis://host:6379/0?encoding=utf-8&quot;</code>;</p>
+<p>&quot;redis://:password@host:6379/0?encoding=utf-8&quot;`;</p>
+</li>
+<li>
+<p>a（主机，端口）元组 - ;<code>('localhost', 6379)</code></p>
+</li>
+<li>
+<p>或者是unix域套接字路径字符串 - <code>&quot;/path/to/redis.sock&quot;</code>。</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 连接时切换到的Redis数据库索引。</p>
+</li>
+<li>
+<p><strong>password</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 如果redis服务器实例需要授权，则使用密码。</p>
+</li>
+<li>
+<p><strong>ssl</strong>（<a href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext"><code>ssl.SSLContext</code></a>或True或None） - 传递给的SSL上下文<code>asyncio.BaseEventLoop.create_connection()</code>。</p>
+</li>
+<li>
+<p><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 用于响应解码的编解码器。</p>
+</li>
+<li>
+<p><strong>解析器</strong>（<em>可调用**或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>无</em></a>） - 协议解析器类。可用于设置自定义协议阅读器; 预期相同的界面<code>hiredis.Reader</code>。</p>
+</li>
+<li>
+<p><strong>loop</strong>（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio-event-loop">EventLoop</a>） - 可选的<em>事件循环</em>实例（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop"><code>asyncio.get_event_loop()</code></a>如果未指定则使用）。</p>
+</li>
+<li>
+<p><strong>timeout</strong>（<em>float大于0</em> <em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 打开连接的最长时间，否则引发<a href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError"><code>asyncio.TimeoutError</code></a>异常。<code>None</code>默认情况下</p>
+</li>
+</ul>
+<h4 id="返回redisconnection实例">返回：<code>RedisConnection</code>实例。</h4>
+<h3 id="font-color6ab0declassfont-aioredisredisconnection"><strong><font color=#6ab0de>class</font></strong>  aioredis.RedisConnection</h3>
+<h4 id="接口类abcabcconnection">接口类：<code>abc.AbcConnection</code></h4>
+<h4 id="方法">方法：</h4>
+<ul>
+<li>
+<p><strong>address</strong></p>
+<p>Redis服务器地址; IP端口元组或unix socket str（<em>只读</em>）。</p>
+<p>IP是IPv4或IPv6，具体取决于初始地址中已解析的主机部分。</p>
+</li>
+<li>
+<p><strong>db</strong></p>
+<p>当前数据库索引（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>encoding</strong></p>
+<p>用于响应解码的当前编解码器（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>closed</strong></p>
+<p><strong><font color=#ff502c>True</font></strong> 如果连接已关闭（<em>只读</em>），则设置为。</p>
+</li>
+<li>
+<p><strong>in_transaction</strong></p>
+<p>设置为 <strong><font color=#ff502c>True</font></strong> 发出MULTI命令时（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>pubsub_channels</strong></p>
+<p>具有订阅频道的<em>只读</em>字典。键是字节，值是<a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.Channel"><code>Channel</code></a>实例。</p>
+</li>
+<li>
+<p><strong>pubsub_patterns</strong></p>
+<p>具有订阅模式的<em>只读</em>字典。键是字节，值是<a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.Channel"><code>Channel</code></a>实例。</p>
+</li>
+<li>
+<p><strong>in_pubsub</strong></p>
+<p>表示连接处于PUB / SUB模式。提供订阅频道的数量。<em>只读</em>。</p>
+</li>
+<li>
+<p><strong>execute(command，args，encoding = _NOTSET)</strong></p>
+<p>执行Redis命令。</p>
+<p>该方法本身不是<strong>协程</strong>，而是写入底层传输并返回<a href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future"><code>asyncio.Future</code></a> 等待结果。</p>
+<p><strong>参数：</strong></p>
+<ul>
+<li><strong>command</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>，</em><a href="https://docs.python.org/3/library/stdtypes.html#bytes"><em>bytes</em></a><em>，</em><a href="https://docs.python.org/3/library/stdtypes.html#bytearray"><em>bytearray</em></a>） - 要执行的命令</li>
+<li><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 用于覆盖响应解码的仅关键字参数。默认情况下，将使用连接范围的编码。可以设置为None以跳过响应解码。</li>
+</ul>
+<p><strong>Rasies：</strong></p>
+<ul>
+<li><a href="https://docs.python.org/3/library/exceptions.html#TypeError"><strong>TypeError</strong></a> - 当任何参数为None或无法编码为字节时。</li>
+<li><a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ReplyError"><strong>aioredis.ReplyError</strong></a> - 对于redis错误回复。</li>
+<li><a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ProtocolError"><strong>aioredis.ProtocolError</strong></a> - 无法解码响应和/或连接断开。</li>
+</ul>
+<p><strong>返回：返回bytes或int reply（如果设置了编码，则返回str）</strong></p>
+</li>
+<li>
+<p><strong>execute_pubsub(command，channels_or_patterns)</strong></p>
+<p>执行Pub / Sub命令的方法。该方法本身不是协程，而是返回<a href="https://docs.python.org/3/library/asyncio-task.html#asyncio.gather"><code>asyncio.gather()</code></a> 协程。方法还接受<a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.Channel"><code>aioredis.Channel</code></a>实例作为命令参数：</p>
+<pre><code class="language-python">&gt;&gt;&gt; ch1 = Channel('A', is_pattern=False, loop=loop)
+&gt;&gt;&gt; await conn.execute_pubsub('subscribe', ch1)
+[[b'subscribe', b'A', 1]]
+</code></pre>
+</li>
+<li>
+<p><strong>closed()</strong></p>
+<p>关闭连接。</p>
+<p>将连接标记为已关闭和计划清理过程。</p>
+<p>所有待处理的命令都将被取消 <a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ConnectionForcedCloseError"><code>ConnectionForcedCloseError</code></a>。</p>
+</li>
+<li>
+<p><strong>wait_closed()</strong></p>
+<p>将当前db索引更改为新索引。</p>
+<p><strong>参数：</strong> <strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 新的redis数据库索引。</p>
+<p><strong>Rasies：</strong></p>
+<ul>
+<li><a href="https://docs.python.org/3/library/exceptions.html#TypeError"><strong>TypeError</strong></a> - 当<code>db</code>参数不是int时。</li>
+<li><a href="https://docs.python.org/3/library/exceptions.html#ValueError"><strong>ValueError</strong></a> - 当<code>db</code>参数小于0时。</li>
+</ul>
+<p><strong>返回True：始终返回True或引发异常。</strong></p>
+</li>
+<li>
+<p><strong>auth(密码)</strong></p>
+<p>发送AUTH命令。</p>
+<p><strong>参数：</strong>  <strong>password</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>） - 纯文本密码</p>
+<p><strong>返回 bool：</strong> 如果redis回复 <strong><font color=#ff502c>OK</font></strong> ，则为 <strong><font color=#ff502c>True</font></strong> 。</p>
+</li>
+</ul>
+<h2 id="connections-pool">Connections Pool</h2>
+<h3 id="基本用法示例">基本用法示例：</h3>
+<pre><code class="language-python">import aioredis
+
+async def sample_pool():
+    pool = await aioredis.create_pool('redis://localhost')
+    val = await pool.execute('get', 'my-key')
+</code></pre>
+<h3 id="创建redis连接池create_pool">创建Redis连接池(create_pool)</h3>
+<blockquote>
+<p><strong>aioredis.create_pool(<font color=#6ab0de>address，*，db = 0，password = None，ssl = None，encoding = None，minsize = 1，maxsize = 10，parser = None，loop = None，create_connection_timeout = None，pool_cls = None，connection_cls = None</font>)</strong></p>
+</blockquote>
+<h4 id="参数-2">参数：</h4>
+<ul>
+<li><strong>地址</strong>（<em>或</em>） -
+<ul>
+<li>Redis URI - <code>&quot;redis://host:6379/0?encoding=utf-8&quot;</code>;</li>
+<li>a（主机，端口）元组 - ;<code>('localhost', 6379)</code></li>
+<li>或者是unix域套接字路径字符串 - <code>&quot;/path/to/redis.sock&quot;</code>。</li>
+</ul>
+</li>
+<li><strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 连接时切换到的Redis数据库索引。</li>
+<li><strong>password</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 如果redis服务器实例需要授权，则使用密码。</li>
+<li><strong>ssl</strong>（<a href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext"><code>ssl.SSLContext</code></a>或True或None） - 传递给的SSL上下文<code>asyncio.BaseEventLoop.create_connection()</code>。</li>
+<li><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 用于响应解码的编解码器。</li>
+<li><strong>minsize</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 要在池中创建的最小可用连接数。 <code>1</code>默认情况下。</li>
+<li><strong>maxsize</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 要保留在池中的最大连接数。 <code>10</code>默认情况下。必须大于<code>0</code>。<code>None</code>是不被允许的。</li>
+<li><strong>解析器</strong>（<em>可调用**或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>无</em></a>） - 协议解析器类。可用于设置自定义协议阅读器; 预期相同的界面<code>hiredis.Reader</code>。</li>
+<li><strong>loop</strong>（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio-event-loop">EventLoop</a>） - 可选的<em>事件循环</em>实例（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop"><code>asyncio.get_event_loop()</code></a>如果未指定则使用）。</li>
+<li><strong>create_connection_timeout</strong>（<em>float大于0</em> <em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 打开连接的最长时间，否则引发连接<a href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError"><code>asyncio.TimeoutError</code></a>。<code>None</code>默认情况下。</li>
+<li><strong>pool_cls</strong>（<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcPool"><em>aioredis.abc.AbcPool</em></a>） - 可用于实例化自定义池类。该参数<strong>必须是</strong>子类<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcPool"><code>AbcPool</code></a>。</li>
+<li><strong>connection_cls</strong>（<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><em>aioredis.abc.AbcConnection</em></a>） - 可用于使池实例化自定义连接类。该参数<strong>必须是</strong>子类 <a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><code>AbcConnection</code></a>。</li>
+</ul>
+<h4 id="返回connectionspool-实例">返回：<a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ConnectionsPool"><code>ConnectionsPool</code></a> 实例。</h4>
+<h3 id="font-color6ab0declassfont-aioredisconnectionspool"><strong><font color=#6ab0de>class</font></strong> aioredis.ConnectionsPool</h3>
+<h4 id="接口类abcabcpool">接口类：<code>abc.AbcPool</code></h4>
+<h4 id="方法-2">方法：</h4>
+<ul>
+<li>
+<p><strong>minsize</strong></p>
+<p>池的最小大小（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>maxsize</strong></p>
+<p>池的最大大小（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>size</strong></p>
+<p>当前池大小 - 空闲和已使用连接的数量（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>freesize</strong></p>
+<p>当前的空闲连接数（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>db</strong></p>
+<p>当前选择的db索引（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>encoding</strong></p>
+<p>用于响应解码的当前编解码器（<em>只读</em>）。</p>
+</li>
+<li>
+<p><strong>closed</strong></p>
+<p><strong><font color=#ff502c>True</font></strong> 如果游泳池关闭。</p>
+</li>
+<li>
+<p><strong>execute(command, args, kwargs)</strong></p>
+<p>在空闲连接中执行Redis命令并返回 asyncio.Future等待结果。</p>
+<p>此方法尝试从池中选择一个空闲连接并立即通过它发送命令 (保持由提供的流水线功能aioredis.RedisConnection.execute())。如果没有找到连接 - 返回coroutine等待执行命令的自由连接。</p>
+</li>
+<li>
+<p><strong>execute_pubsub(command, channels)</strong></p>
+<p>执行Redis（p）subscribe /（p）unsubscribe命令。</p>
+<p>ConnectionsPool 为pub / sub选择单独的免费连接并使用它直到池关闭或连接断开（取消订阅所有频道/模式将保持连接被锁定以供pub / sub使用）。</p>
+<p>Pub / Sub连接没有自动重新连接，因为这将隐藏用户消息丢失。</p>
+<p>与execute()行为类似，即：尝试从池中选择自由连接并将其切换到pub / sub模式; 或者回退到coroutine等待自由连接和重复操作。</p>
+</li>
+<li>
+<p><strong>get_connection(command, args=())</strong></p>
+<p>从池返回 tuple (connection, address) 获取空闲连接。</p>
+<p>如果未找到空闲连接 - 则返回None以代替连接。</p>
+<p>返回类型： tuple(RedisConnection or None, str)</p>
+</li>
+<li>
+<p><strong>coroutine clear()</strong></p>
+<p>关闭并删除池中的所有空闲连接。</p>
+</li>
+<li>
+<p><strong>coroutine select(db)</strong></p>
+<p>更改池中所有空闲连接的db索引。</p>
+<p><strong>参数：</strong> <strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 新数据库索引。</p>
+</li>
+<li>
+<p><strong>coroutine acquire(command=None, args=())</strong></p>
+<p>从空闲池获取连接。如果需要，创建新的连接。</p>
+<p><strong>参数：</strong></p>
+<ul>
+<li><strong>command</strong>  - 为将来保留。</li>
+<li><strong>args</strong> - 为将来保留。</li>
+</ul>
+<p><strong>Rasies：</strong> <a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.PoolClosedError"><strong>aioredis.PoolClosedError</strong></a> - 如果池已经关闭</p>
+</li>
+<li>
+<p><strong>release(conn)</strong></p>
+<p>将已使用的连接返回到池中。</p>
+<p>当返回的连接的db索引与池中的索引不同时，将断开连接。当空闲连接队列已满时，将断开连接。</p>
+<p><strong><font color=#ff502c>注意：这种方法不是协程</font></strong></p>
+<p><strong>参数：</strong> <strong>conn</strong> (aioredis.RedisConnection) – A RedisConnection 实例.</p>
+</li>
+<li>
+<p><strong>close()</strong></p>
+<p>关闭所有可用和正在进行的连接，并将池标记为已关闭。</p>
+</li>
+<li>
+<p><strong>coroutine wait_closed()</strong></p>
+<p>等待池关闭(当所有连接都关闭时)。</p>
+</li>
+</ul>
+<h2 id="pubsub-channel-object">Pub/Sub Channel object</h2>
+<blockquote>
+<p>Channel对象是用于存储接收的发布/订阅消息的队列包装器。</p>
+</blockquote>
+<h3 id="font-color6ab0declassfont-aioredischannelname-is_pattern-loopnone"><strong><font color=#6ab0de>class</font></strong>  aioredis.Channel(name, is_pattern, loop=None)</h3>
+<p><strong>接口类：</strong> <strong>abc.AbcChannel</strong></p>
+<p>表示发布/订阅消息队列的对象。它基本上是一个包装器asyncio.Queue。</p>
+<ul>
+<li>
+<p><strong>name</strong></p>
+<p>保存编码的通道/模式名称。</p>
+</li>
+<li>
+<p><strong>is_pattern</strong></p>
+<p>模式通道设置为True。</p>
+</li>
+<li>
+<p><strong>is_active</strong></p>
+<p>如果队列中有消息并且仍然订阅了此通道，则设置为True。</p>
+</li>
+<li>
+<p><strong>coroutine get(*, encoding=None, decoder=None)</strong></p>
+<p>Coroutine等待并返回消息。</p>
+<p>返回值是收到的消息或 <strong><font color=#ff502c>None</font></strong> 表示该频道已取消订阅且不再接收消息。</p>
+<p><strong>参数：</strong></p>
+<ul>
+<li><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>） - 如果不是 <strong><font color=#ff502c>None</font></strong> 用于解码生成的字节消息。</li>
+<li><strong>decoder</strong>（<em>callable</em>） - 如果指定用于解码消息，例如<a href="https://docs.python.org/3/library/json.html#json.loads"><code>json.loads()</code></a></li>
+</ul>
+<p><strong>Rasies：</strong> <a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ChannelClosedError"><strong>aioredis.ChannelClosedError</strong></a> - 如果频道已取消订阅且没有更多消息。</p>
+</li>
+<li>
+<p><strong>get_json(*, encoding=&quot;utf-8&quot;)</strong></p>
+<p>Shortcut to <code>get(encoding=&quot;utf-8&quot;, decoder=json.loads)</code></p>
+</li>
+<li>
+<p><strong>coroutine wait_message()</strong></p>
+<p>关闭（取消订阅）等待消息在频道或频道中可用的等待消息。</p>
+<p>主要思想是在循环中使用它：</p>
+<pre><code class="language-python">&gt;&gt;&gt; ch = redis.channels['channel:1']
+&gt;&gt;&gt; while await ch.wait_message():
+...     msg = await ch.get()
+</code></pre>
+<p><strong>返回类型：</strong> bool</p>
+</li>
+<li>
+<p><strong>coroutine async-for iter(*, encoding=None, decoder=None)</strong></p>
+<p>与get()方法相同，但它是一个本地协程。</p>
+<p>用法示例：</p>
+<pre><code class="language-python">&gt;&gt;&gt; async for msg in ch.iter():
+...     print(msg)
+</code></pre>
+</li>
+</ul>
+<h2 id="commands-interface">Commands Interface</h2>
+<blockquote>
+<p>该库提供了高级API，实现了Redis命令的简单接口。</p>
+</blockquote>
+<h3 id="用法示例">用法示例：</h3>
+<pre><code class="language-python">import aioredis
+
+# Create Redis client bound to single non-reconnecting connection.
+async def single_connection():
+   redis = await aioredis.create_redis(
+      'redis://localhost')
+   val = await redis.get('my-key')
+
+# Create Redis client bound to connections pool.
+async def pool_of_connections():
+   redis = await aioredis.create_redis_pool(
+      'redis://localhost')
+   val = await redis.get('my-key')
+
+   # we can also use pub/sub as underlying pool
+   #  has several free connections:
+   ch1, ch2 = await redis.subscribe('chan:1', 'chan:2')
+   # publish using free connection
+   await redis.publish('chan:1', 'Hello')
+   await ch1.get()
+</code></pre>
+<p>有关命令参考 - 请参阅<a href="https://aioredis.readthedocs.io/en/v1.2.0/mixins.html#aioredis-commands">命令mixins参考</a>。</p>
+<h3 id="aiorediscreate_redis">aioredis.create_redis</h3>
+<blockquote>
+<p><font color=#6ab0de>coroutine</font> aioredis.create_redis(<font color=#6ab0de>address, *, db=0, password=None, ssl=None, encoding=None, commands_factory=Redis, parser=None, timeout=None, connection_cls=None, loop=None</font>)</p>
+</blockquote>
+<p>此<a href="https://docs.python.org/3/library/asyncio-task.html#coroutine">协程</a>创建绑定到单个Redis连接的高级Redis接口实例（没有自动重新连接）。</p>
+<h4 id="参数-3">参数：</h4>
+<ul>
+<li><strong>address</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a><em>或</em><a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>） - 连接的地址。可以是（主机，端口）元组，unix域套接字路径字符串或Redis URI字符串。</li>
+<li><strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 连接时切换到的Redis数据库索引。</li>
+<li><strong>password</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/stdtypes.html#bytes"><em>bytes</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - Redis服务器实例需要授权时使用的密码。</li>
+<li><strong>ssl</strong>（<a href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext"><code>ssl.SSLContext</code></a>或True或None） - 传递给的SSL上下文<code>asyncio.BaseEventLoop.create_connection()</code>。</li>
+<li><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 用于响应解码的编解码器。</li>
+<li><strong>commands_factory</strong>（<em>callable</em>） - 接受单个参数的工厂 - 实现<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><code>AbcConnection</code></a> 并返回为Redis提供高级接口的实例的对象。<a href="https://aioredis.readthedocs.io/en/v1.2.0/mixins.html#aioredis.Redis"><code>Redis</code></a>默认情况下。</li>
+<li><strong>解析器</strong>（<em>可调用**或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>无</em></a>） - 协议解析器类。可用于设置自定义协议阅读器; 预期相同的界面<code>hiredis.Reader</code>。</li>
+<li><strong>timeout</strong>（<em>float大于0</em> <em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 打开连接的最长时间，否则引发<a href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError"><code>asyncio.TimeoutError</code></a>异常。 <code>None</code>默认情况下</li>
+<li><strong>connection_cls</strong>（<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><em>aioredis.abc.AbcConnection</em></a>） - 可用于实例化自定义连接类。该参数<strong>必须是</strong>子类 <a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><code>AbcConnection</code></a>。</li>
+<li><strong>loop</strong>（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio-event-loop">EventLoop</a>） - 可选的<em>事件循环</em>实例（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop"><code>asyncio.get_event_loop()</code></a>如果未指定则使用）。</li>
+</ul>
+<h4 id="返回redis-客户端-commands_factory-调用的结果-默认情况下">返回：Redis 客户端 (commands_factory 调用的结果), 默认情况下。</h4>
+<h3 id="aiorediscreate_redis_pool">aioredis.create_redis_pool</h3>
+<blockquote>
+<p><font color=#6ab0de>coroutine</font> aioredis.create_redis_pool(<font color=#6ab0de>address, *, db=0, password=None, ssl=None, encoding=None, commands_factory=Redis, minsize=1, maxsize=10, parser=None, timeout=None, pool_cls=None, connection_cls=None, loop=None</font>)</p>
+</blockquote>
+<p>此<a href="https://docs.python.org/3/library/asyncio-task.html#coroutine">协程</a>创建绑定到连接池的高级Redis客户端实例（这允许自动重新连接和简单的发布/订阅使用）。</p>
+<p>另请参阅<a href="https://aioredis.readthedocs.io/en/v1.2.0/api_reference.html#aioredis.ConnectionsPool"><code>ConnectionsPool</code></a>参数说明。</p>
+<h4 id="参数-4">参数：</h4>
+<ul>
+<li><strong>address</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#tuple"><em>tuple</em></a><em>或</em><a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a>） - 连接的地址。可以是（主机，端口）元组，unix域套接字路径字符串或Redis URI字符串。</li>
+<li><strong>db</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 连接时切换到的Redis数据库索引。</li>
+<li><strong>password</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/stdtypes.html#bytes"><em>bytes</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - Redis服务器实例需要授权时使用的密码。</li>
+<li><strong>ssl</strong>（<a href="https://docs.python.org/3/library/ssl.html#ssl.SSLContext"><code>ssl.SSLContext</code></a>或True或None） - 传递给的SSL上下文<code>asyncio.BaseEventLoop.create_connection()</code>。</li>
+<li><strong>encoding</strong>（<a href="https://docs.python.org/3/library/stdtypes.html#str"><em>str</em></a><em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 用于响应解码的编解码器。</li>
+<li><strong>commands_factory</strong>（<em>callable</em>） - 接受单个参数的工厂 - 实现<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><code>AbcConnection</code></a>接口的对象，并返回一个为Redis提供高级接口的实例。<a href="https://aioredis.readthedocs.io/en/v1.2.0/mixins.html#aioredis.Redis"><code>Redis</code></a>默认情况下。</li>
+<li><strong>minsize</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 初始化和保留在池中的最小连接数。默认值为1。</li>
+<li><strong>maxsize</strong>（<a href="https://docs.python.org/3/library/functions.html#int"><em>int</em></a>） - 可在池中创建的最大连接数。默认值为10。</li>
+<li><strong>解析器</strong>（<em>可调用**或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>无</em></a>） - 协议解析器类。可用于设置自定义协议阅读器; 预期相同的界面<code>hiredis.Reader</code>。</li>
+<li><strong>timeout</strong>（<em>float大于0</em> <em>或</em><a href="https://docs.python.org/3/library/constants.html#None"><em>None</em></a>） - 打开连接的最长时间，否则引发<a href="https://docs.python.org/3/library/asyncio-exceptions.html#asyncio.TimeoutError"><code>asyncio.TimeoutError</code></a>异常。 <code>None</code>默认情况下</li>
+<li><strong>pool_cls</strong>（<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcPool"><em>aioredis.abc.AbcPool</em></a>） - 可用于实例化自定义池类。该参数<strong>必须是</strong>子类<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcPool"><code>AbcPool</code></a>。</li>
+<li><strong>connection_cls</strong>（<a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><em>aioredis.abc.AbcConnection</em></a>） - 可用于使池实例化自定义连接类。该参数<strong>必须是</strong>子类 <a href="https://aioredis.readthedocs.io/en/v1.2.0/abc.html#aioredis.abc.AbcConnection"><code>AbcConnection</code></a>。</li>
+<li><strong>loop</strong>（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio-event-loop">EventLoop</a>） - 可选的<em>事件循环</em>实例（<a href="https://docs.python.org/3/library/asyncio-eventloop.html#asyncio.get_event_loop"><code>asyncio.get_event_loop()</code></a>如果未指定则使用）。</li>
+</ul>
+<h4 id="返回redis-客户端-commands_factory-调用的结果-默认情况下-2">返回：Redis 客户端 (commands_factory 调用的结果), 默认情况下。</h4>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#connection">Connection</a>
+<ul>
+<li><a href="#%E8%BF%9E%E6%8E%A5%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B">连接使用示例：</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAredis%E8%BF%9E%E6%8E%A5create_connection">创建Redis连接(create_connection)</a>
+<ul>
+<li><a href="#%E5%8F%82%E6%95%B0">参数：</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Eredisconnection%E5%AE%9E%E4%BE%8B">返回：<code>RedisConnection</code>实例。</a></li>
+</ul>
+</li>
+<li><a href="#font-color6ab0declassfont-aioredisredisconnection"><strong><font color=#6ab0de>class</font></strong>  aioredis.RedisConnection</a>
+<ul>
+<li><a href="#%E6%8E%A5%E5%8F%A3%E7%B1%BBabcabcconnection">接口类：<code>abc.AbcConnection</code></a></li>
+<li><a href="#%E6%96%B9%E6%B3%95">方法：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#connections-pool">Connections Pool</a>
+<ul>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B">基本用法示例：</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BAredis%E8%BF%9E%E6%8E%A5%E6%B1%A0create_pool">创建Redis连接池(create_pool)</a>
+<ul>
+<li><a href="#%E5%8F%82%E6%95%B0-2">参数：</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Econnectionspool-%E5%AE%9E%E4%BE%8B">返回：<code>ConnectionsPool</code> 实例。</a></li>
+</ul>
+</li>
+<li><a href="#font-color6ab0declassfont-aioredisconnectionspool"><strong><font color=#6ab0de>class</font></strong> aioredis.ConnectionsPool</a>
+<ul>
+<li><a href="#%E6%8E%A5%E5%8F%A3%E7%B1%BBabcabcpool">接口类：<code>abc.AbcPool</code></a></li>
+<li><a href="#%E6%96%B9%E6%B3%95-2">方法：</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#pubsub-channel-object">Pub/Sub Channel object</a>
+<ul>
+<li><a href="#font-color6ab0declassfont-aioredischannelname-is_pattern-loopnone"><strong><font color=#6ab0de>class</font></strong>  aioredis.Channel(name, is_pattern, loop=None)</a></li>
+</ul>
+</li>
+<li><a href="#commands-interface">Commands Interface</a>
+<ul>
+<li><a href="#%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B">用法示例：</a></li>
+<li><a href="#aiorediscreate_redis">aioredis.create_redis</a>
+<ul>
+<li><a href="#%E5%8F%82%E6%95%B0-3">参数：</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Eredis-%E5%AE%A2%E6%88%B7%E7%AB%AF-commands_factory-%E8%B0%83%E7%94%A8%E7%9A%84%E7%BB%93%E6%9E%9C-%E9%BB%98%E8%AE%A4%E6%83%85%E5%86%B5%E4%B8%8B">返回：Redis 客户端 (commands_factory 调用的结果), 默认情况下。</a></li>
+</ul>
+</li>
+<li><a href="#aiorediscreate_redis_pool">aioredis.create_redis_pool</a>
+<ul>
+<li><a href="#%E5%8F%82%E6%95%B0-4">参数：</a></li>
+<li><a href="#%E8%BF%94%E5%9B%9Eredis-%E5%AE%A2%E6%88%B7%E7%AB%AF-commands_factory-%E8%B0%83%E7%94%A8%E7%9A%84%E7%BB%93%E6%9E%9C-%E9%BB%98%E8%AE%A4%E6%83%85%E5%86%B5%E4%B8%8B-2">返回：Redis 客户端 (commands_factory 调用的结果), 默认情况下。</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/ni-xiang-kai-fa-gong-ju-sao-mang/">
+              <h3 class="post-title">
+                逆向开发工具扫盲
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

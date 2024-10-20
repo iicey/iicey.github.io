@@ -1,0 +1,283 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>排序算法 | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="排序算法 | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="线性查找
+# -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/us..." />
+    <meta name="keywords" content="算法" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              排序算法
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-09-15
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+                <a href="https://iicey.github.io/NiqLQG1iy6/" class="post-tag">
+                  # 算法
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h3 id="线性查找">线性查找</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def search(arr, x):
+    for i in range(len(arr)):
+        if arr[i] == x:
+            return i
+    return -1
+
+if __name__ == '__main__':
+    print(search(['A', 'B', 'C', 'D', 'E'], 'D'))
+</code></pre>
+<h3 id="冒泡排序">冒泡排序</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def bubble_sort(arr):
+    n = len(arr)
+    # 遍历所有数组元素
+    for i in range(n):
+        # Last i elements are already in place
+        for j in range(0, n - i - 1):
+            if arr[j] &gt; arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+            print(i, j, arr)
+    return arr
+
+if __name__ == '__main__':
+    print(bubble_sort([64, 34, 25, 12, 22, 11, 90]))
+</code></pre>
+<h3 id="插入排序">插入排序</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def insertion_sort(arr):
+    for i in range(1, len(arr)):  # 默认第一个元素已经在有序序列中，从后面元素开始插入
+        for j in range(i, 0, -1):  # 逆向遍历比较，交换位置实现插入
+            if arr[j] &lt; arr[j - 1]:
+                arr[j], arr[j - 1] = arr[j - 1], arr[j]
+            print(i, j, arr)
+    return arr
+
+if __name__ == '__main__':
+    print(insertion_sort([23, 51, 436, 32, 54, 76, 6, 87, 789, 53, 6543, 5]))
+</code></pre>
+<h3 id="堆排序">堆排序</h3>
+<pre><code class="language-python"># -*- coding: utf-8 -*-
+
+# Author: 桑葚ICE
+# Email: 152516cc@gmail.com
+# Blog: iicey.github.io
+# JueJin: juejin.im/user/5c64dce8e51d45013c40742c
+
+def heapify(arr, n, i):
+    largest = i  # 父节点
+    left = 2 * i + 1  # 左节点
+    right = 2 * i + 2  # 右节点
+    if left &lt; n and arr[i] &lt; arr[left]:
+        largest = left
+    if right &lt; n and arr[largest] &lt; arr[right]:
+        largest = right
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]  # 交换
+        heapify(arr, n, largest)
+    print(f&quot;n:{n}, i:{i}, largest:{largest}, left:{left}, right:{right}, arr:{arr}&quot;)
+
+def heap_sort(arr):
+    n = len(arr)
+    for i in range(n, -1, -1):
+        heapify(arr, n, i)
+        # 一个个交换元素
+
+    print('***********************')
+    for i in range(n - 1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        print(arr)
+        heapify(arr, i, 0)
+    return arr
+
+if __name__ == '__main__':
+    print(heap_sort([2, 4, 3, 6, 5, 8, 7]))
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li>
+<ul>
+<li><a href="#%E7%BA%BF%E6%80%A7%E6%9F%A5%E6%89%BE">线性查找</a></li>
+<li><a href="#%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F">冒泡排序</a></li>
+<li><a href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F">插入排序</a></li>
+<li><a href="#%E5%A0%86%E6%8E%92%E5%BA%8F">堆排序</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/dui-que-kou-hua-kuai-gui-ji-ji-suan-dai-ma-de-feng-zhuang/">
+              <h3 class="post-title">
+                对缺口滑块轨迹计算代码的封装
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>frp内网穿透(http服务转发) | iicey</title>
+<link rel="shortcut icon" href="https://iicey.github.io//favicon.ico?v=1729401465353">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://iicey.github.io//styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="frp内网穿透(http服务转发) | iicey - Atom Feed" href="https://iicey.github.io//atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="下载地址，文档地址
+Server配置
+frps.ini配置
+[common]
+bind_port = 7000  # 服务端监听端口，默认7000
+token = password  # 鉴权使用的 token 值，客户端需要设置一样的值才..." />
+    <meta name="keywords" content="frp,内网穿透,反向代理" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://iicey.github.io/">
+  <img class="avatar" src="https://iicey.github.io//images/avatar.png?v=1729401465353" alt="">
+  </a>
+  <h1 class="site-title">
+    iicey
+  </h1>
+  <p class="site-description">
+    博采众长 独立思考
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="https://iicey.github.io/fj-ICXXe1" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              frp内网穿透(http服务转发)
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-09-15
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://iicey.github.io/H8khZi3gq/" class="post-tag">
+                  # frp
+                </a>
+              
+                <a href="https://iicey.github.io/6_9-zROihP/" class="post-tag">
+                  # 内网穿透
+                </a>
+              
+                <a href="https://iicey.github.io/RehX-x5BdB/" class="post-tag">
+                  # 反向代理
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p><a href="https://github.com/fatedier/frp/releases">下载地址</a>，<a href="https://gofrp.org/docs/">文档地址</a></p>
+<h1 id="server配置">Server配置</h1>
+<h3 id="frpsini配置">frps.ini配置</h3>
+<pre><code class="language-shell">[common]
+bind_port = 7000  # 服务端监听端口，默认7000
+token = password  # 鉴权使用的 token 值，客户端需要设置一样的值才能鉴权通过
+dashboard_port = 7500  # Web 界面，访问 http://服务器IP:7500
+dashboard_user = username  # HTTP BasicAuth 用户名	
+dashboard_pwd = password  # HTTP BasicAuth 密码
+</code></pre>
+<h3 id="启动命令">启动命令</h3>
+<pre><code class="language-shell">nohup ./frps -c ./frps.ini &gt;frp.log 2&gt;&amp;1 &amp;
+</code></pre>
+<h1 id="client配置">Client配置</h1>
+<h3 id="frpcini配置">frpc.ini配置</h3>
+<pre><code>[common]
+server_addr = xx.xx.xx.xx  # 连接服务端的地址
+server_port = 7000  # 连接服务端的端口	
+token = password  # 鉴权使用的 token 值，需要和服务端设置一样的值才能鉴权通过
+
+[app_name]
+type = tcp
+local_ip = 127.0.0.1  # 连接服务端时所绑定的本地 IP
+local_port = 8000  # 连接服务端时所绑定的本地端口
+remote_port = 7531  # 服务的外部访问端口，将 local_port 映射到外网
+</code></pre>
+<h3 id="启动命令-2">启动命令</h3>
+<pre><code class="language-shell">./frpc -c frpc.ini
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#server%E9%85%8D%E7%BD%AE">Server配置</a><br>
+*
+<ul>
+<li><a href="#frpsini%E9%85%8D%E7%BD%AE">frps.ini配置</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4">启动命令</a></li>
+</ul>
+</li>
+<li><a href="#client%E9%85%8D%E7%BD%AE">Client配置</a><br>
+*
+<ul>
+<li><a href="#frpcini%E9%85%8D%E7%BD%AE">frpc.ini配置</a></li>
+<li><a href="#%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4-2">启动命令</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://iicey.github.io/die-dai-si-wei-yu-mvp-chan-pin-gui-hua-fang-fa-oopd/">
+              <h3 class="post-title">
+                迭代思维与 MVP 产品规划方法(OOPD) 
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">iicey</a>
+  <a class="rss" href="https://iicey.github.io//atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
